@@ -38,6 +38,11 @@ Do not import an unrelated production database to obtain shop definitions.
 
 ## Verification
 
+This snapshot compiled successfully with Java 21. The selected test run
+completed with 167 tests, zero failures, zero errors and zero skipped tests.
+The changed/new files were also checked for local runtime credentials,
+private-key/token patterns, user-specific references and generated artifacts.
+
 Java 21 is required. The selected tests are:
 
 ```text
