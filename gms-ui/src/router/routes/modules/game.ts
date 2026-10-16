@@ -13,6 +13,11 @@ const GAME: AppRouteRecordRaw = {
   },
   children: [
     {
+      path: 'character', name: 'CharacterManagement',
+      component: () => import('@/views/game/character/index.vue'),
+      meta: { locale: 'menu.game.character', requiresAuth: true, roles: ['admin'] },
+    },
+    {
       path: 'config',
       name: 'Config',
       component: () => import('@/views/game/config/index.vue'),

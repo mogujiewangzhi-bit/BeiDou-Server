@@ -1,4 +1,10 @@
 export default {
+  'account.player.grant.history': 'Grant History',
+  'account.player.grant.queued': 'Saved for delivery on character login',
+  'account.player.grant.pending': 'Pending',
+  'account.player.grant.delivered': 'Delivered',
+  'account.player.grant.created': 'Created',
+  'account.player.grant.deliveredAt': 'Delivered At',
   'account.list.column.id': 'ID',
   'account.list.column.name': 'account',
   'account.list.column.loggedin': 'logged',
@@ -89,7 +95,7 @@ export default {
   'account.player.level': 'Lv.',
   'account.player.gm.level': 'GM Lv.',
 
-  'account.player.button.globalGive': 'Global Give',
+  'account.player.button.globalGive': 'Give to All Online Players',
   'account.player.button.give': 'Give',
   'account.player.nxCredit': 'NxCredit',
   'account.player.nxPrepaid': 'NxPrepaid',

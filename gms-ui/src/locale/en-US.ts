@@ -11,8 +11,12 @@ import login from '@/views/login/locale/en-US';
 import inventory from '@/views/game/inventory/locale/en-US';
 import autoban from '@/views/game/autoban/locale/en-US';
 import base from './en-US/base';
+import characterAdmin from '@/views/game/character/locale/en-US';
+import skillAdmin from '@/views/game/character/locale/skills-en-US';
 
 export default {
+  ...characterAdmin,
+  ...skillAdmin,
   'menu.dashboard': 'Dashboard',
   'menu.dashboard.workplace': 'Workplace',
   'menu.dashboard.informationSearch': 'Information Search',

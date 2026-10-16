@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 export interface GiveForm {
+  deliveryId?: string;
   worldId?: number;
   playerId?: number;
   player?: string;
@@ -32,19 +33,25 @@ export function getPlayerList(
   pageSize: number,
   id?: number,
   name?: string,
-  map?: number
+  map?: number,
+  world?: number
 ) {
-  return axios.post('/character/v1/online/list', {
+  return axios.post('/character/v1/listForGive', {
     pageNo,
     pageSize,
     id,
     name,
     map,
+    world,
   });
 }
 
 export function givePlayerSrc(data: GiveForm) {
-  return axios.post(`/give/v1/resource`, data);
+  return axios.post<{ queued: boolean }>(`/give/v1/resource`, data);
+}
+
+export function getRewardHistory(cid: number) {
+  return axios.get(`/give/v1/rewards/${cid}`);
 }
 
 export function getEquInitialInfo(id: number) {

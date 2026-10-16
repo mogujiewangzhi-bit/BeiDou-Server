@@ -1,0 +1,15 @@
+export default {
+  'skillAdmin.title':'技能管理','skillAdmin.skill':'技能','skillAdmin.search':'搜索技能名称或 ID',
+  'skillAdmin.job':'所属职业','skillAdmin.level':'技能等级','skillAdmin.master':'掌握上限',
+  'skillAdmin.expiration':'有效期','skillAdmin.permanent':'永久','skillAdmin.operation':'操作',
+  'skillAdmin.edit':'修改','skillAdmin.remove':'移除','skillAdmin.max':'加满',
+  'skillAdmin.confirm':'确认技能修改','skillAdmin.history':'技能修改记录','skillAdmin.absent':'未拥有',
+  'skillAdmin.crossWarning':'跨职业技能可能无法显示或施放，需客户端验证。',
+  'skillAdmin.allowCross':'确认跨职业赋予',
+  'skillAdmin.shortcut':'快捷键','skillAdmin.key':'按键','skillAdmin.keyAuto':'自动选择空闲键',
+  'skillAdmin.keyChoose':'指定按键','skillAdmin.keyNone':'暂不绑定','skillAdmin.notBindable':'被动或自动触发技能，无需快捷键',
+  'skillAdmin.keyConflict':'按键已占用','skillAdmin.keyReplace':'确认替换该键原有绑定','skillAdmin.keyOccupied':'已占用',
+  'skillAdmin.keyPrevious':'原按键绑定','skillAdmin.keyStatus.assigned':'绑定技能',
+  'skillAdmin.keyStatus.existing':'保留已有技能按键','skillAdmin.keyStatus.none':'不修改快捷键',
+  'skillAdmin.keyStatus.notBindable':'无需施放按键','skillAdmin.keyStatus.removed':'清理该技能按键',
+};

@@ -1,0 +1,15 @@
+export default {
+  'skillAdmin.title':'Skills','skillAdmin.skill':'Skill','skillAdmin.search':'Search skill name or ID',
+  'skillAdmin.job':'Career','skillAdmin.level':'Skill level','skillAdmin.master':'Mastery limit',
+  'skillAdmin.expiration':'Expiration','skillAdmin.permanent':'Permanent','skillAdmin.operation':'Actions',
+  'skillAdmin.edit':'Edit','skillAdmin.remove':'Remove','skillAdmin.max':'Maximize',
+  'skillAdmin.confirm':'Confirm skill change','skillAdmin.history':'Skill change history','skillAdmin.absent':'Not owned',
+  'skillAdmin.crossWarning':'Cross-career skills may not display or cast. Client verification is required.',
+  'skillAdmin.allowCross':'Confirm cross-career assignment',
+  'skillAdmin.shortcut':'Shortcut','skillAdmin.key':'Key','skillAdmin.keyAuto':'Choose a free key automatically',
+  'skillAdmin.keyChoose':'Choose a key','skillAdmin.keyNone':'No binding','skillAdmin.notBindable':'Passive or automatically triggered skill; no casting key',
+  'skillAdmin.keyConflict':'Key occupied','skillAdmin.keyReplace':'Confirm replacing this key binding','skillAdmin.keyOccupied':'Occupied',
+  'skillAdmin.keyPrevious':'Previous binding','skillAdmin.keyStatus.assigned':'Bind skill',
+  'skillAdmin.keyStatus.existing':'Keep existing skill key','skillAdmin.keyStatus.none':'Keep shortcuts unchanged',
+  'skillAdmin.keyStatus.notBindable':'No casting key needed','skillAdmin.keyStatus.removed':'Remove this skill binding',
+};

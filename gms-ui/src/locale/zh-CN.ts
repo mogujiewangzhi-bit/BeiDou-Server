@@ -11,8 +11,12 @@ import login from '@/views/login/locale/zh-CN';
 import inventory from '@/views/game/inventory/locale/zh-CN';
 import autoban from '@/views/game/autoban/locale/zh-CN';
 import baseConfig from './zh-CN/base';
+import characterAdmin from '@/views/game/character/locale/zh-CN';
+import skillAdmin from '@/views/game/character/locale/skills-zh-CN';
 
 export default {
+  ...characterAdmin,
+  ...skillAdmin,
   // 左侧菜单
   'menu.dashboard': '仪表盘',
   'menu.dashboard.workplace': '工作台',

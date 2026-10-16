@@ -131,19 +131,14 @@
     <a-modal
       v-model:visible="selectorVisible"
       :title="$t('informationSearch.characterSelector.title')"
-      :width="750"
+      width="min(750px,94vw)"
       :footer="false"
     >
       <a-form :model="selectorCondition">
         <a-form-item
-          :label="$t('informationSearch.characterSelector.column.id')"
-        >
-          <a-input-number v-model="selectorCondition.id" allow-clear />
-        </a-form-item>
-        <a-form-item
           :label="$t('informationSearch.characterSelector.column.name')"
         >
-          <a-input v-model="selectorCondition.name" allow-clear />
+          <CharacterPicker v-model="selectorCondition.id" @select="selectFilterCharacter" />
         </a-form-item>
         <a-space class="a-form-item-btn">
           <a-button type="primary" @click="searchCharacter">
@@ -293,6 +288,8 @@
 
 <script lang="ts" setup>
   import { ref } from 'vue';
+  import CharacterPicker from '@/components/character-picker/index.vue';
+  import { CharacterOption } from '@/api/character-admin';
   import { useI18n } from 'vue-i18n';
   import { Message } from '@arco-design/web-vue';
   import useLoading from '@/hooks/loading';
@@ -438,6 +435,12 @@
     selectorVisible.value = true;
   };
 
+  const selectedCharacterWorld = ref<number>();
+  const selectFilterCharacter = (character?: CharacterOption) => {
+    selectorCondition.value.name = undefined;
+    selectedCharacterWorld.value = character?.world;
+    characterList.value = character ? [character] : [];
+  };
   const searchCharacter = async () => {
     setLoading(true);
     try {
@@ -445,7 +448,9 @@
         selectorCondition.value.pageNo,
         selectorCondition.value.pageSize,
         selectorCondition.value.id,
-        selectorCondition.value.name
+        selectorCondition.value.name,
+        undefined,
+        selectedCharacterWorld.value
       );
       if (!data.records || data.records.length === 0) {
         Message.warning(t('informationSearch.characterSelector.notFound'));

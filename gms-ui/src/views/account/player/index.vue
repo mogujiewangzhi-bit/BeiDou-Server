@@ -4,17 +4,9 @@
     <a-card class="general-card" :title="$t('menu.account.player')">
       <a-form :model="filterForm" class="a-from-keyword">
         <a-row :gutter="16">
-          <a-col :span="6">
-            <a-form-item :label="$t('account.player.id')">
-              <a-input-number
-                v-model="filterForm.id"
-                @keydown.enter="loadData"
-              />
-            </a-form-item>
-          </a-col>
-          <a-col :span="6">
+          <a-col :xs="24" :sm="12">
             <a-form-item :label="$t('account.player.name')">
-              <a-input v-model="filterForm.name" @keydown.enter="loadData" />
+              <CharacterPicker v-model="filterForm.id" @select="selectFilter" />
             </a-form-item>
           </a-col>
           <a-col :span="6">
@@ -67,8 +59,14 @@
         column-resizable
         :pagination="false"
         :bordered="{ cell: true }"
+        :scroll="{ x: 1200 }"
       >
         <template #columns>
+          <a-table-column :title="$t('account.list.charList.column.status')" :width="80" align="center">
+            <template #cell="{ record }">
+              <a-tag :color="record.online ? 'green' : 'gray'">{{ $t(record.online ? 'account.list.charList.column.status.online' : 'account.list.charList.column.status.offline') }}</a-tag>
+            </template>
+          </a-table-column>
           <a-table-column
             :title="$t('account.player.id')"
             data-index="id"
@@ -116,6 +114,9 @@
               <a-button type="text" size="mini" @click="giveClick(record)">
                 {{ $t('account.player.button.give') }}
               </a-button>
+              <a-button type="text" size="mini" @click="historyClick(record.id)">
+                {{ $t('account.player.grant.history') }} ({{ record.pendingCount }})
+              </a-button>
             </template>
           </a-table-column>
         </template>
@@ -133,6 +134,22 @@
         @page-size-change="pageSizeChange"
       />
     </a-card>
+
+    <a-modal v-model:visible="historyVisible" :title="$t('account.player.grant.history')" :footer="false" width="min(760px, 94vw)">
+      <a-table :data="historyRows" :loading="historyLoading" :pagination="{ pageSize: 10 }" :scroll="{ x: 700 }" row-key="id">
+        <template #columns>
+          <a-table-column title="ID" data-index="id" :width="60" />
+          <a-table-column :title="$t('account.player.form.type')" :width="220">
+            <template #cell="{ record }">{{ resourceLabel(record.resource.type) }}<span v-if="record.resource.id"> · {{ record.resource.id }}</span> ×{{ record.resource.type === 6 ? 1 : record.resource.quantity }}</template>
+          </a-table-column>
+          <a-table-column :title="$t('account.list.charList.column.status')" :width="90">
+            <template #cell="{ record }"><a-tag :color="record.status === 'delivered' ? 'green' : 'orange'">{{ $t(`account.player.grant.${record.status}`) }}</a-tag></template>
+          </a-table-column>
+          <a-table-column :title="$t('account.player.grant.created')" data-index="createdAt" :width="160" />
+          <a-table-column :title="$t('account.player.grant.deliveredAt')" data-index="deliveredAt" :width="160" />
+        </template>
+      </a-table>
+    </a-modal>
 
     <a-modal
       v-model:visible="giveFormVisible"
@@ -305,6 +322,8 @@
 <script setup lang="ts">
   import useLoading from '@/hooks/loading';
   import { ref } from 'vue';
+  import CharacterPicker from '@/components/character-picker/index.vue';
+  import { CharacterOption } from '@/api/character-admin';
   import { AccountState } from '@/store/modules/account/types';
   import { Message } from '@arco-design/web-vue';
   import { useI18n } from 'vue-i18n';
@@ -313,6 +332,7 @@
     getPlayerList,
     GiveForm,
     givePlayerSrc,
+    getRewardHistory,
   } from '@/api/player';
 
   const { t } = useI18n();
@@ -325,12 +345,27 @@
     id?: number;
     name?: string;
     map?: number;
+    world?: number;
   }>({
     id: undefined,
     name: undefined,
     map: undefined,
   });
   const giveFormVisible = ref(false);
+  const historyVisible = ref(false);
+  const historyLoading = ref(false);
+  const historyRows = ref([]);
+  const resourceLabel = (type: number) => t(`account.player.${['nxCredit', 'nxPrepaid', 'maplePoint', 'mesos', 'exp', 'item', 'equip'][type]}`);
+  const historyClick = async (cid: number) => {
+    historyVisible.value = true;
+    historyLoading.value = true;
+    try {
+      const { data } = await getRewardHistory(cid);
+      historyRows.value = data;
+    } finally {
+      historyLoading.value = false;
+    }
+  };
   const giveFormTitle = ref('');
   const formData = ref<GiveForm>({
     worldId: undefined,
@@ -370,7 +405,8 @@
         size.value,
         filterForm.value.id,
         filterForm.value.name,
-        filterForm.value.map
+        filterForm.value.map,
+        filterForm.value.world
       );
       tableData.value = data.records;
       total.value = data.totalRow;
@@ -379,6 +415,12 @@
     }
   };
   loadData();
+  const selectFilter = (character?: CharacterOption) => {
+    filterForm.value.name = undefined;
+    filterForm.value.world = character?.world;
+    page.value = 1;
+    loadData();
+  };
 
   const refreshClick = () => {
     page.value = 1;
@@ -399,13 +441,15 @@
   const resetClick = () => {
     filterForm.value.id = undefined;
     filterForm.value.name = undefined;
+    filterForm.value.world = undefined;
     filterForm.value.map = undefined;
     page.value = 1;
     loadData();
   };
 
   const globalGiveClick = () => {
-    giveFormTitle.value = '全服发放资源';
+    giveFormTitle.value = t('account.player.button.globalGive');
+    formData.value = { deliveryId: crypto.randomUUID(), type: 0, playerId: 0 };
     typeOptions.value = [
       { value: 0, label: t('account.player.nxCredit') },
       { value: 1, label: t('account.player.nxPrepaid') },
@@ -422,7 +466,7 @@
   };
 
   const giveClick = (data: any) => {
-    giveFormTitle.value = '发放资源';
+    giveFormTitle.value = t('account.player.button.give');
     typeOptions.value = [
       { value: 0, label: t('account.player.nxCredit') },
       { value: 1, label: t('account.player.nxPrepaid') },
@@ -438,8 +482,10 @@
       { value: 11, label: t('account.player.gm') },
       { value: 12, label: t('account.player.fame') },
     ];
+    if (!data.online) typeOptions.value = typeOptions.value.filter(option => option.value <= 6);
 
     formData.value = {
+      deliveryId: crypto.randomUUID(),
       worldId: data.world,
       playerId: data.id,
       player: data.name,
@@ -471,8 +517,12 @@
   const submitClick = async () => {
     setLoading(true);
     try {
-      await givePlayerSrc(formData.value);
-      Message.success(t('message.success'));
+      const { data } = await givePlayerSrc(formData.value);
+      Message.success(t(data.queued ? 'account.player.grant.queued' : 'message.success'));
+      await loadData();
+      return true;
+    } catch {
+      return false;
     } finally {
       setLoading(false);
     }
