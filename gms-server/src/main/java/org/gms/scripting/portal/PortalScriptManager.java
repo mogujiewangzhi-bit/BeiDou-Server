@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.gms.scripting.portal;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Client;
 import org.gms.config.GameConfig;
 import org.slf4j.Logger;
@@ -58,7 +60,7 @@ public class PortalScriptManager extends AbstractScriptManager {
 
         script = iv.getInterface(PortalScript.class);
         if (script == null) {
-            throw new ScriptException(String.format("Portal script \"%s\" fails to implement the PortalScript interface", scriptName));
+            throw new ScriptException(String.format(I18nUtil.getExceptionMessage("Localization.legacy.exception.2a397d3bef594d39"), scriptName));
         }
 
         scripts.put(scriptPath, script);
@@ -81,7 +83,7 @@ public class PortalScriptManager extends AbstractScriptManager {
             }
         } catch (Exception e) {
 
-            log.warn("Portal script error in: {}", portal.getScriptName(), e);
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.72b69af99ff5aef5"), portal.getScriptName(), e);
         }
         return false;
     }

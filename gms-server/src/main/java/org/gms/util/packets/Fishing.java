@@ -19,6 +19,8 @@
 */
 package org.gms.util.packets;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.config.GameConfig;
 import org.gms.constants.id.ItemId;
@@ -61,9 +63,9 @@ public class Fishing {
         double baitLikelihood = 0.0002 * chr.getWorldServer().getFishingRate() * baitLevel;   // can improve 10.0 at "max level 50000" on rate 1x
 
         if (GameConfig.getServerBoolean("use_debug") && chr.isGM()) {
-            chr.dropMessage(5, "----- FISHING RESULT -----");
-            chr.dropMessage(5, "Likelihoods - Year: " + yearLikelihood + " Time: " + timeLikelihood + " Meso: " + baitLikelihood);
-            chr.dropMessage(5, "Score rolls - Year: " + (0.23 * yearLikelihood) + " Time: " + (0.77 * timeLikelihood) + " Meso: " + baitLikelihood);
+            chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.fb0433e8e2e7e94b"));
+            chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.d6c2eae32d193f5b") + yearLikelihood + I18nUtil.getMessage("Localization.legacy.message.7fdfb90d3b958395") + timeLikelihood + I18nUtil.getMessage("Localization.legacy.message.3d44136a35bf5599") + baitLikelihood);
+            chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.2517e526a1d284d7") + (0.23 * yearLikelihood) + I18nUtil.getMessage("Localization.legacy.message.7fdfb90d3b958395") + (0.77 * timeLikelihood) + I18nUtil.getMessage("Localization.legacy.message.3d44136a35bf5599") + baitLikelihood);
         }
 
         return (0.23 * yearLikelihood) + (0.77 * timeLikelihood) + (baitLikelihood) > 57.777;
@@ -77,12 +79,12 @@ public class Fishing {
         }
 
         if (!MapId.isFishingArea(chr.getMapId())) {
-            chr.dropMessage("You are not in a fishing area!");
+            chr.dropMessage(I18nUtil.getMessage("Localization.legacy.message.8edb7d672d667ce1"));
             return;
         }
 
         if (chr.getLevel() < 30) {
-            chr.dropMessage(5, "You must be above level 30 to fish!");
+            chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.c29b08bd6d9ddb80"));
             return;
         }
 
@@ -114,13 +116,13 @@ public class Fishing {
                     if (chr.canHold(itemid)) {
                         chr.getAbstractPlayerInteraction().gainItem(itemid, true);
                     } else {
-                        chr.showHint("Couldn't catch a(n) #r" + ItemInformationProvider.getInstance().getName(itemid) + "#k due to #e#b" + ItemConstants.getInventoryType(itemid) + "#k#n inventory limit.");
+                        chr.showHint(I18nUtil.getMessage("Localization.legacy.message.4826c1104f954fbe") + ItemInformationProvider.getInstance().getName(itemid) + I18nUtil.getMessage("Localization.legacy.message.f35e40d8a06362be") + ItemConstants.getInventoryType(itemid) + I18nUtil.getMessage("Localization.legacy.message.de1d8ff906e17843"));
                         rewardStr += ".. but has goofed up due to full inventory.";
                     }
                     break;
             }
 
-            chr.getMap().dropMessage(6, chr.getName() + " found " + rewardStr);
+            chr.getMap().dropMessage(6, chr.getName() + I18nUtil.getMessage("Localization.legacy.message.3527fd33dc13192e") + rewardStr);
         }
 
         chr.sendPacket(PacketCreator.showInfo(fishingEffect));
@@ -196,8 +198,8 @@ public class Fishing {
             }
         }
 
-        log.debug("Diary   min {} max {}", minhit, maxhit);
-        log.debug("Diary10 min {} max {}", minhit10, maxhit10);
-        log.debug("Hits: {}, Hits10: {}, Total: {} -- %1000 {}, +10 %1000: {}", hits, hits10, total, (hits * 1000 / total), (hits10 * 1000 / total));
+        log.debug(I18nUtil.getLogMessage("Localization.legacy.log.bdb23afed21fd507"), minhit, maxhit);
+        log.debug(I18nUtil.getLogMessage("Localization.legacy.log.92f442c5f97c594b"), minhit10, maxhit10);
+        log.debug(I18nUtil.getLogMessage("Localization.legacy.log.f9b09ddd90f0259f"), hits, hits10, total, (hits * 1000 / total), (hits10 * 1000 / total));
     }
 } 

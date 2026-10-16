@@ -21,6 +21,8 @@
  */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.BuffStat;
 import org.gms.client.Character;
 import org.gms.client.Job;
@@ -70,10 +72,6 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 public abstract class AbstractDealDamageHandler extends AbstractPacketHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ItemPickupHandler.class);
-
-    private static int decodeDamage(int encodedDamage) {
-        return encodedDamage < 0 ? encodedDamage & Integer.MAX_VALUE : encodedDamage;
-    }
 
     public static class AttackInfo {
 
@@ -336,7 +334,10 @@ public abstract class AbstractDealDamageHandler extends AbstractPacketHandler {
                     }
 
                     for (Integer eachd : onedList) {
-                        totDamageToOneMonster += decodeDamage(eachd);
+                        if (eachd < 0) {
+                            eachd += Integer.MAX_VALUE;
+                        }
+                        totDamageToOneMonster += eachd;
                     }
                     totDamage += totDamageToOneMonster;
                     monster.aggroMonsterDamage(player, totDamageToOneMonster);
@@ -347,8 +348,15 @@ public abstract class AbstractDealDamageHandler extends AbstractPacketHandler {
                             int delay = 0;
                             final int maxmeso = player.getBuffedValue(BuffStat.PICKPOCKET);
                             for (Integer eachd : onedList) {
+                                eachd += Integer.MAX_VALUE;
+
                                 if (pickpocket.getEffect(picklv).makeChanceResult()) {
-                                    final int eachdf = decodeDamage(eachd);
+                                    final int eachdf;
+                                    if (eachd < 0) {
+                                        eachdf = eachd + Integer.MAX_VALUE;
+                                    } else {
+                                        eachdf = eachd;
+                                    }
 
                                     TimerManager.getInstance().schedule(() -> map.spawnMesoDrop(Math.min((int) Math.max(((double) eachdf / (double) 20000) * (double) maxmeso, 1), maxmeso), new Point((int) (monster.getPosition().getX() + Randomizer.nextInt(100) - 50), (int) (monster.getPosition().getY())), monster, player, true, (byte) 2), delay);
                                     delay += 100;
@@ -364,13 +372,20 @@ public abstract class AbstractDealDamageHandler extends AbstractPacketHandler {
                                 monster.addStolen(0);
 
                                 MonsterInformationProvider mi = MonsterInformationProvider.getInstance();
-                                MonsterDropEntry stolenDrop = mi.retrieveRandomStealDrop(monster.getId());
-                                if (stolenDrop != null) {
+                                List<Integer> dropPool = mi.retrieveDropPool(monster.getId());
+                                if (dropPool != null && !dropPool.isEmpty()) {
+                                    int rndPool = (int) Math.floor(Math.random() * dropPool.get(dropPool.size() - 1));
+
+                                    int i = 0;
+                                    while (rndPool >= dropPool.get(i)) {
+                                        i++;
+                                    }
+
                                     List<MonsterDropEntry> toSteal = new ArrayList<>();
-                                    toSteal.add(stolenDrop);
+                                    toSteal.add(mi.retrieveDrop(monster.getId()).get(i));
 
                                     map.dropItemsFromMonster(toSteal, player, monster);
-                                    monster.addStolen(stolenDrop.itemId);
+                                    monster.addStolen(toSteal.get(0).itemId);
                                 }
                             }
                         }
@@ -609,7 +624,7 @@ public abstract class AbstractDealDamageHandler extends AbstractPacketHandler {
                                 + " " + bboxInfo
                 );
                 log.warn(
-                        "Player: {} maxDistanceSqToMob: {} thresholdSq: {} SID: {} MID: {} {}",
+                        I18nUtil.getLogMessage("Localization.legacy.log.6d08d02dfd8ab052"),
                         player.getName(),
                         distanceHackWorstDistance,
                         distanceHackWorstThreshold,

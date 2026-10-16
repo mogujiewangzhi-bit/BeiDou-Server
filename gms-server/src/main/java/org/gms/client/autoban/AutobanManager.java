@@ -5,6 +5,8 @@
 
 package org.gms.client.autoban;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.config.GameConfig;
 import org.gms.net.server.Server;
@@ -72,7 +74,7 @@ public class AutobanManager {
         }
         if (GameConfig.getServerBoolean("use_auto_ban_log")) {
             // Lets log every single point too.
-            log.info("Autoban - chr {} caused {} {}", Character.makeMapleReadable(chr.getName()), fac.name(), reason);
+            log.info(I18nUtil.getLogMessage("Localization.legacy.log.cfd9276eb22c4f0c"), Character.makeMapleReadable(chr.getName()), fac.name(), reason);
         }
     }
 
@@ -85,7 +87,7 @@ public class AutobanManager {
             samemisscount++;
         }
         if (samemisscount > 4) {
-            chr.sendPolice("You will be disconnected for miss godmode.");
+            chr.sendPolice(I18nUtil.getMessage("Localization.legacy.message.e6d2874c147db1dc"));
         }
         //chr.autoban("Autobanned for : " + misses + " Miss godmode", 1);
         else if (samemisscount > 0) {
@@ -132,7 +134,7 @@ public class AutobanManager {
                     chr.getClient().disconnect(false, false);
                 }
 
-                log.info("Autoban - Chr {} was caught spamming TYPE {} and has been disconnected", chr, type);
+                log.info(I18nUtil.getLogMessage("Localization.legacy.log.22a869728f2a469d"), chr, type);
             }
         } else {
             this.timestamp[type] = time;

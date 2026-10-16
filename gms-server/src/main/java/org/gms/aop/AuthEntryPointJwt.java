@@ -1,5 +1,7 @@
 package org.gms.aop;
 
+import org.gms.util.I18nUtil;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,7 +20,7 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
-        logger.error("Unauthorized error with {}: {}", request.getRequestURI(), authException.getMessage());
+        logger.error(I18nUtil.getLogMessage("Localization.legacy.log.dfab355298e37c3a"), request.getRequestURI(), authException.getMessage());
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: Unauthorized");
     }
 

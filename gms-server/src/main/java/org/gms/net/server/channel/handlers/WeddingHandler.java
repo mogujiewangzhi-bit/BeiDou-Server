@@ -6,6 +6,8 @@
 
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 
 import org.gms.client.Character;
 import org.gms.client.Client;
@@ -124,11 +126,11 @@ public final class WeddingHandler extends AbstractPacketHandler {
 
                                     c.sendPacket(WeddingPackets.onWeddingGiftResult((byte) 0xF, marriage.getWishlistItems(groomWishlist), marriage.getGiftItems(c, groomWishlist)));
                                 } else {
-                                    c.getPlayer().dropMessage(1, "Free a slot on your inventory before collecting this item.");
+                                    c.getPlayer().dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.40ae639c3a0bc6d7"));
                                     c.sendPacket(WeddingPackets.onWeddingGiftResult((byte) 0xE, marriage.getWishlistItems(groomWishlist), marriage.getGiftItems(c, groomWishlist)));
                                 }
                             } else {
-                                c.getPlayer().dropMessage(1, "You have already collected this item.");
+                                c.getPlayer().dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.1aa86c542210c23e"));
                                 c.sendPacket(WeddingPackets.onWeddingGiftResult((byte) 0xE, marriage.getWishlistItems(groomWishlist), marriage.getGiftItems(c, groomWishlist)));
                             }
                         }
@@ -143,18 +145,18 @@ public final class WeddingHandler extends AbstractPacketHandler {
                                 InventoryManipulator.addFromDrop(c, item, true);
                                 c.sendPacket(WeddingPackets.onWeddingGiftResult((byte) 0xF, Collections.singletonList(""), items));
                             } else {
-                                c.getPlayer().dropMessage(1, "Free a slot on your inventory before collecting this item.");
+                                c.getPlayer().dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.40ae639c3a0bc6d7"));
                                 c.sendPacket(WeddingPackets.onWeddingGiftResult((byte) 0xE, Collections.singletonList(""), items));
                             }
                         } catch (Exception e) {
-                            c.getPlayer().dropMessage(1, "You have already collected this item.");
+                            c.getPlayer().dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.1aa86c542210c23e"));
                             c.sendPacket(WeddingPackets.onWeddingGiftResult((byte) 0xE, Collections.singletonList(""), items));
                         }
                     }
                 } else if (mode == 8) { // out of Wedding Registry
                     c.sendPacket(PacketCreator.enableActions());
                 } else {
-                    log.warn("Unhandled wedding mode: {}", mode);
+                    log.warn(I18nUtil.getLogMessage("Localization.legacy.log.06cb4df6248de720"), mode);
                 }
             } finally {
                 c.releaseClient();

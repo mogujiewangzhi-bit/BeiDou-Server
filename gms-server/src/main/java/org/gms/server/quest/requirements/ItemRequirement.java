@@ -21,6 +21,8 @@
  */
 package org.gms.server.quest.requirements;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.inventory.InventoryType;
 import org.gms.client.inventory.Item;
@@ -81,7 +83,7 @@ public class ItemRequirement extends AbstractQuestRequirement {
                 } else {
                     if (count < countNeeded) {
                         if (chr.getInventory(InventoryType.EQUIPPED).countById(itemId) + count >= countNeeded) {
-                            chr.dropMessage(5, "Unequip the required " + ii.getName(itemId) + " before trying this quest operation.");
+                            chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.07d97210e375f395") + ii.getName(itemId) + I18nUtil.getMessage("Localization.legacy.message.c30f676cc1835119"));
                             return false;
                         }
                     }

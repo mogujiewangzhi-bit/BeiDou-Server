@@ -19,6 +19,8 @@
  */
 package org.gms.scripting.event.scheduler;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.config.GameConfig;
 import org.gms.net.server.Server;
 import org.gms.server.ThreadManager;
@@ -83,7 +85,7 @@ public class EventScriptScheduler {
                 try {
                     r.run();  // runs the scheduled action
                 } catch (Exception e) {
-                    log.error("Exception occurred while running scheduled event task", e);
+                    log.error(I18nUtil.getLogMessage("Localization.legacy.log.faac12324dad739d"), e);
                 }
                 toRemove.add(r);
             }
@@ -101,8 +103,8 @@ public class EventScriptScheduler {
         }
     }
 
-    public long registerEntry(final Runnable scheduledAction, final long duration) {
-        long nextScheduledTime = Server.getInstance().getCurrentTime() + duration;
+    public void registerEntry(final Runnable scheduledAction, final long duration) {
+
         ThreadManager.getInstance().newTask(() -> {
             schedulerLock.lock();
             try {
@@ -115,12 +117,11 @@ public class EventScriptScheduler {
                     schedulerTask = TimerManager.getInstance().register(this::runBaseSchedule, GameConfig.getServerLong("mob_status_monitor_proc"), GameConfig.getServerLong("mob_status_monitor_proc"));
                 }
 
-                registeredEntries.put(scheduledAction, nextScheduledTime);
+                registeredEntries.put(scheduledAction, Server.getInstance().getCurrentTime() + duration);
             } finally {
                 schedulerLock.unlock();
             }
         });
-        return nextScheduledTime;
     }
 
     public void cancelEntry(final Runnable scheduledAction) {

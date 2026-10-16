@@ -90,7 +90,7 @@ public abstract class CharacterFactory {
         }
 
         if (!MakeCharInfoValidator.isNewCharacterValid(newCharacter)) {
-            log.warn("Owner from account {} tried to packet edit in character creation", c.getAccountName());
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.69e1fc14dc215b7c"), c.getAccountName());
             return -2;
         }
 

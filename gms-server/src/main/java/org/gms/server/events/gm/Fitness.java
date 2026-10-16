@@ -22,6 +22,8 @@
 
 package org.gms.server.events.gm;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.constants.id.MapId;
 import org.gms.server.TimerManager;
@@ -56,7 +58,7 @@ public class Fitness {
         checkAndMessage();
 
         chr.getMap().getPortal("join00").setPortalStatus(true);
-        chr.sendPacket(PacketCreator.serverNotice(0, "The portal has now opened. Press the up arrow key at the portal to enter."));
+        chr.sendPacket(PacketCreator.serverNotice(0, I18nUtil.getMessage("Localization.legacy.message.542be40fd7f3da32")));
     }
 
     public boolean isTimerStarted() {
@@ -85,29 +87,29 @@ public class Fitness {
             }
             if (MapId.isPhysicalFitness(chr.getMapId())) {
                 if (getTimeLeft() > 9000 && getTimeLeft() < 11000) {
-                    chr.sendPacket(PacketCreator.serverNotice(0, "You have 10 sec left. Those of you unable to beat the game, we hope you beat it next time! Great job everyone!! See you later~"));
+                    chr.sendPacket(PacketCreator.serverNotice(0, I18nUtil.getMessage("Localization.legacy.message.0a7b8d57f3c14150")));
                 } else if (getTimeLeft() > 99000 && getTimeLeft() < 101000) {
-                    chr.sendPacket(PacketCreator.serverNotice(0, "Alright, you don't have much time remaining. Please hurry up a little!"));
+                    chr.sendPacket(PacketCreator.serverNotice(0, I18nUtil.getMessage("Localization.legacy.message.8674bb1eab9dd462")));
                 } else if (getTimeLeft() > 239000 && getTimeLeft() < 241000) {
-                    chr.sendPacket(PacketCreator.serverNotice(0, "The 4th stage is the last one for [The Maple Physical Fitness Test]. Please don't give up at the last minute and try your best. The reward is waiting for you at the very top!"));
+                    chr.sendPacket(PacketCreator.serverNotice(0, I18nUtil.getMessage("Localization.legacy.message.229ce325db3fdaff")));
                 } else if (getTimeLeft() > 299000 && getTimeLeft() < 301000) {
-                    chr.sendPacket(PacketCreator.serverNotice(0, "The 3rd stage offers traps where you may see them, but you won't be able to step on them. Please be careful of them as you make your way up."));
+                    chr.sendPacket(PacketCreator.serverNotice(0, I18nUtil.getMessage("Localization.legacy.message.f58d8994748a0c59")));
                 } else if (getTimeLeft() > 359000 && getTimeLeft() < 361000) {
-                    chr.sendPacket(PacketCreator.serverNotice(0, "For those who have heavy lags, please make sure to move slowly to avoid falling all the way down because of lags."));
+                    chr.sendPacket(PacketCreator.serverNotice(0, I18nUtil.getMessage("Localization.legacy.message.74449ce71b1f7648")));
                 } else if (getTimeLeft() > 499000 && getTimeLeft() < 501000) {
-                    chr.sendPacket(PacketCreator.serverNotice(0, "Please remember that if you die during the event, you'll be eliminated from the game. If you're running out of HP, either take a potion or recover HP first before moving on."));
+                    chr.sendPacket(PacketCreator.serverNotice(0, I18nUtil.getMessage("Localization.legacy.message.71803f1ccacad732")));
                 } else if (getTimeLeft() > 599000 && getTimeLeft() < 601000) {
-                    chr.sendPacket(PacketCreator.serverNotice(0, "The most important thing you'll need to know to avoid the bananas thrown by the monkeys is *Timing* Timing is everything in this!"));
+                    chr.sendPacket(PacketCreator.serverNotice(0, I18nUtil.getMessage("Localization.legacy.message.9c338797deac8601")));
                 } else if (getTimeLeft() > 659000 && getTimeLeft() < 661000) {
-                    chr.sendPacket(PacketCreator.serverNotice(0, "The 2nd stage offers monkeys throwing bananas. Please make sure to avoid them by moving along at just the right timing."));
+                    chr.sendPacket(PacketCreator.serverNotice(0, I18nUtil.getMessage("Localization.legacy.message.6f3ab02fe6cc30c6")));
                 } else if (getTimeLeft() > 699000 && getTimeLeft() < 701000) {
-                    chr.sendPacket(PacketCreator.serverNotice(0, "Please remember that if you die during the event, you'll be eliminated from the game. You still have plenty of time left, so either take a potion or recover HP first before moving on."));
+                    chr.sendPacket(PacketCreator.serverNotice(0, I18nUtil.getMessage("Localization.legacy.message.4983ba578a00f29b")));
                 } else if (getTimeLeft() > 779000 && getTimeLeft() < 781000) {
-                    chr.sendPacket(PacketCreator.serverNotice(0, "Everyone that clears [The Maple Physical Fitness Test] on time will be given an item, regardless of the order of finish, so just relax, take your time, and clear the 4 stages."));
+                    chr.sendPacket(PacketCreator.serverNotice(0, I18nUtil.getMessage("Localization.legacy.message.69681abda4bf0f65")));
                 } else if (getTimeLeft() > 839000 && getTimeLeft() < 841000) {
-                    chr.sendPacket(PacketCreator.serverNotice(0, "There may be a heavy lag due to many users at stage 1 all at once. It won't be difficult, so please make sure not to fall down because of heavy lag."));
+                    chr.sendPacket(PacketCreator.serverNotice(0, I18nUtil.getMessage("Localization.legacy.message.e22cf18a16d4f220")));
                 } else if (getTimeLeft() > 869000 && getTimeLeft() < 871000) {
-                    chr.sendPacket(PacketCreator.serverNotice(0, "[MapleStory Physical Fitness Test] consists of 4 stages, and if you happen to die during the game, you'll be eliminated from the game, so please be careful of that."));
+                    chr.sendPacket(PacketCreator.serverNotice(0, I18nUtil.getMessage("Localization.legacy.message.4b814cd2d4a1f0e8")));
                 }
             } else {
                 resetTimes();

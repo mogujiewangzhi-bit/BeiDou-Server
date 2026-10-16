@@ -21,6 +21,8 @@
  */
 package org.gms.server.quest;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.QuestStatus;
 import org.gms.client.QuestStatus.Status;
@@ -143,7 +145,7 @@ public class Quest {
                     medals.put(this.id, medalid);
                 }
             } else {
-                log.warn("No quest data for id {}", id);
+                log.warn(I18nUtil.getLogMessage("Localization.legacy.log.1890fbafac57ac30"), id);
             }
         }
 

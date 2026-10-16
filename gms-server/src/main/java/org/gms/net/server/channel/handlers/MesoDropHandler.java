@@ -21,6 +21,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.config.GameConfig;
@@ -44,7 +46,7 @@ public final class MesoDropHandler extends AbstractPacketHandler {
         int meso = p.readInt();
 
         if (player.isGM() && player.gmLevel() < GameConfig.getServerInt("minimum_gm_level_to_drop")) {
-            player.message("You cannot drop mesos at your GM level.");
+            player.message(I18nUtil.getMessage("Localization.legacy.message.82ad6c0caf01442c"));
             return;
         }
 

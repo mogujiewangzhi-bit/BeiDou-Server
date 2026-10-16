@@ -55,7 +55,6 @@ import org.gms.net.server.guild.GuildPackets;
 import org.gms.net.server.world.PartyCharacter;
 import org.gms.net.server.world.PartyOperation;
 import org.gms.net.server.world.World;
-import org.gms.server.quest.medal.OutstandingCitizenMedal;
 import org.gms.service.HpMpAlertService;
 import org.gms.util.I18nUtil;
 import org.gms.util.packets.WeddingPackets;
@@ -64,6 +63,7 @@ import org.slf4j.LoggerFactory;
 import org.gms.scripting.event.EventInstanceManager;
 import org.gms.server.life.MobSkill;
 import org.gms.service.NoteService;
+import org.gms.service.OfflineGrantService;
 import org.gms.util.DatabaseConnection;
 import org.gms.util.PacketCreator;
 import org.gms.util.Pair;
@@ -226,6 +226,19 @@ public final class PlayerLoggedinHandler extends AbstractPacketHandler {
                 player.newClient(c);
             }
 
+            if (newcomer) {
+                try {
+                    ServerManager.getApplicationContext().getBean(OfflineGrantService.class).deliverAtLogin(player);
+                } catch (Exception e) {
+                    log.error(I18nUtil.getLogMessage("Grant.loginFailed"), cid, e);
+                    // Never save a partly modified, unpublished character after rollback.
+                    player.setLoggedIn(false);
+                    c.setPlayer(null);
+                    c.disconnect(true, false);
+                    return;
+                }
+            }
+
             // 增加参数判断，避免给客户端发未知包导致异常
             if (GameConfig.getServerBoolean("use_server_auto_pot")) {
                 byte hpAlert = hpMpAlertService.getHpAlert(player.getId());
@@ -323,7 +336,7 @@ public final class PlayerLoggedinHandler extends AbstractPacketHandler {
                             newAlliance = Alliance.loadAlliance(allianceId);
                             if (newAlliance != null) {
                                 server.addAlliance(allianceId, newAlliance);
-                            } else if (Alliance.isAllianceMissing(allianceId)) {
+                            } else {
                                 player.getGuild().setAllianceId(0);
                             }
                         }
@@ -339,7 +352,7 @@ public final class PlayerLoggedinHandler extends AbstractPacketHandler {
                 }
             }
             //展示服务信息
-            OutstandingCitizenMedal.refreshEligibility(player);
+            org.gms.server.quest.medal.OutstandingCitizenMedal.refreshEligibility(player);
             noteService.show(player);
             //异常地图掉线信息提示
             c.getSysRescue().showMapChangeMessage(player);
@@ -400,7 +413,7 @@ public final class PlayerLoggedinHandler extends AbstractPacketHandler {
                     }
                     */
                 if (player.isGM()) {
-                    Server.getInstance().broadcastGMMessage(c.getWorld(), PacketCreator.earnTitleMessage((player.gmLevel() < 6 ? "GM " : "Admin ") + player.getName() + " 登录了游戏"));
+                    Server.getInstance().broadcastGMMessage(c.getWorld(), PacketCreator.earnTitleMessage((player.gmLevel() < 6 ? "GM " : I18nUtil.getMessage("Localization.legacy.message.b4eba48546ef0cd7")) + player.getName() + " 登录了游戏"));
                 } else {
                     if (GameConfig.getServerBoolean("use_login_notification")) {
                         String msg = I18nUtil.getMessage("Character.login.globalNotice", player.getName());

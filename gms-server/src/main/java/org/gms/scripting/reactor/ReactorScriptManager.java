@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.gms.scripting.reactor;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +66,7 @@ public class ReactorScriptManager extends AbstractScriptManager {
         } catch (final NoSuchMethodException e) {
             //do nothing, hit is OPTIONAL
         } catch (final ScriptException | NullPointerException e) {
-            log.error("Error during onHit script for reactor: {}", reactor.getId(), e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.07671081489acf54"), reactor.getId(), e);
         }
     }
 
@@ -77,7 +79,7 @@ public class ReactorScriptManager extends AbstractScriptManager {
 
             iv.invokeFunction("act");
         } catch (final ScriptException | NoSuchMethodException | NullPointerException e) {
-            log.error("Error during act script for reactor: {}", reactor.getId(), e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.e210f1d72de598ef"), reactor.getId(), e);
         }
     }
 
@@ -95,7 +97,7 @@ public class ReactorScriptManager extends AbstractScriptManager {
                     }
                 }
             } catch (Throwable e) {
-                log.error("Error getting drops for reactor: {}", reactorId);
+                log.error(I18nUtil.getLogMessage("Localization.legacy.log.c20d0613759ce354"), reactorId);
             }
             drops.put(reactorId, ret);
         }
@@ -124,7 +126,7 @@ public class ReactorScriptManager extends AbstractScriptManager {
 
             iv.invokeFunction(functionName);
         } catch (final ScriptException | NoSuchMethodException | NullPointerException e) {
-            log.error("Error during {} script for reactor: {}", functionName, reactor.getId(), e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.bfc0141a2ac1dacf"), functionName, reactor.getId(), e);
         }
     }
 

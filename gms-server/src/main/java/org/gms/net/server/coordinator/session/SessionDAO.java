@@ -1,5 +1,7 @@
 package org.gms.net.server.coordinator.session;
 
+import org.gms.util.I18nUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.gms.util.DatabaseConnection;
@@ -22,7 +24,7 @@ public class SessionDAO {
              PreparedStatement ps = con.prepareStatement(query)) {
             ps.executeUpdate();
         } catch (SQLException e) {
-            log.warn("Failed to delete expired hwidaccounts", e);
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.82e3a50c90c81b03"), e);
         }
     }
 
@@ -46,7 +48,7 @@ public class SessionDAO {
     public static void registerAccountAccess(Connection con, int accountId, Hwid hwid, Instant expiry)
             throws SQLException {
         if (hwid == null) {
-            throw new IllegalArgumentException("Hwid must not be null");
+            throw new IllegalArgumentException(I18nUtil.getExceptionMessage("Localization.legacy.exception.d5c9a9bcab30bae4"));
         }
 
         final String query = "INSERT INTO hwidaccounts (accountid, hwid, expiresat) VALUES (?, ?, ?)";

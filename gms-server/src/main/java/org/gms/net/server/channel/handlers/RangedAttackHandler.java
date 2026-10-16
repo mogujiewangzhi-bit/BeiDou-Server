@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.BuffStat;
 import org.gms.client.Character;
 import org.gms.client.Client;
@@ -192,7 +194,7 @@ public final class RangedAttackHandler extends AbstractDealDamageHandler {
                         bulletConsume = supplement;     //将消耗飞镖设为补充飞镖
                     }
                     if (slot < 0) {
-                        log.warn("<ERROR> Projectile to use was unable to be found.");
+                        log.warn(I18nUtil.getLogMessage("Localization.legacy.log.691e53d56b1f6481"));
                     } else {
                         InventoryManipulator.removeFromSlot(c, InventoryType.USE, slot, bulletConsume, false, true);    //减去消耗品指定栏位物品数量
                     }

@@ -458,7 +458,7 @@ public class Monster extends AbstractLoadedLife {
         }
 
         if (GameConfig.getServerBoolean("use_debug") && from.isGM()) {
-            from.dropMessage(5, I18nUtil.getMessage("Monster.applyDamage.message1") + this.getId() + ", OID " + this.getObjectId());
+            from.dropMessage(5, I18nUtil.getMessage("Monster.applyDamage.message1") + this.getId() + I18nUtil.getMessage("Localization.legacy.message.8466c109b0bd73c2") + this.getObjectId());
         }
 
         if (!fake) {
@@ -859,7 +859,7 @@ public class Monster extends AbstractLoadedLife {
                 }, getAnimationTime("die1"));
             }
         } else {  // is this even necessary?
-            log.warn("[CRITICAL LOSS] toSpawn is null for {}", getName());
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.433d70111e2a2467"), getName());
         }
 
         Character looter = map.getCharacterById(getHighestDamagerId());
@@ -1160,7 +1160,7 @@ public class Monster extends AbstractLoadedLife {
             case WEAK:
                 break;
             default: {
-                log.warn("Unknown elemental effectiveness: {}", getMonsterEffectiveness(status.getSkill().getElement()));
+                log.warn(I18nUtil.getLogMessage("Localization.legacy.log.05d89f2a8feba8eb"), getMonsterEffectiveness(status.getSkill().getElement()));
                 return false;
             }
         }

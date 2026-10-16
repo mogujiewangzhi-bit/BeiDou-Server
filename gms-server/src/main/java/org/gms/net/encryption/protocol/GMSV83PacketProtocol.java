@@ -1,5 +1,7 @@
 package org.gms.net.encryption.protocol;
 
+import org.gms.util.I18nUtil;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -31,7 +33,7 @@ public class GMSV83PacketProtocol implements PacketProtocol {
         final int header = in.readInt();
 
         if (!receiveCypher.isValidHeader(header)) {
-            throw new InvalidPacketHeaderException("Attempted to decode a packet with an invalid header", header);
+            throw new InvalidPacketHeaderException(I18nUtil.getExceptionMessage("Localization.legacy.exception.065684af65b36520"), header);
         }
 
         final int packetLength = decodePacketLength(header);

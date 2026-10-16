@@ -392,7 +392,7 @@ public final class UseCashItemHandler extends AbstractPacketHandler {
                 remove(c, position, itemId);
                 c.sendPacket(new SendNoteSuccessPacket());
             } catch (Exception e) {
-                log.error("Error sending note", e);
+                log.error(I18nUtil.getLogMessage("Localization.legacy.log.57ea5bb09403035b"), e);
             }
         } else if (itemType == 510) {//音乐盒
             player.getMap().broadcastMessage(PacketCreator.musicChange("Jukebox/Congratulation"));
@@ -536,7 +536,7 @@ public final class UseCashItemHandler extends AbstractPacketHandler {
             int jobid = p.readInt();
             int improveSp = p.readInt();
             if (ItemConstants.notValidHairColor(haircolor)) {
-                log.warn("{} want to create a character with a not valid hair color {}", player.getName(), haircolor);
+                log.warn(I18nUtil.getLogMessage("Localization.legacy.log.7735a58335111a7a"), player.getName(), haircolor);
                 c.enableActions();
                 return;
             }
@@ -710,7 +710,7 @@ public final class UseCashItemHandler extends AbstractPacketHandler {
                 client.enableActions();
             }, SECONDS.toMillis(3));
         } else {
-            log.warn("NEW CASH ITEM TYPE: {}, packet: {}", itemType, p);
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.462abb9f577e1ad8"), itemType, p);
             c.enableActions();
         }
         c.enableActions();

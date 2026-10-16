@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.gms.scripting.map;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.slf4j.Logger;
@@ -82,7 +84,7 @@ public class MapScriptManager extends AbstractScriptManager {
             }
             return true;
         } catch (final Exception e) {
-            log.error("Error running map script {}", mapScriptPath, e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.b787b92f663c13a6"), mapScriptPath, e);
         }
 
         return false;

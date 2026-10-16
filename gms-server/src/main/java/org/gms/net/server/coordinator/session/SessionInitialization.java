@@ -1,5 +1,7 @@
 package org.gms.net.server.coordinator.session;
 
+import org.gms.util.I18nUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +67,7 @@ public class SessionInitialization {
                 }
             }
         } catch (Exception e) {
-            log.error("Failed to initialize session.", e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.3d60742fa13abe50"), e);
             return InitializationResult.ERROR;
         }
 

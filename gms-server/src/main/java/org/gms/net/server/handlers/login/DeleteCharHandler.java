@@ -21,6 +21,8 @@
  */
 package org.gms.net.server.handlers.login;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Client;
 import org.gms.client.Family;
 import org.gms.net.AbstractPacketHandler;
@@ -52,7 +54,7 @@ public final class DeleteCharHandler extends AbstractPacketHandler {
 
                 try (ResultSet rs = ps.executeQuery()) {
                     if (!rs.next()) {
-                        throw new SQLException("Character record does not exist.");
+                        throw new SQLException(I18nUtil.getExceptionMessage("Localization.legacy.exception.aa6262108f40bfe3"));
                     }
                     int world = rs.getInt("world");
                     int guildId = rs.getInt("guildid");
@@ -79,12 +81,12 @@ public final class DeleteCharHandler extends AbstractPacketHandler {
                     }
                 }
             } catch (SQLException e) {
-                log.error("Failed to delete chrId {}", cid, e);
+                log.error(I18nUtil.getLogMessage("Localization.legacy.log.35803e918744fa52"), cid, e);
                 c.sendPacket(PacketCreator.deleteCharResponse(cid, 0x09));
                 return;
             }
             if (c.deleteCharacter(cid, c.getAccID())) {
-                log.info("Account {} deleted chrId {}", c.getAccountName(), cid);
+                log.info(I18nUtil.getLogMessage("Localization.legacy.log.f37a7b428d9654ba"), c.getAccountName(), cid);
                 c.sendPacket(PacketCreator.deleteCharResponse(cid, 0));
             } else {
                 c.sendPacket(PacketCreator.deleteCharResponse(cid, 0x09));

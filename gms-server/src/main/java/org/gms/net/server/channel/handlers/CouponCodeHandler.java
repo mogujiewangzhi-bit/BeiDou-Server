@@ -23,6 +23,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.inventory.Item;
@@ -96,7 +98,7 @@ public final class CouponCodeHandler extends AbstractPacketHandler {
                     item = 4000000;
                     qty = 1;
 
-                    log.warn("Error trying to redeem itemid {} from coupon codeid {}", item, codeid);
+                    log.warn(I18nUtil.getLogMessage("Localization.legacy.log.479ab9cda0c1d57e"), item, codeid);
                 }
 
                 if (!chr.canHold(item, qty)) {

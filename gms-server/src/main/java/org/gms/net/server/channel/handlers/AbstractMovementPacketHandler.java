@@ -21,6 +21,8 @@
  */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.net.AbstractPacketHandler;
 import org.gms.net.packet.InPacket;
@@ -145,7 +147,7 @@ public abstract class AbstractMovementPacketHandler extends AbstractPacketHandle
                     break;
                 }
                 default:
-                    log.warn("Unhandled case: {}", command);
+                    log.warn(I18nUtil.getLogMessage("Localization.legacy.log.3d509e46fc84ead6"), command);
                     throw new EmptyMovementException(p);
             }
         }
@@ -253,7 +255,7 @@ public abstract class AbstractMovementPacketHandler extends AbstractPacketHandle
                     break;
                 }
                 default:
-                    log.warn("Unhandled Case: {}", command);
+                    log.warn(I18nUtil.getLogMessage("Localization.legacy.log.0b39617751f33233"), command);
                     throw new EmptyMovementException(p);
             }
         }

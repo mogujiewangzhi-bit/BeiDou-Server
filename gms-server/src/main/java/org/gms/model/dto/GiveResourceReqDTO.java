@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class GiveResourceReqDTO {
+    private String deliveryId;
     private Integer worldId;
     private Integer playerId;
     private String player;

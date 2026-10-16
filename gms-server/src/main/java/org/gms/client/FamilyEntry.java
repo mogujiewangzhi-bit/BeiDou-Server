@@ -19,6 +19,8 @@
 */
 package org.gms.client;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.net.packet.Packet;
 import org.gms.net.server.Server;
 import org.slf4j.Logger;
@@ -117,11 +119,11 @@ public class FamilyEntry {
             }
             if (!success) {
                 con.rollback();
-                log.error("Could not absorb {}'s family into {}'s family. (SQL ERROR)", oldFamily.getName(), newFamily.getName());
+                log.error(I18nUtil.getLogMessage("Localization.legacy.log.025b6a0c5b72ff00"), oldFamily.getName(), newFamily.getName());
             }
             con.setAutoCommit(true);
         } catch (SQLException e) {
-            log.error("Could not get connection to DB when joining families", e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.ba0f6848140eb339"), e);
         }
     }
 
@@ -161,12 +163,12 @@ public class FamilyEntry {
             }
             if (!success) {
                 con.rollback();
-                log.error("Could not fork family with new leader {}. (Old senior: {}, leader: {})", getName(), oldSenior.getName(), oldFamily.getLeader().getName());
+                log.error(I18nUtil.getLogMessage("Localization.legacy.log.eb9c42b706f5c597"), getName(), oldSenior.getName(), oldFamily.getLeader().getName());
             }
             con.setAutoCommit(true);
 
         } catch (SQLException e) {
-            log.error("Could not get connection to DB when forking families", e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.8bb218f47f2d450f"), e);
         }
     }
 
@@ -194,7 +196,7 @@ public class FamilyEntry {
             ps.setInt(2, cid);
             ps.executeUpdate();
         } catch (SQLException e) {
-            log.error("Could not update family id in 'family_character' for chrId {}. (fork)", cid, e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.bd13c456dcf81370"), cid, e);
             return false;
         }
         return true;
@@ -375,7 +377,7 @@ public class FamilyEntry {
         try (Connection con = DatabaseConnection.getConnection()) {
             return updateDBChangeFamily(con, cid, familyid, seniorid);
         } catch (SQLException e) {
-            log.error("Could not get connection to DB while changing family", e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.ac5b127aa16deb2f"), e);
             return false;
         }
     }
@@ -387,7 +389,7 @@ public class FamilyEntry {
             ps.setInt(3, cid);
             ps.executeUpdate();
         } catch (SQLException e) {
-            log.error("Could not update seniorId in 'family_character' for chrId {}", cid, e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.e6086d67e16258a4"), cid, e);
             return false;
         }
         return updateCharacterFamilyDB(con, cid, familyid, false);
@@ -399,7 +401,7 @@ public class FamilyEntry {
             ps.setInt(2, charid);
             ps.executeUpdate();
         } catch (SQLException e) {
-            log.error("Could not update familyId in 'characters' for chrId {} when changing family. {}", charid, fork ? "(fork)" : "", e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.0de5cd023d8fc48f"), charid, fork ? "(fork)" : "", e);
             return false;
         }
         return true;
@@ -554,7 +556,7 @@ public class FamilyEntry {
             ps.setLong(3, System.currentTimeMillis());
             ps.executeUpdate();
         } catch (SQLException e) {
-            log.error("Could not insert new row in 'family_entitlement' for chr {}", getName(), e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.863f951473c6935c"), getName(), e);
         }
         entitlements[id]++;
         return true;
@@ -567,7 +569,7 @@ public class FamilyEntry {
             ps.setInt(2, getChrId());
             ps.executeUpdate();
         } catch (SQLException e) {
-            log.error("Could not refund family entitlement \"{}\" for chr {}", entitlement.getName(), getName(), e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.ef90706bcd51f568"), entitlement.getName(), getName(), e);
         }
         entitlements[id] = 0;
         return true;
@@ -598,7 +600,7 @@ public class FamilyEntry {
         try (Connection con = DatabaseConnection.getConnection()) {
             return saveReputation(con);
         } catch (SQLException e) {
-            log.error("Could not get connection to DB while saving reputation", e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.4155dec097bd7a33"), e);
             return false;
         }
     }
@@ -615,7 +617,7 @@ public class FamilyEntry {
             ps.setInt(5, getChrId());
             ps.executeUpdate();
         } catch (SQLException e) {
-            log.error("Failed to autosave rep to 'family_character' for chrId {}", getChrId(), e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.f5c51a47d3ff3b90"), getChrId(), e);
             return false;
         }
         return true;

@@ -12,6 +12,9 @@ import org.gms.model.dto.ChrOnlineListRtnDTO;
 import org.gms.model.dto.ResultBody;
 import org.gms.model.dto.SubmitBody;
 import org.gms.service.CharacterService;
+import org.gms.service.OfflineGrantService;
+import org.gms.model.dto.GrantCharacterDTO;
+import java.sql.SQLException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +24,12 @@ import java.util.List;
 @RequestMapping("/character")
 public class CharacterController {
     private final CharacterService characterService;
+    private final OfflineGrantService offlineGrantService;
+
+    @PostMapping("/" + ApiConstant.LATEST + "/listForGive")
+    public ResultBody<Page<GrantCharacterDTO>> listForGive(@RequestBody SubmitBody<ChrOnlineListReqDTO> submitBody) throws SQLException {
+        return ResultBody.success(offlineGrantService.list(submitBody.getData()));
+    }
 
     @Tag(name = "/character/" + ApiConstant.LATEST)
     @Operation(summary = "调整玩家个人倍率，extendName为：expRate | mesoRate | dropRate")

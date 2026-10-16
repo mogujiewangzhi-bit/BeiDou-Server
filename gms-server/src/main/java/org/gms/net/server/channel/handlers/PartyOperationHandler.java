@@ -21,6 +21,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.config.GameConfig;
@@ -69,7 +71,7 @@ public final class PartyOperationHandler extends AbstractPacketHandler {
                 if (res == InviteResultType.ACCEPTED) {
                     Party.joinParty(player, partyid, false);
                 } else {
-                    c.sendPacket(PacketCreator.serverNotice(5, "You couldn't join the party due to an expired invitation request."));
+                    c.sendPacket(PacketCreator.serverNotice(5, I18nUtil.getMessage("Localization.legacy.message.378c379f111e4a58")));
                 }
                 break;
             }
@@ -78,11 +80,11 @@ public final class PartyOperationHandler extends AbstractPacketHandler {
                 Character invited = world.getPlayerStorage().getCharacterByName(name);
                 if (invited != null) {
                     if (invited.getLevel() < 10 && (!GameConfig.getServerBoolean("use_party_for_starters") || player.getLevel() >= 10)) { //min requirement is level 10
-                        c.sendPacket(PacketCreator.serverNotice(5, "The player you have invited does not meet the requirements."));
+                        c.sendPacket(PacketCreator.serverNotice(5, I18nUtil.getMessage("Localization.legacy.message.097c9a74a0f76989")));
                         return;
                     }
                     if (GameConfig.getServerBoolean("use_party_for_starters") && invited.getLevel() >= 10 && player.getLevel() < 10) {    //trying to invite high level
-                        c.sendPacket(PacketCreator.serverNotice(5, "The player you have invited does not meet the requirements."));
+                        c.sendPacket(PacketCreator.serverNotice(5, I18nUtil.getMessage("Localization.legacy.message.097c9a74a0f76989")));
                         return;
                     }
 

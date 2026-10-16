@@ -1,32 +1,64 @@
 package org.gms.util;
 
-import org.gms.client.Client;
 import org.gms.constants.string.CharsetConstants;
 import org.gms.manager.ServerManager;
 import org.gms.property.ServiceProperty;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceResolvable;
+import org.springframework.context.support.ResourceBundleMessageSource;
 
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.Optional;
 
-/**
- * messageSource.getMessage底层是通过循环遍历文件名去读取的
- * 所以将不同文件名定义不同的bean，这样扫描的时候可以少扫描其他文件，直接找到想要对应的文件，节约时间
- */
 public class I18nUtil {
-    public static final Locale LANGUAGE = Locale.forLanguageTag(ServerManager.getApplicationContext().getBean(ServiceProperty.class).getLanguage());
-    public static final MessageSource messageSource = ServerManager.getApplicationContext().getBean("messageSource", MessageSource.class);
-    public static final MessageSource logSource = ServerManager.getApplicationContext().getBean("logSource", MessageSource.class);
-    public static final MessageSource exceptionSource = ServerManager.getApplicationContext().getBean("exceptionSource", MessageSource.class);
+    public static final Locale LANGUAGE = serviceLanguage();
+    public static final MessageSource messageSource = new DeferredMessageSource("messageSource", "i18n/message");
+    public static final MessageSource logSource = new DeferredMessageSource("logSource", "i18n/log");
+    public static final MessageSource exceptionSource = new DeferredMessageSource("exceptionSource", "i18n/exception");
+
+    private static Locale serviceLanguage() {
+        ApplicationContext context = ServerManager.getApplicationContext();
+        return context == null ? Locale.SIMPLIFIED_CHINESE
+                : Locale.forLanguageTag(context.getBean(ServiceProperty.class).getLanguage());
+    }
+
+    // Offline tools must not initialize Spring or pin a missing application context.
+    private static final class DeferredMessageSource implements MessageSource {
+        private final String beanName;
+        private final ResourceBundleMessageSource fallback = new ResourceBundleMessageSource();
+
+        private DeferredMessageSource(String beanName, String basename) {
+            this.beanName = beanName;
+            fallback.setBasename(basename);
+            fallback.setDefaultEncoding("UTF-8");
+        }
+
+        private MessageSource delegate() {
+            ApplicationContext context = ServerManager.getApplicationContext();
+            return context == null ? fallback : context.getBean(beanName, MessageSource.class);
+        }
+
+        @Override
+        public String getMessage(String code, Object[] args, String defaultMessage, Locale locale) {
+            return delegate().getMessage(code, args, defaultMessage, locale);
+        }
+
+        @Override
+        public String getMessage(String code, Object[] args, Locale locale) {
+            return delegate().getMessage(code, args, locale);
+        }
+
+        @Override
+        public String getMessage(MessageSourceResolvable resolvable, Locale locale) {
+            return delegate().getMessage(resolvable, locale);
+        }
+    }
 
     public static String getMessage(String code, Object... args) {
-        // 如果当前存在客户端请求，则以客户端的语言为准。如果当前非客户端请求，是服务端主动发给客户端的，则以服务端语言为准
-        Locale clientLang = CharsetConstants.getLanguageLocale(ThreadLocalUtil.getClientLang());
-        // 确保所有参数转为字符串，包括数字类型（避免千分符问题）
-        String[] stringArgs = Arrays.stream(args)
-                .map(String::valueOf)
-                .toArray(String[]::new);
+        Locale clientLang = ServerManager.getApplicationContext() == null ? serviceLanguage()
+                : CharsetConstants.getLanguageLocale(ThreadLocalUtil.getClientLang());
+        String[] stringArgs = Arrays.stream(args).map(String::valueOf).toArray(String[]::new);
         return messageSource.getMessage(code, stringArgs, clientLang);
     }
 
@@ -34,31 +66,16 @@ public class I18nUtil {
         return messageSource.getMessage(code, args, locale);
     }
 
-    /**
-     * 用StringFormat格式的message，传参是通过{0} {1}
-     *
-     * @param code messageCode
-     * @param args 传参
-     * @return 组合后的message
-     */
     public static String getLogMessage(String code, Object... args) {
-        return logSource.getMessage(code, args, LANGUAGE);
+        return logSource.getMessage(code, args, serviceLanguage());
     }
 
-    /**
-     * 根据传入的语言获取message
-     *
-     * @param locale 语言
-     * @param code   messageCode
-     * @param args   传参
-     * @return 组合后的message
-     */
     public static String getLogMessage(Locale locale, String code, Object... args) {
         return logSource.getMessage(code, args, locale);
     }
 
     public static String getExceptionMessage(String code, Object... args) {
-        return exceptionSource.getMessage(code, args, LANGUAGE);
+        return exceptionSource.getMessage(code, args, serviceLanguage());
     }
 
     public static String getExceptionMessage(Locale locale, String code, Object... args) {

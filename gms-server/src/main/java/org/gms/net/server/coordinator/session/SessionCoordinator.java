@@ -19,6 +19,8 @@
 */
 package org.gms.net.server.coordinator.session;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.config.GameConfig;
@@ -93,7 +95,7 @@ public class SessionCoordinator {
                 return true;
             }
         } catch (SQLException e) {
-            log.warn("Failed to update account access. Account id: {}, nibbleHwid: {}", accountId, hwid, e);
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.a25e047d9f088abb"), accountId, hwid, e);
         }
 
         return false;
@@ -270,7 +272,7 @@ public class SessionCoordinator {
                 SessionDAO.registerAccountAccess(con, accountId, hwid, expiry);
             }
         } catch (SQLException ex) {
-            log.warn("Failed to associate hwid {} with account id {}", hwid, accountId, ex);
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.cea5f965d580d649"), hwid, accountId, ex);
         }
     }
 
@@ -350,14 +352,14 @@ public class SessionCoordinator {
                     .map(Object::toString)
                     .collect(Collectors.joining(", "));
 
-            log.debug("Current online clients: {}", commaSeparatedClients);
+            log.debug(I18nUtil.getLogMessage("Localization.legacy.log.a38c39b68768d4aa"), commaSeparatedClients);
         }
 
         if (!onlineRemoteHwids.isEmpty()) {
             List<Hwid> hwids = new ArrayList<>(onlineRemoteHwids);
             hwids.sort(Comparator.comparing(Hwid::hwid));
 
-            log.debug("Current online HWIDs: {}", hwids.stream()
+            log.debug(I18nUtil.getLogMessage("Localization.legacy.log.047873eb0fc1170f"), hwids.stream()
                     .map(Hwid::hwid)
                     .collect(Collectors.joining(" ")));
         }
@@ -366,9 +368,9 @@ public class SessionCoordinator {
             List<Entry<String, Client>> elist = new ArrayList<>(loginRemoteHosts.entrySet());
             elist.sort(Entry.comparingByKey());
 
-            log.debug("Current login sessions: {}", loginRemoteHosts.entrySet().stream()
+            log.debug(I18nUtil.getLogMessage("Localization.legacy.log.736d7afd17c6cc29"), loginRemoteHosts.entrySet().stream()
                     .sorted(Entry.comparingByKey())
-                    .map(entry -> "(" + entry.getKey() + ", client: " + entry.getValue())
+                    .map(entry -> "(" + entry.getKey() + I18nUtil.getLogMessage("Localization.legacy.log.a273b3871cae35e5") + entry.getValue())
                     .collect(Collectors.joining(", ")));
         }
     }

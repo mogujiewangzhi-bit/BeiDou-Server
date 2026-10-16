@@ -19,6 +19,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.constants.game.GameConstants;
@@ -43,14 +45,14 @@ public class FieldDamageMobHandler extends AbstractPacketHandler {
         MapleMap map = chr.getMap();
 
         if (map.getEnvironment().isEmpty()) {   // no environment objects activated to actually hit the mob
-            log.warn("Chr {} tried to use an obstacle on mapid {} to attack", c.getPlayer().getName(), map.getId());
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.8856312395a5d1ed"), c.getPlayer().getName(), map.getId());
             return;
         }
 
         Monster mob = map.getMonsterByOid(mobOid);
         if (mob != null) {
             if (dmg < 0 || dmg > GameConstants.MAX_FIELD_MOB_DAMAGE) {
-                log.warn("Chr {} tried to use an obstacle on mapid {} to attack {} with damage {}", c.getPlayer().getName(),
+                log.warn(I18nUtil.getLogMessage("Localization.legacy.log.ea5d80c8b9cd6cb6"), c.getPlayer().getName(),
                         map.getId(), MonsterInformationProvider.getInstance().getMobNameFromId(mob.getId()), dmg);
                 return;
             }

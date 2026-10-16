@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.gms.server.life;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.provider.Data;
 import org.gms.provider.DataProvider;
 import org.gms.provider.DataProviderFactory;
@@ -52,7 +54,7 @@ public class MobSkillFactory {
 
     public static MobSkill getMobSkillOrThrow(MobSkillType type, int level) {
         return getMobSkill(type, level).orElseThrow(
-                () -> new IllegalArgumentException("No MobSkill exists for type %s, level %d".formatted(type, level))
+                () -> new IllegalArgumentException(I18nUtil.getExceptionMessage("Localization.legacy.exception.41b3b71a3798ed84").formatted(type, level))
         );
     }
 

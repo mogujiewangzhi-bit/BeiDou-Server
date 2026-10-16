@@ -21,6 +21,8 @@
  */
 package org.gms.client.processor.npc;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.autoban.AutobanFactory;
@@ -68,7 +70,7 @@ public class StorageProcessor {
                     byte slot = p.readByte();
                     if (slot < 0 || slot > storage.getSlots()) { // removal starts at zero
                         AutobanFactory.PACKET_EDIT.alert(c.getPlayer(), c.getPlayer().getName() + " tried to packet edit with storage.");
-                        log.warn("Chr {} tried to work with storage slot {}", c.getPlayer().getName(), slot);
+                        log.warn(I18nUtil.getLogMessage("Localization.legacy.log.3dc3f9a6ba38a675"), c.getPlayer().getName(), slot);
                         c.disconnect(true, false);
                         return;
                     }
@@ -78,7 +80,7 @@ public class StorageProcessor {
 
                     if (hasGMRestrictions(chr)) {
                         chr.dropMessage(1, gmBlockedStorageMessage);
-                        log.info(String.format("GM %s blocked from using storage", chr.getName()));
+                        log.info(String.format(I18nUtil.getLogMessage("Localization.legacy.log.f85e4c476aa79dc9"), chr.getName()));
                         chr.sendPacket(PacketCreator.enableActions());
                         return;
                     }
@@ -104,7 +106,7 @@ public class StorageProcessor {
                                 chr.gainMeso(-takeoutFee, false);
 
                                 String itemName = ii.getName(item.getItemId());
-                                log.debug("Chr {} took out {}x {} ({})", c.getPlayer().getName(), item.getQuantity(), itemName, item.getItemId());
+                                log.debug(I18nUtil.getLogMessage("Localization.legacy.log.38724f840f5695d2"), c.getPlayer().getName(), item.getQuantity(), itemName, item.getItemId());
 
                                 storage.sendTakenOut(c, item.getInventoryType());
                             } else {
@@ -126,14 +128,14 @@ public class StorageProcessor {
                     if (slot < 1 || slot > inv.getSlotLimit()) { // player inv starts at one
                         AutobanFactory.PACKET_EDIT.alert(c.getPlayer(),
                                 c.getPlayer().getName() + " tried to packet edit with storage.");
-                        log.warn("Chr {} tried to store item at slot {}", c.getPlayer().getName(), slot);
+                        log.warn(I18nUtil.getLogMessage("Localization.legacy.log.8b8c81d0a45d06c2"), c.getPlayer().getName(), slot);
                         c.disconnect(true, false);
                         return;
                     }
 
                     if (hasGMRestrictions(chr)) {
                         chr.dropMessage(1, gmBlockedStorageMessage);
-                        log.info(String.format("GM %s blocked from using storage", chr.getName()));
+                        log.info(String.format(I18nUtil.getLogMessage("Localization.legacy.log.f85e4c476aa79dc9"), chr.getName()));
                         chr.sendPacket(PacketCreator.enableActions());
                         return;
                     }
@@ -186,7 +188,7 @@ public class StorageProcessor {
                         chr.setUsedStorage();
 
                         String itemName = ii.getName(item.getItemId());
-                        log.debug("Chr {} stored {}x {} ({})", c.getPlayer().getName(), item.getQuantity(), itemName, item.getItemId());
+                        log.debug(I18nUtil.getLogMessage("Localization.legacy.log.d8b2be16a954a603"), c.getPlayer().getName(), item.getQuantity(), itemName, item.getItemId());
                         storage.sendStored(c, ItemConstants.getInventoryType(itemId));
                     }
                     break;
@@ -204,7 +206,7 @@ public class StorageProcessor {
 
                     if (hasGMRestrictions(chr)) {
                         chr.dropMessage(1, gmBlockedStorageMessage);
-                        log.info(String.format("GM %s blocked from using storage", chr.getName()));
+                        log.info(String.format(I18nUtil.getLogMessage("Localization.legacy.log.f85e4c476aa79dc9"), chr.getName()));
                         chr.sendPacket(PacketCreator.enableActions());
                         return;
                     }
@@ -226,7 +228,7 @@ public class StorageProcessor {
                         storage.setMeso(storageMesos - meso);
                         chr.gainMeso(meso, false, true, false);
                         chr.setUsedStorage();
-                        log.debug("Chr {} {} {} mesos", c.getPlayer().getName(), meso > 0 ? "took out" : "stored", Math.abs(meso));
+                        log.debug(I18nUtil.getLogMessage("Localization.legacy.log.6466ba0b42b2b765"), c.getPlayer().getName(), meso > 0 ? I18nUtil.getLogMessage("Localization.legacy.log.fbda3eafc2fbcd3c") : "stored", Math.abs(meso));
                         storage.sendMeso(c);
                     } else {
                         c.sendPacket(PacketCreator.enableActions());

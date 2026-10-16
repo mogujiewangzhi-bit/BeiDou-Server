@@ -21,6 +21,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.net.AbstractPacketHandler;
@@ -69,7 +71,7 @@ public final class MessengerHandler extends AbstractPacketHandler {
                                             world.joinMessenger(messenger.getId(), messengerplayer, player.getName(), messengerplayer.getChannel());
                                         }
                                     } else {
-                                        player.message("Could not verify your Maple Messenger accept since the invitation rescinded.");
+                                        player.message(I18nUtil.getMessage("Localization.legacy.message.983ed07b07b40081"));
                                     }
                                 }
                             }

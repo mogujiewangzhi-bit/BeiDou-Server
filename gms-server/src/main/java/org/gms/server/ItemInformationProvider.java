@@ -290,6 +290,10 @@ public class ItemInformationProvider {
         return blockMouse;
     }
 
+    public boolean expiresOnLogout(int itemId) {
+        return DataTool.getIntConvert("info/expireOnLogout", getItemData(itemId), 0) == 1;
+    }
+
     private Data getItemData(int itemId) {
         Data ret = null;
         String idStr = "0" + itemId;
@@ -1844,7 +1848,7 @@ public class ItemInformationProvider {
         int id = equip.getItemId();
 
         if (ItemId.isWeddingRing(id) && chr.hasJustMarried()) {
-            chr.dropMessage(5, "The Wedding Ring cannot be equipped on this map.");  // will dc everyone due to doubled couple effect
+            chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.2c52be74b4c1701d"));  // will dc everyone due to doubled couple effect
             return false;
         }
 
@@ -1854,7 +1858,7 @@ public class ItemInformationProvider {
             String itemName = ItemInformationProvider.getInstance().getName(equip.getItemId());
             Server.getInstance().broadcastGMMessage(chr.getWorld(), PacketCreator.sendYellowTip("[Warning]: " + chr.getName() + " tried to equip " + itemName + " into slot " + dst + "."));
             AutobanFactory.PACKET_EDIT.alert(chr, chr.getName() + " tried to forcibly equip an item.");
-            log.warn("Chr {} tried to equip {} into slot {}", chr.getName(), itemName, dst);
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.63d1cdf554ee26d9"), chr.getName(), itemName, dst);
             return false;
         }
 

@@ -21,6 +21,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Client;
 import org.gms.client.autoban.AutobanFactory;
 import org.gms.net.AbstractPacketHandler;
@@ -46,7 +48,7 @@ public final class PetChatHandler extends AbstractPacketHandler {
         String text = p.readString();
         if (text.length() > Byte.MAX_VALUE) {
             AutobanFactory.PACKET_EDIT.alert(c.getPlayer(), c.getPlayer().getName() + " tried to packet edit with pets.");
-            log.warn("Chr {} tried to send text with length of {}", c.getPlayer().getName(), text.length());
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.4b26a649cba03770"), c.getPlayer().getName(), text.length());
             c.disconnect(true, false);
             return;
         }

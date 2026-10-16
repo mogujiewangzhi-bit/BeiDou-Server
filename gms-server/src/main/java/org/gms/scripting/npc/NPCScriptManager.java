@@ -21,6 +21,8 @@
  */
 package org.gms.scripting.npc;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.constants.game.NextLevelType;
@@ -93,7 +95,7 @@ public class NPCScriptManager extends AbstractScriptManager {
             ScriptEngine engine = getInvocableScriptEngine("npc/" + filename + ".js", c);
 
             if (engine == null) {
-                c.getPlayer().dropMessage(1, "NPC " + npc + " is uncoded.");
+                c.getPlayer().dropMessage(1, "NPC " + npc + I18nUtil.getMessage("Localization.legacy.message.90c86b047734a67a"));
                 cm.dispose();
                 return;
             }
@@ -108,7 +110,7 @@ public class NPCScriptManager extends AbstractScriptManager {
             }
 
         } catch (final Exception e) {
-            log.error("Error starting NPC script: {}", npc, e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.74cd796d45c0d5c6"), npc, e);
             dispose(c);
         }
     }
@@ -162,7 +164,7 @@ public class NPCScriptManager extends AbstractScriptManager {
             }
             return true;
         } catch (Exception e) {
-            log.error("Error starting NPC script: {}", npc, e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.74cd796d45c0d5c6"), npc, e);
             dispose(c, true);
 
             return false;
@@ -178,7 +180,7 @@ public class NPCScriptManager extends AbstractScriptManager {
                 iv.invokeFunction("action", mode, type, selection);
             } catch (Exception t) {
                 if (getCM(c) != null) {
-                    log.error("Error performing NPC script action for npc: {}", getCM(c).getNpc(), t);
+                    log.error(I18nUtil.getLogMessage("Localization.legacy.log.63e5677e429779d1"), getCM(c).getNpc(), t);
                 }
                 dispose(c, true);
             } finally {
@@ -229,13 +231,13 @@ public class NPCScriptManager extends AbstractScriptManager {
                         }
                     }
                     default -> {
-                        log.error("Unsupported level type: {}", nextLevelContext.getLevelType());
+                        log.error(I18nUtil.getLogMessage("Localization.legacy.log.917d37bd4f996684"), nextLevelContext.getLevelType());
                         dispose(c, true);
                     }
                 }
             } catch (Exception t) {
                 if (getCM(c) != null) {
-                    log.error("Error performing NPC script action for npc: {}", getCM(c).getNpc(), t);
+                    log.error(I18nUtil.getLogMessage("Localization.legacy.log.63e5677e429779d1"), getCM(c).getNpc(), t);
                 }
                 dispose(c, true);
             } finally {

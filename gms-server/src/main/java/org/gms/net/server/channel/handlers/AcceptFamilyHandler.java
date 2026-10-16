@@ -21,6 +21,8 @@
  */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.Family;
@@ -136,7 +138,7 @@ public final class AcceptFamilyHandler extends AbstractPacketHandler {
                 ps.setInt(3, seniorID);
                 ps.executeUpdate();
             } catch (SQLException e) {
-                log.error("Could not save new family record for chrId {}", characterID, e);
+                log.error(I18nUtil.getLogMessage("Localization.legacy.log.237d5a40e3953b6b"), characterID, e);
             }
             if (updateChar) {
                 try (PreparedStatement ps = con.prepareStatement("UPDATE characters SET familyid = ? WHERE id = ?")) {
@@ -144,11 +146,11 @@ public final class AcceptFamilyHandler extends AbstractPacketHandler {
                     ps.setInt(2, characterID);
                     ps.executeUpdate();
                 } catch (SQLException e) {
-                    log.error("Could not update 'characters' 'familyid' record for chrId {}", characterID, e);
+                    log.error(I18nUtil.getLogMessage("Localization.legacy.log.4b921d7a92cb2a35"), characterID, e);
                 }
             }
         } catch (SQLException e) {
-            log.error("Could not get connection to DB while inserting new family record", e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.f8d3b682f1e14d56"), e);
         }
     }
 }

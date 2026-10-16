@@ -23,6 +23,8 @@
 */
 package org.gms.client.processor.npc;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.autoban.AutobanFactory;
@@ -210,7 +212,7 @@ public class DueyProcessor {
 
             int updateRows = ps.executeUpdate();
             if (updateRows < 1) {
-                log.error("Error trying to create package [mesos: {}, sender: {}, quick: {}, receiver chrId: {}]", mesos, sender, quick, toCid);
+                log.error(I18nUtil.getLogMessage("Localization.legacy.log.69e895b477b7230a"), mesos, sender, quick, toCid);
                 return -1;
             }
 
@@ -219,7 +221,7 @@ public class DueyProcessor {
                 if (rs.next()) {
                     packageId = rs.getInt(1);
                 } else {
-                    log.error("Failed inserting package [mesos: {}, sender: {}, quick: {}, receiver chrId: {}]", mesos, sender, quick, toCid);
+                    log.error(I18nUtil.getLogMessage("Localization.legacy.log.84eb0c4de515f96c"), mesos, sender, quick, toCid);
                     return -1;
                 }
             }
@@ -289,8 +291,8 @@ public class DueyProcessor {
         if (c.tryacquireClient()) {
             try {
                 if (c.getPlayer().isGM() && c.getPlayer().gmLevel() < GameConfig.getServerInt("minimum_gm_level_to_use_duey")) {
-                    c.getPlayer().message("You cannot use Duey to send items at your GM level.");
-                    log.info(String.format("GM %s tried to send a package to %s", c.getPlayer().getName(), recipient));
+                    c.getPlayer().message(I18nUtil.getMessage("Localization.legacy.message.d3e887b7e989f1d5"));
+                    log.info(String.format(I18nUtil.getLogMessage("Localization.legacy.log.e2483f7daf32b92e"), c.getPlayer().getName(), recipient));
                     c.sendPacket(PacketCreator.sendDueyMSG(DueyProcessor.Actions.TOCLIENT_SEND_INCORRECT_REQUEST.getCode()));
                     return;
                 }
@@ -298,14 +300,14 @@ public class DueyProcessor {
                 // 修复发快递给别人扣钱的问题
                 if (sendMesos < 0) {
                     AutobanFactory.PACKET_EDIT.alert(c.getPlayer(), c.getPlayer().getName() + " tried to packet edit with sendMesos on duey.");
-                    log.warn("Chr {} tried to use duey with mesos {}", c.getPlayer().getName(), sendMesos);
+                    log.warn(I18nUtil.getLogMessage("Localization.legacy.log.b712adb0cf485334"), c.getPlayer().getName(), sendMesos);
                     c.disconnect(true, false);
                     return;
                 }
                 int fee = Trade.getFee(sendMesos);
                 if (sendMessage != null && sendMessage.length() > 100) {
                     AutobanFactory.PACKET_EDIT.alert(c.getPlayer(), c.getPlayer().getName() + " tried to packet edit with Quick Delivery on duey.");
-                    log.warn("Chr {} tried to use duey with too long of a text", c.getPlayer().getName());
+                    log.warn(I18nUtil.getLogMessage("Localization.legacy.log.01a00ad8b8460a22"), c.getPlayer().getName());
                     c.disconnect(true, false);
                     return;
                 }
@@ -313,7 +315,7 @@ public class DueyProcessor {
                     fee += 5000;
                 } else if (!c.getPlayer().haveItem(ItemId.QUICK_DELIVERY_TICKET)) {
                     AutobanFactory.PACKET_EDIT.alert(c.getPlayer(), c.getPlayer().getName() + " tried to packet edit with Quick Delivery on duey.");
-                    log.warn("Chr {} tried to use duey with Quick Delivery without a ticket, mesos {} and amount {}", c.getPlayer().getName(), sendMesos, amount);
+                    log.warn(I18nUtil.getLogMessage("Localization.legacy.log.c6a7f9c2a2747ecf"), c.getPlayer().getName(), sendMesos, amount);
                     c.disconnect(true, false);
                     return;
                 }
@@ -321,7 +323,7 @@ public class DueyProcessor {
                 long finalcost = (long) sendMesos + fee;
                 if (finalcost < 0 || finalcost > Integer.MAX_VALUE || (amount < 1 && sendMesos == 0)) {
                     AutobanFactory.PACKET_EDIT.alert(c.getPlayer(), c.getPlayer().getName() + " tried to packet edit with duey.");
-                    log.warn("Chr {} tried to use duey with mesos {} and amount {}", c.getPlayer().getName(), sendMesos, amount);
+                    log.warn(I18nUtil.getLogMessage("Localization.legacy.log.5c03668f21bcb3a2"), c.getPlayer().getName(), sendMesos, amount);
                     c.disconnect(true, false);
                     return;
                 }
@@ -414,7 +416,7 @@ public class DueyProcessor {
 
             if (dp == null) {
                 c.sendPacket(PacketCreator.sendDueyMSG(Actions.TOCLIENT_RECV_UNKNOWN_ERROR.getCode()));
-                log.warn("Chr {} tried to receive package from duey with id {}", c.getPlayer().getName(), packageId);
+                log.warn(I18nUtil.getLogMessage("Localization.legacy.log.4622e14b198bddbd"), c.getPlayer().getName(), packageId);
                 return;
             }
 
@@ -422,7 +424,7 @@ public class DueyProcessor {
             if (!Objects.equals(dp.getReceiverId(), c.getPlayer().getId())) {
                 AutobanFactory.PACKET_EDIT.alert(c.getPlayer(), c.getPlayer().getName() + " tried to packet edit with duey.");
                 c.sendPacket(PacketCreator.sendDueyMSG(Actions.TOCLIENT_RECV_UNKNOWN_ERROR.getCode()));
-                log.warn("Chr {} tried to receive package from duey with receiverId {}", c.getPlayer().getName(), dp.getReceiverId());
+                log.warn(I18nUtil.getLogMessage("Localization.legacy.log.a0dad4bcf1380e8b"), c.getPlayer().getName(), dp.getReceiverId());
                 return;
             }
 

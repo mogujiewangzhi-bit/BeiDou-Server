@@ -21,6 +21,8 @@
 */
 package org.gms.server.maps;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.inventory.Inventory;
@@ -236,7 +238,7 @@ public class PlayerShop extends AbstractMapObject {
                     iitem.setQuantity((short) (shopItem.getItem().getQuantity() * shopItem.getBundles()));
 
                     if (!Inventory.checkSpot(chr, iitem)) {
-                        chr.sendPacket(PacketCreator.serverNotice(1, "Have a slot available on your inventory to claim back the item."));
+                        chr.sendPacket(PacketCreator.serverNotice(1, I18nUtil.getMessage("Localization.legacy.message.1544305137cb18e7")));
                         chr.sendPacket(PacketCreator.enableActions());
                         return;
                     }
@@ -287,7 +289,7 @@ public class PlayerShop extends AbstractMapObject {
 
                     if (c.getPlayer().getMeso() >= price) {
                         if (!owner.canHoldMeso(price)) {    // thanks Rohenn for noticing owner hold check misplaced
-                            c.getPlayer().dropMessage(1, "Transaction failed since the shop owner can't hold any more mesos.");
+                            c.getPlayer().dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.e32e8b9d4e80247e"));
                             c.sendPacket(PacketCreator.enableActions());
                             return false;
                         }
@@ -311,16 +313,16 @@ public class PlayerShop extends AbstractMapObject {
                                     owner.setPlayerShop(null);
                                     this.setOpen(false);
                                     this.closeShop();
-                                    owner.dropMessage(1, "Your items are sold out, and therefore your shop is closed.");
+                                    owner.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.24486b018cc1a19e"));
                                 }
                             }
                         } else {
-                            c.getPlayer().dropMessage(1, "Your inventory is full. Please clear a slot before buying this item.");
+                            c.getPlayer().dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.f4b91afd9d37186e"));
                             c.sendPacket(PacketCreator.enableActions());
                             return false;
                         }
                     } else {
-                        c.getPlayer().dropMessage(1, "You don't have enough mesos to purchase this item.");
+                        c.getPlayer().dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.58aa54197a43728a"));
                         c.sendPacket(PacketCreator.enableActions());
                         return false;
                     }
@@ -538,14 +540,14 @@ public class PlayerShop extends AbstractMapObject {
 
     public synchronized boolean visitShop(Character chr) {
         if (this.isBanned(chr.getName())) {
-            chr.dropMessage(1, "You have been banned from this store.");
+            chr.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.f6fc2c47294042f6"));
             return false;
         }
 
         visitorLock.lock();
         try {
             if (!open.get()) {
-                chr.dropMessage(1, "This store is not yet open.");
+                chr.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.8cb57a759b68f53a"));
                 return false;
             }
 

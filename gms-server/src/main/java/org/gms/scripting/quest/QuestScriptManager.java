@@ -21,6 +21,8 @@
  */
 package org.gms.scripting.quest;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Client;
 import org.gms.client.QuestStatus;
 import org.gms.constants.game.GameConstants;
@@ -75,7 +77,7 @@ public class QuestScriptManager extends AbstractScriptManager {
 
                 ScriptEngine engine = getQuestScriptEngine(c, questid);
                 if (engine == null) {
-                    log.warn("START Quest {} is uncoded.", questid);
+                    log.warn(I18nUtil.getLogMessage("Localization.legacy.log.738980ee565a8786"), questid);
                     qm.dispose();
                     return;
                 }
@@ -88,7 +90,7 @@ public class QuestScriptManager extends AbstractScriptManager {
                 iv.invokeFunction("start", (byte) 1, (byte) 0, 0);
             }
         } catch (final Throwable t) {
-            log.error("Error starting quest script: {}", questid, t);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.55e4c0ddbad98bcc"), questid, t);
             dispose(c);
         }
     }
@@ -100,7 +102,7 @@ public class QuestScriptManager extends AbstractScriptManager {
                 c.setClickedNPC();
                 iv.invokeFunction("start", mode, type, selection);
             } catch (final Exception e) {
-                log.error("Error starting quest script: {}", getQM(c).getQuest(), e);
+                log.error(I18nUtil.getLogMessage("Localization.legacy.log.55e4c0ddbad98bcc"), getQM(c).getQuest(), e);
                 dispose(c);
             }
         }
@@ -127,7 +129,7 @@ public class QuestScriptManager extends AbstractScriptManager {
 
                 ScriptEngine engine = getQuestScriptEngine(c, questid);
                 if (engine == null) {
-                    log.warn("END Quest {} is uncoded.", questid);
+                    log.warn(I18nUtil.getLogMessage("Localization.legacy.log.0a06b7eaa02cc757"), questid);
                     qm.dispose();
                     return;
                 }
@@ -140,7 +142,7 @@ public class QuestScriptManager extends AbstractScriptManager {
                 iv.invokeFunction("end", (byte) 1, (byte) 0, 0);
             }
         } catch (final Throwable t) {
-            log.error("Error starting quest script: {}", questid, t);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.55e4c0ddbad98bcc"), questid, t);
             dispose(c);
         }
     }
@@ -152,7 +154,7 @@ public class QuestScriptManager extends AbstractScriptManager {
                 c.setClickedNPC();
                 iv.invokeFunction("end", mode, type, selection);
             } catch (final Exception e) {
-                log.error("Error ending quest script: {}", getQM(c).getQuest(), e);
+                log.error(I18nUtil.getLogMessage("Localization.legacy.log.d9e6c121eeaa36e4"), getQM(c).getQuest(), e);
                 dispose(c);
             }
         }
@@ -182,7 +184,7 @@ public class QuestScriptManager extends AbstractScriptManager {
                 iv.invokeFunction("raiseOpen");
             }
         } catch (final Throwable t) {
-            log.error("Error during quest script raiseOpen for quest: {}", questid, t);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.f075472792c91750"), questid, t);
             dispose(c);
         }
     }

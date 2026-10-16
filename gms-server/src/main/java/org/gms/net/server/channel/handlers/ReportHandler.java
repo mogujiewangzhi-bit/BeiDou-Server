@@ -21,6 +21,8 @@
  */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.net.AbstractPacketHandler;
@@ -58,7 +60,7 @@ public final class ReportHandler extends AbstractPacketHandler {
                 c.sendPacket(PacketCreator.reportResponse((byte) 2));
                 return;
             }
-            Server.getInstance().broadcastGMMessage(c.getWorld(), PacketCreator.serverNotice(6, victim + " was reported for: " + description));
+            Server.getInstance().broadcastGMMessage(c.getWorld(), PacketCreator.serverNotice(6, victim + I18nUtil.getMessage("Localization.legacy.message.e5e556a4bac21f2b") + description));
             addReport(c.getPlayer().getId(), Character.getIdByName(victim), 0, description, "");
         } else if (type == 1) {
             String chatlog = p.readString();
@@ -74,10 +76,10 @@ public final class ReportHandler extends AbstractPacketHandler {
                     return;
                 }
             }
-            Server.getInstance().broadcastGMMessage(c.getWorld(), PacketCreator.serverNotice(6, victim + " was reported for: " + description));
+            Server.getInstance().broadcastGMMessage(c.getWorld(), PacketCreator.serverNotice(6, victim + I18nUtil.getMessage("Localization.legacy.message.e5e556a4bac21f2b") + description));
             addReport(c.getPlayer().getId(), Character.getIdByName(victim), reason, description, chatlog);
         } else {
-            Server.getInstance().broadcastGMMessage(c.getWorld(), PacketCreator.serverNotice(6, c.getPlayer().getName() + " is probably packet editing. Got unknown report type, which is impossible."));
+            Server.getInstance().broadcastGMMessage(c.getWorld(), PacketCreator.serverNotice(6, c.getPlayer().getName() + I18nUtil.getMessage("Localization.legacy.message.5eaacf8c13f80ca1")));
         }
     }
 

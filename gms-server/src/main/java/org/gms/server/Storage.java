@@ -18,6 +18,8 @@
  */
 package org.gms.server;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Client;
 import org.gms.client.inventory.InventoryType;
 import org.gms.client.inventory.Item;
@@ -100,7 +102,7 @@ public class Storage {
 
             return ret;
         } catch (SQLException ex) { // exceptions leading to deploy null storages found thanks to Jefe
-            log.error("SQL error occurred when trying to load storage for accId {}, world {}", id, GameConstants.WORLD_NAMES[world], ex);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.b734832ac8649eb6"), id, GameConstants.WORLD_NAMES[world], ex);
             throw new RuntimeException(ex);
         }
     }
@@ -358,6 +360,15 @@ public class Storage {
         lock.lock();
         try {
             typeItems.clear();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public boolean isOpened() {
+        if (!lock.tryLock()) throw new IllegalArgumentException("busy");
+        try {
+            return !typeItems.isEmpty();
         } finally {
             lock.unlock();
         }

@@ -22,6 +22,8 @@
 
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.net.AbstractPacketHandler;
@@ -45,7 +47,7 @@ public class RemoteStoreHandler extends AbstractPacketHandler {
             }
             return;
         } else {
-            chr.dropMessage(1, "You don't have a Merchant open.");
+            chr.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.3dd59ee132c837bb"));
         }
         c.sendPacket(PacketCreator.enableActions());
     }

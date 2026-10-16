@@ -21,6 +21,8 @@
 */
 package org.gms.client;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.server.quest.Quest;
 import org.gms.util.StringUtil;
 
@@ -252,7 +254,7 @@ public class QuestStatus {
         if (forfeited >= this.forfeited) {
             this.forfeited = forfeited;
         } else {
-            throw new IllegalArgumentException("Can't set forfeits to something lower than before.");
+            throw new IllegalArgumentException(I18nUtil.getExceptionMessage("Localization.legacy.exception.915b2e3176eb0faa"));
         }
     }
 
@@ -260,7 +262,7 @@ public class QuestStatus {
         if (completed >= this.completed) {
             this.completed = completed;
         } else {
-            throw new IllegalArgumentException("Can't set completes to something lower than before.");
+            throw new IllegalArgumentException(I18nUtil.getExceptionMessage("Localization.legacy.exception.a2eb6505ee8ef24e"));
         }
     }
 

@@ -166,7 +166,7 @@ public class InventoryManipulator {
                 chr.setHasSandboxItem();
             }
         } else {
-            throw new RuntimeException("Trying to create equip with non-one quantity");
+            throw new RuntimeException(I18nUtil.getExceptionMessage("Localization.legacy.exception.6255e9bb1677ba0b"));
         }
         return true;
     }
@@ -277,7 +277,7 @@ public class InventoryManipulator {
                 chr.setHasSandboxItem();
             }
         } else {
-            log.warn("Tried to pickup Equip id {} containing more than 1 quantity --> {}", itemid, quantity);
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.0a5d313ca1ea1498"), itemid, quantity);
             c.sendPacket(PacketCreator.getInventoryFull());
             c.sendPacket(PacketCreator.showItemUnavailable());
             return false;
@@ -476,7 +476,7 @@ public class InventoryManipulator {
             }
         }
         if (removeQuantity > 0 && type != InventoryType.CANHOLD) {
-            throw new RuntimeException("[Hack] Not enough items available of Item:" + itemId + ", Quantity (After Quantity/Over Current Quantity): " + (quantity - removeQuantity) + "/" + quantity);
+            throw new RuntimeException(I18nUtil.getExceptionMessage("Localization.legacy.exception.7140d193bef95fbb") + itemId + I18nUtil.getExceptionMessage("Localization.legacy.exception.3f3fc3fd6222d86a") + (quantity - removeQuantity) + "/" + quantity);
         }
     }
 
@@ -753,8 +753,8 @@ public class InventoryManipulator {
         Item source = inv.getItem(src);
 
         if (chr.isGM() && chr.gmLevel() < GameConfig.getServerInt("minimum_gm_level_to_drop")) {
-            chr.message("You cannot drop items at your GM level.");
-            log.info("GM %s tried to drop item id %d", chr.getName(), source.getItemId());
+            chr.message(I18nUtil.getMessage("Localization.legacy.message.d6f6c98b0d992b4e"));
+            log.info(I18nUtil.getLogMessage("Localization.legacy.log.80c2b3c4d91f8df9"), chr.getName(), source.getItemId());
             return;
         }
 

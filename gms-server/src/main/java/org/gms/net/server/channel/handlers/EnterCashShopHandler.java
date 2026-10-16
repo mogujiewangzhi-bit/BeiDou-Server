@@ -21,6 +21,8 @@
 
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.net.AbstractPacketHandler;
@@ -44,13 +46,13 @@ public class EnterCashShopHandler extends AbstractPacketHandler {
             }
 
             if (mc.getEventInstance() != null) {
-                c.sendPacket(PacketCreator.serverNotice(5, "Entering Cash Shop or MTS are disabled when registered on an event."));
+                c.sendPacket(PacketCreator.serverNotice(5, I18nUtil.getMessage("Localization.legacy.message.39565223b86a45fb")));
                 c.sendPacket(PacketCreator.enableActions());
                 return;
             }
 
             if (MiniDungeonInfo.isDungeonMap(mc.getMapId())) {
-                c.sendPacket(PacketCreator.serverNotice(5, "Changing channels or entering Cash Shop or MTS are disabled when inside a Mini-Dungeon."));
+                c.sendPacket(PacketCreator.serverNotice(5, I18nUtil.getMessage("Localization.legacy.message.abb7c203da84eeb5")));
                 c.sendPacket(PacketCreator.enableActions());
                 return;
             }

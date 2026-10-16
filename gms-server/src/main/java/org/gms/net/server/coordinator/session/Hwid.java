@@ -1,5 +1,7 @@
 package org.gms.net.server.coordinator.session;
 
+import org.gms.util.I18nUtil;
+
 import java.util.regex.Pattern;
 
 public record Hwid(String hwid) {
@@ -13,12 +15,12 @@ public record Hwid(String hwid) {
 
     public static Hwid fromHostString(String hostString) throws IllegalArgumentException {
         if (hostString == null || !isValidHostString(hostString)) {
-            throw new IllegalArgumentException("hostString has invalid format");
+            throw new IllegalArgumentException(I18nUtil.getExceptionMessage("Localization.legacy.exception.42afce3531ff6ebd"));
         }
 
         final String[] split = hostString.split("_");
         if (split.length != 2 || split[1].length() != HWID_LENGTH) {
-            throw new IllegalArgumentException("Hwid validation failed for hwid: " + hostString);
+            throw new IllegalArgumentException(I18nUtil.getExceptionMessage("Localization.legacy.exception.41e84f842057f56f") + hostString);
         }
 
         return new Hwid(split[1]);

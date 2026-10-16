@@ -858,8 +858,8 @@ public class World {
     }
 
     public void debugMarriageStatus() {
-        log.debug("Queued marriages: {}", queuedMarriages);
-        log.debug("Guest list: {}", marriageGuests);
+        log.debug(I18nUtil.getLogMessage("Localization.legacy.log.9af3f42ac5da96d2"), queuedMarriages);
+        log.debug(I18nUtil.getLogMessage("Localization.legacy.log.d91e6d5315784b9c"), marriageGuests);
     }
 
     private void registerCharacterParty(Integer chrid, Integer partyid) {
@@ -988,7 +988,7 @@ public class World {
     public void updateParty(int partyid, PartyOperation operation, PartyCharacter target) {
         Party party = getParty(partyid);
         if (party == null) {
-            throw new IllegalArgumentException("no party with the specified partyid exists");
+            throw new IllegalArgumentException(I18nUtil.getExceptionMessage("Localization.legacy.exception.9cd09642cd52f28c"));
         }
         switch (operation) {
             case JOIN:
@@ -1028,7 +1028,7 @@ public class World {
                 }
                 break;
             default:
-                log.warn("Unhandled updateParty operation: {}", operation.name());
+                log.warn(I18nUtil.getLogMessage("Localization.legacy.log.0953e2d5853a52a4"), operation.name());
         }
         updateParty(party, operation, target);
     }
@@ -1108,7 +1108,7 @@ public class World {
     public void leaveMessenger(int messengerid, MessengerCharacter target) {
         Messenger messenger = getMessenger(messengerid);
         if (messenger == null) {
-            throw new IllegalArgumentException("No messenger with the specified messengerid exists");
+            throw new IllegalArgumentException(I18nUtil.getExceptionMessage("Localization.legacy.exception.09eb5c4874e19ef1"));
         }
         int position = messenger.getPositionByName(target.getName());
         messenger.removeMember(target);
@@ -1216,7 +1216,7 @@ public class World {
     public void silentLeaveMessenger(int messengerid, MessengerCharacter target) {
         Messenger messenger = getMessenger(messengerid);
         if (messenger == null) {
-            throw new IllegalArgumentException("No messenger with the specified messengerid exists");
+            throw new IllegalArgumentException(I18nUtil.getExceptionMessage("Localization.legacy.exception.09eb5c4874e19ef1"));
         }
         messenger.addMember(target, target.getPosition());
     }
@@ -1224,7 +1224,7 @@ public class World {
     public void joinMessenger(int messengerid, MessengerCharacter target, String from, int fromchannel) {
         Messenger messenger = getMessenger(messengerid);
         if (messenger == null) {
-            throw new IllegalArgumentException("No messenger with the specified messengerid exists");
+            throw new IllegalArgumentException(I18nUtil.getExceptionMessage("Localization.legacy.exception.09eb5c4874e19ef1"));
         }
         messenger.addMember(target, target.getPosition());
         addMessengerPlayer(messenger, from, fromchannel, target.getPosition());
@@ -1233,7 +1233,7 @@ public class World {
     public void silentJoinMessenger(int messengerid, MessengerCharacter target, int position) {
         Messenger messenger = getMessenger(messengerid);
         if (messenger == null) {
-            throw new IllegalArgumentException("No messenger with the specified messengerid exists");
+            throw new IllegalArgumentException(I18nUtil.getExceptionMessage("Localization.legacy.exception.09eb5c4874e19ef1"));
         }
         messenger.addMember(target, position);
     }
@@ -1653,29 +1653,28 @@ public class World {
     }
 
     public void runHiredMerchantSchedule() {
-        List<HiredMerchant> merchantsToClose = new ArrayList<>();
+        Map<Integer, Pair<HiredMerchant, Integer>> deployedMerchants;
         activeMerchantsLock.lock();
         try {
             merchantUpdate = Server.getInstance().getCurrentTime();
-            for (Map.Entry<Integer, Pair<HiredMerchant, Integer>> entry : activeMerchants.entrySet()) {
-                int timeOn = entry.getValue().getRight();
-                HiredMerchant merchant = entry.getValue().getLeft();
-                if (merchant.isClosedForBan() || timeOn > 144) { // 1440 minutes == 24hrs
-                    merchantsToClose.add(merchant);
-                } else {
-                    entry.setValue(new Pair<>(merchant, timeOn + 1));
+            deployedMerchants = new LinkedHashMap<>(activeMerchants);
+
+            for (Map.Entry<Integer, Pair<HiredMerchant, Integer>> dm : deployedMerchants.entrySet()) {
+                try {
+                    int timeOn = dm.getValue().getRight();
+                    HiredMerchant hm = dm.getValue().getLeft();
+
+                    if (timeOn <= 144) {   // 1440 minutes == 24hrs
+                        activeMerchants.put(hm.getOwnerId(), new Pair<>(dm.getValue().getLeft(), timeOn + 1));
+                    } else {
+                        hm.forceClose();
+                    }
+                } catch (Exception e) {
+                    log.error(I18nUtil.getLogMessage("Localization.legacy.log.7b366dd764a754e1"), dm.getKey(), e);
                 }
             }
         } finally {
             activeMerchantsLock.unlock();
-        }
-        // 收店需要客户端/物品锁，不能持注册表锁等待，避免与店主操作互锁。
-        for (HiredMerchant merchant : merchantsToClose) {
-            try {
-                merchant.forceClose();
-            } catch (RuntimeException e) {
-                log.error(I18nUtil.getLogMessage("HiredMerchant.close.scheduleFailed", merchant.getOwnerId()), e);
-            }
         }
     }
 

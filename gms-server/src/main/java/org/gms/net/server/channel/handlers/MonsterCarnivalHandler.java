@@ -21,6 +21,8 @@
  */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.Disease;
@@ -90,7 +92,7 @@ public final class MonsterCarnivalHandler extends AbstractPacketHandler {
                     } else if (tab == 1) { //debuffs
                         final List<Integer> skillid = c.getPlayer().getMap().getSkillIds();
                         if (num >= skillid.size()) {
-                            c.getPlayer().dropMessage(5, "An unexpected error has occurred.");
+                            c.getPlayer().dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.18da7c03c274bd9c"));
                             c.sendPacket(PacketCreator.enableActions());
                             return;
                         }

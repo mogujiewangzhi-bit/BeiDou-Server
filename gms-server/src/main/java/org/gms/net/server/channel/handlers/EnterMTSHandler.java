@@ -21,6 +21,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.inventory.Equip;
@@ -57,19 +59,19 @@ public final class EnterMTSHandler extends AbstractPacketHandler {
         }
 
         if (chr.getEventInstance() != null) {
-            c.sendPacket(PacketCreator.serverNotice(5, "Entering Cash Shop or MTS are disabled when registered on an event."));
+            c.sendPacket(PacketCreator.serverNotice(5, I18nUtil.getMessage("Localization.legacy.message.39565223b86a45fb")));
             c.sendPacket(PacketCreator.enableActions());
             return;
         }
 
         if (MiniDungeonInfo.isDungeonMap(chr.getMapId())) {
-            c.sendPacket(PacketCreator.serverNotice(5, "Changing channels or entering Cash Shop or MTS are disabled when inside a Mini-Dungeon."));
+            c.sendPacket(PacketCreator.serverNotice(5, I18nUtil.getMessage("Localization.legacy.message.abb7c203da84eeb5")));
             c.sendPacket(PacketCreator.enableActions());
             return;
         }
 
         if (FieldLimit.CANNOTMIGRATE.check(chr.getMap().getFieldLimit())) {
-            chr.dropMessage(1, "You can't do it here in this map.");
+            chr.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.2712630cd3115d37"));
             c.sendPacket(PacketCreator.enableActions());
             return;
         }

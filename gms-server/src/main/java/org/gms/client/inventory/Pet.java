@@ -29,6 +29,7 @@ import org.gms.server.movement.AbsoluteLifeMovement;
 import org.gms.server.movement.LifeMovement;
 import org.gms.server.movement.LifeMovementFragment;
 import org.gms.util.DatabaseConnection;
+import org.gms.util.I18nUtil;
 import org.gms.util.PacketCreator;
 import org.gms.util.Pair;
 
@@ -75,13 +76,21 @@ public class Pet extends Item {
     }
 
     public static Pet loadFromDb(int itemid, short position, int petid) {
+        try (Connection con = DatabaseConnection.getConnection()) {
+            return loadFromDb(itemid, position, petid, con);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Pet loadFromDb(int itemid, short position, int petid, Connection con) throws SQLException {
         Pet ret = new Pet(itemid, position, petid);
-        try (Connection con = DatabaseConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement("SELECT name, level, closeness, fullness, summoned, flag FROM pets WHERE petid = ?")) { // Get the pet details...
+        try (PreparedStatement ps = con.prepareStatement("SELECT name, level, closeness, fullness, summoned, flag FROM pets WHERE petid = ?")) {
             ps.setInt(1, petid);
 
             try (ResultSet rs = ps.executeQuery()) {
-                rs.next();
+                if (!rs.next()) throw new SQLException(I18nUtil.getExceptionMessage("Grant.petMissing", petid));
                 ret.setName(rs.getString("name"));
                 ret.setTameness(Math.min(rs.getInt("closeness"), 30000));
                 ret.setLevel((byte) Math.min(rs.getByte("level"), 30));
@@ -90,9 +99,6 @@ public class Pet extends Item {
                 ret.setPetAttribute(rs.getInt("flag"));
             }
             return ret;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
         }
     }
 
@@ -107,8 +113,15 @@ public class Pet extends Item {
     }
 
     public void saveToDb() {
-        try (Connection con = DatabaseConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement("UPDATE pets SET name = ?, level = ?, closeness = ?, fullness = ?, summoned = ?, flag = ? WHERE petid = ?")) {
+        try (Connection con = DatabaseConnection.getConnection()) {
+            saveToDb(con);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void saveToDb(Connection con) throws SQLException {
+        try (PreparedStatement ps = con.prepareStatement("UPDATE pets SET name = ?, level = ?, closeness = ?, fullness = ?, summoned = ?, flag = ? WHERE petid = ?")) {
             ps.setString(1, getName());
             ps.setInt(2, getLevel());
             ps.setInt(3, getTameness());
@@ -117,8 +130,6 @@ public class Pet extends Item {
             ps.setInt(6, getPetAttribute());
             ps.setInt(7, getUniqueId());
             ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 

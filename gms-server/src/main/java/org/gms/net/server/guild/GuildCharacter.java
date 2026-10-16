@@ -134,10 +134,6 @@ public class GuildCharacter {
         return allianceRank;
     }
 
-    public void setOfflineAllianceRank(int rank) {
-        allianceRank = rank;
-    }
-
     public void setAllianceRank(int rank) {
         allianceRank = rank;
         character.setAllianceRank(rank);

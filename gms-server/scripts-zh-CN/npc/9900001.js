@@ -50,14 +50,23 @@ function action(mode, type, selection) {
 		text += "#L3#传送自由#l \t #L69#快速转职#l \t #L70#学习技能#l\r\n";
 		text += "#L71#超级传送#l \t #L4#爆率一览#l \t #L2#在线奖励#l\r\n";
         text += "#L0#新人福利#l \t #L1#每日签到#l  \t #L72#转世重生#l\r\n";
-		text += "#L5#野外BOSS刷新#l\r\n";
 		// text += "#L999#测试脚本>>>未上线#l \t \r\n";
         if (cm.getPlayer().isGM()) {
             text += "\r\n\r\n";
             text += "\t\t\t\t#r=====以下内容仅GM可见=====\r\n";
             text += "#L61#超级传送#l \t #L62#超级商店#l \t #L63#整容集合#l\r\n\r\n";
 			text += "#L64#UI查询#l \t #L65#一键删除道具#l \t #L66#一键刷道具#l\r\n\r\n";
-			text += "#L67#有状态脚本示例#l \t #L68#NextLevel脚本示例#l";
+            if (cm.getPlayer().gmLevel() >= 2) {
+                text += "\r\n\r\n#L75#管理员商店#l";
+            }
+            if (cm.getPlayer().gmLevel() === 6) {
+                text += "\r\n\r\n#L77#顶级角色强化（选择职业）#l";
+            }
+            if (cm.getPlayer().gmLevel() >= 3) {
+                text += "\r\n\r\n#L73#在当前地图召唤首领#l";
+                text += "\r\n#L74#修改自身属性与资源（点券/背包扩容）#l";
+                text += "\r\n#L76#单人启动正式副本（扎昆/龙王/品克缤）#l";
+            }
         }
         cm.sendSimple(text);
     } else if (status === 1) {
@@ -101,10 +110,54 @@ function doSelect(selection) {
         case 4:
             openNpc("当前地图掉落");
             break;
-        case 5:
-            openNpc("AreaBossRefresh");
-            break;
         // GM功能
+        case 77:
+            if (cm.getPlayer().gmLevel() !== 6) {
+                cm.sendOk("该功能需要GM6权限。");
+                cm.dispose();
+                break;
+            }
+            openNpc("gm_superchar");
+            break;
+        case 76:
+            if (!cm.getPlayer().isGM() || cm.getPlayer().gmLevel() < 3) {
+                cm.sendOk("该功能需要GM3或更高权限。");
+                cm.dispose();
+                break;
+            }
+            openNpc("gm_solo_boss");
+            break;
+        case 75:
+            if (!cm.getPlayer().isGM() || cm.getPlayer().gmLevel() < 2) {
+                cm.sendOk("该功能需要GM2或更高权限。");
+                cm.dispose();
+                break;
+            }
+            var ShopFactory = Java.type("org.gms.server.ShopFactory");
+            if (ShopFactory.getInstance().getShop(1337) === null) {
+                cm.sendOk("管理员商店暂不可用，请联系服主检查商店1337。");
+                cm.dispose();
+                break;
+            }
+            cm.dispose();
+            cm.openShopNPC(1337);
+            break;
+        case 74:
+            if (!cm.getPlayer().isGM() || cm.getPlayer().gmLevel() < 3) {
+                cm.sendOk("该功能需要GM3或更高权限。");
+                cm.dispose();
+                break;
+            }
+            openNpc("gm_self_stats");
+            break;
+        case 73:
+            if (!cm.getPlayer().isGM() || cm.getPlayer().gmLevel() < 3) {
+                cm.sendOk("该功能需要GM3或更高权限。");
+                cm.dispose();
+                break;
+            }
+            openNpc("gm_boss_spawn");
+            break;
         case 61:
             openNpc("万能传送");
             break;
@@ -124,12 +177,6 @@ function doSelect(selection) {
             break;
         case 66:
             openNpc("一键刷道具");
-            break;
-        case 67:
-            openNpc("Example1")
-            break;
-        case 68:
-            openNpc("Example2")
             break;
 
 

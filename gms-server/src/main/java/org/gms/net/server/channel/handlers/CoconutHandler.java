@@ -22,6 +22,8 @@
 
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Client;
 import org.gms.net.AbstractPacketHandler;
 import org.gms.net.packet.InPacket;
@@ -69,10 +71,10 @@ public final class CoconutHandler extends AbstractPacketHandler {
                 event.fallCoconut();
                 if (c.getPlayer().getTeam() == 0) {
                     event.addMapleScore();
-                    map.broadcastMessage(PacketCreator.serverNotice(5, c.getPlayer().getName() + " of Team Maple knocks down a coconut."));
+                    map.broadcastMessage(PacketCreator.serverNotice(5, c.getPlayer().getName() + I18nUtil.getMessage("Localization.legacy.message.65e330c48b48c58e")));
                 } else {
                     event.addStoryScore();
-                    map.broadcastMessage(PacketCreator.serverNotice(5, c.getPlayer().getName() + " of Team Story knocks down a coconut."));
+                    map.broadcastMessage(PacketCreator.serverNotice(5, c.getPlayer().getName() + I18nUtil.getMessage("Localization.legacy.message.844adc996786860e")));
                 }
                 map.broadcastMessage(PacketCreator.coconutScore(event.getMapleScore(), event.getStoryScore()));
             }

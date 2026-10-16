@@ -251,7 +251,7 @@ public final class Channel {
             try {
                 merch.forceClose();
             } catch (Exception e) {
-                log.error("Failed to forceClose HiredMerchant owner={}, world={}, channel={}",
+                log.error(I18nUtil.getLogMessage("Localization.legacy.log.952443c974f37ba6"),
                         merch.getOwnerId(), world, channel, e);
             }
         }
@@ -499,7 +499,7 @@ public final class Channel {
                 }
             }
         } catch (IOException e) {
-            log.warn("Unable to load events !");
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.5fe276e99b2a2511"));
             e.printStackTrace();
         }
     }
@@ -775,7 +775,7 @@ public final class Channel {
         Pair<Boolean, Set<Integer>> typeGuests = wserv.removeMarriageQueued(ret);
 
         Pair<String, String> couple = new Pair<>(Character.getNameById(coupleId.getLeft()), Character.getNameById(coupleId.getRight()));
-        wserv.dropMessage(6, couple.getLeft() + " and " + couple.getRight() + "'s wedding is going to be started at " + (cathedral ? "Cathedral" : "Chapel") + " on Channel " + channel + ".");
+        wserv.dropMessage(6, couple.getLeft() + I18nUtil.getMessage("Localization.legacy.message.e3ee915a8e8c7aa0") + couple.getRight() + I18nUtil.getMessage("Localization.legacy.message.9f9fe210ef524ebe") + (cathedral ? I18nUtil.getMessage("Localization.legacy.message.472a62acb756f2b8") : I18nUtil.getMessage("Localization.legacy.message.ea6483ea1e01d363")) + I18nUtil.getMessage("Localization.legacy.message.8b9668d050241240") + channel + ".");
 
         return new Pair<>(typeGuests.getLeft(), new Pair<>(ret, typeGuests.getRight()));
     }
@@ -1073,22 +1073,22 @@ public final class Channel {
     }
 
     public void debugMarriageStatus() {
-        log.debug(" ----- WORLD DATA -----");
+        log.debug(I18nUtil.getLogMessage("Localization.legacy.log.e7846a9db0b331e7"));
         getWorldServer().debugMarriageStatus();
 
         log.debug(" ----- CH. {} -----", channel);
-        log.debug(" ----- CATHEDRAL -----");
-        log.debug("Current Queue: {}", cathedralReservationQueue);
-        log.debug("Cancel Task?: {}", cathedralReservationTask != null);
-        log.debug("Ongoing wid: {}", ongoingCathedral);
-        log.debug("Ongoing wid: {}, isPremium: {}", ongoingCathedral, ongoingCathedralType);
-        log.debug("Guest list: {}", ongoingCathedralGuests);
-        log.debug(" ----- CHAPEL -----");
-        log.debug("Current Queue: {}", chapelReservationQueue);
-        log.debug("Cancel Task?: {}", chapelReservationTask != null);
-        log.debug("Ongoing wid: {}", ongoingChapel);
-        log.debug("Ongoing wid: {}, isPremium: {}", ongoingChapel, ongoingChapelType);
-        log.debug("Guest list: {}", ongoingChapelGuests);
-        log.debug("Starttime: {}", ongoingStartTime);
+        log.debug(I18nUtil.getLogMessage("Localization.legacy.log.f828c0c9c3cabd5e"));
+        log.debug(I18nUtil.getLogMessage("Localization.legacy.log.8f6db7fd50b5c183"), cathedralReservationQueue);
+        log.debug(I18nUtil.getLogMessage("Localization.legacy.log.236dfc17c31bdd96"), cathedralReservationTask != null);
+        log.debug(I18nUtil.getLogMessage("Localization.legacy.log.021268fbcfc7b53b"), ongoingCathedral);
+        log.debug(I18nUtil.getLogMessage("Localization.legacy.log.33cee0d6bfb961d1"), ongoingCathedral, ongoingCathedralType);
+        log.debug(I18nUtil.getLogMessage("Localization.legacy.log.d91e6d5315784b9c"), ongoingCathedralGuests);
+        log.debug(I18nUtil.getLogMessage("Localization.legacy.log.b9b65d185605f69c"));
+        log.debug(I18nUtil.getLogMessage("Localization.legacy.log.8f6db7fd50b5c183"), chapelReservationQueue);
+        log.debug(I18nUtil.getLogMessage("Localization.legacy.log.236dfc17c31bdd96"), chapelReservationTask != null);
+        log.debug(I18nUtil.getLogMessage("Localization.legacy.log.021268fbcfc7b53b"), ongoingChapel);
+        log.debug(I18nUtil.getLogMessage("Localization.legacy.log.33cee0d6bfb961d1"), ongoingChapel, ongoingChapelType);
+        log.debug(I18nUtil.getLogMessage("Localization.legacy.log.d91e6d5315784b9c"), ongoingChapelGuests);
+        log.debug(I18nUtil.getLogMessage("Localization.legacy.log.12af1371e5ec120e"), ongoingStartTime);
     }
 }

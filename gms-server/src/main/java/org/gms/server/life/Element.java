@@ -21,6 +21,8 @@
 */
 package org.gms.server.life;
 
+import org.gms.util.I18nUtil;
+
 public enum Element {
     NEUTRAL(0), PHYSICAL(1), FIRE(2, true), ICE(3, true), LIGHTING(4), POISON(5), HOLY(6, true), DARKNESS(7);
 
@@ -57,7 +59,7 @@ public enum Element {
             case 'P':
                 return NEUTRAL;
         }
-        throw new IllegalArgumentException("unknown elemnt char " + c);
+        throw new IllegalArgumentException(I18nUtil.getExceptionMessage("Localization.legacy.exception.98f3741c910181a4") + c);
     }
 
     public int getValue() {

@@ -1,5 +1,7 @@
 package org.gms.aop;
 
+import org.gms.util.I18nUtil;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -64,7 +66,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
-            logger.error("Filter error", e);
+            logger.error(I18nUtil.getLogMessage("Localization.legacy.log.25cb5166cb47d4a3"), e);
             // 释放流，否则可能内存泄漏
             request.getInputStream().close();
             response.getOutputStream().close();

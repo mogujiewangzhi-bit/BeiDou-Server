@@ -19,6 +19,8 @@
 */
 package org.gms.client.processor.action;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.SkillFactory;
@@ -52,7 +54,7 @@ public class SpawnPetProcessor {
                 int petid = pet.getItemId();
                 if (petid == ItemId.DRAGON_PET || petid == ItemId.ROBO_PET) {
                     if (chr.haveItem(petid + 1)) {
-                        chr.dropMessage(5, "You can't hatch your " + (petid == ItemId.DRAGON_PET ? "Dragon egg" : "Robo egg") + " if you already have a Baby " + (petid == ItemId.DRAGON_PET ? "Dragon." : "Robo."));
+                        chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.9e012115c06a6223") + (petid == ItemId.DRAGON_PET ? I18nUtil.getMessage("Localization.legacy.message.bfb5fd9f10a38e1d") : I18nUtil.getMessage("Localization.legacy.message.bfb784777fba5ab6")) + I18nUtil.getMessage("Localization.legacy.message.5ee2f413c8449b61") + (petid == ItemId.DRAGON_PET ? I18nUtil.getMessage("Localization.legacy.message.dc3c0ccf1798bbad") : I18nUtil.getMessage("Localization.legacy.message.930aad5f3c65f490")));
                         c.sendPacket(PacketCreator.enableActions());
                         return;
                     } else {

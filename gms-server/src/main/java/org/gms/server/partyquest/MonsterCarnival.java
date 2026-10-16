@@ -1,5 +1,7 @@
 package org.gms.server.partyquest;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.config.GameConfig;
 import org.gms.constants.string.LanguageConstants;
@@ -378,7 +380,7 @@ public class MonsterCarnival {
         int chnl = leader1.getClient().getChannel();
         int chnl1 = leader2.getClient().getChannel();
         if (chnl != chnl1) {
-            throw new RuntimeException("Os lideres estao em canais diferentes.");
+            throw new RuntimeException(I18nUtil.getExceptionMessage("Localization.legacy.exception.70c53dc1a192b4f9"));
         }
 
         map.killAllMonsters();
@@ -492,7 +494,7 @@ public class MonsterCarnival {
         } else if (team == 1) {
             return blueTotalCP;
         } else {
-            throw new RuntimeException("Equipe desconhecida");
+            throw new RuntimeException(I18nUtil.getExceptionMessage("Localization.legacy.exception.38943b4d4fdbf236"));
         }
     }
 
@@ -510,7 +512,7 @@ public class MonsterCarnival {
         } else if (team == 1) {
             return blueCP;
         } else {
-            throw new RuntimeException("Equipe desconhecida" + team);
+            throw new RuntimeException(I18nUtil.getExceptionMessage("Localization.legacy.exception.38943b4d4fdbf236") + team);
         }
     }
 

@@ -21,6 +21,8 @@
  */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.net.AbstractPacketHandler;
@@ -320,9 +322,9 @@ public final class BBSOperationHandler extends AbstractPacketHandler {
                 }
             }
         } catch (SQLException se) {
-            log.error("Error displaying thread", se);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.dee8996395e1b78e"), se);
         } catch (RuntimeException re) {//btw we get this everytime for some reason, but replies work!
-            log.error("The number of reply rows does not match the replycount in thread.", re);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.8bb174d0ac635761"), re);
         }
     }
 }

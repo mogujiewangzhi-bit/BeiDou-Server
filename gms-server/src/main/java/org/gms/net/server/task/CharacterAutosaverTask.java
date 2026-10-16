@@ -19,6 +19,8 @@
 */
 package org.gms.net.server.task;
 
+import org.gms.util.I18nUtil;
+
 import lombok.extern.slf4j.Slf4j;
 import org.gms.client.Character;
 import org.gms.config.GameConfig;
@@ -52,7 +54,7 @@ public class CharacterAutosaverTask extends BaseTask implements Runnable {  // t
         }
 
         if (!running.compareAndSet(false, true)) {
-            log.warn("CharacterAutosaverTask skipped: previous round still running");
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.0301a3fffe24688f"));
             return;
         }
 
@@ -81,7 +83,7 @@ public class CharacterAutosaverTask extends BaseTask implements Runnable {  // t
             }
         } finally {
             long cost = System.currentTimeMillis() - startMs;
-            log.info("CharacterAutosaverTask done: world={}, online={}, saved={}, cost={}ms",
+            log.info(I18nUtil.getLogMessage("Localization.legacy.log.462a25f88fe87a31"),
                     wserv.getId(), onlineCount, savedCount, cost);
             running.set(false);
         }

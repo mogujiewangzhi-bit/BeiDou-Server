@@ -1,5 +1,7 @@
 package org.gms.net.netty;
 
+import org.gms.util.I18nUtil;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
@@ -34,7 +36,7 @@ public class ChannelServer extends AbstractServer {
     @Override
     public void stop() {
         if (nettyChannel == null) {
-            throw new IllegalStateException("Must start ChannelServer before stopping it");
+            throw new IllegalStateException(I18nUtil.getExceptionMessage("Localization.legacy.exception.e57323cf16284de4"));
         }
 
         nettyChannel.close().syncUninterruptibly();

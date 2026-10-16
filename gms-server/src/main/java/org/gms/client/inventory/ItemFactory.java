@@ -20,6 +20,8 @@
  */
 package org.gms.client.inventory;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.util.DatabaseConnection;
 import org.gms.util.Pair;
 
@@ -247,10 +249,10 @@ public enum ItemFactory {
                                 try (PreparedStatement psEquip = con.prepareStatement("INSERT INTO `inventoryequipment` VALUES (DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
                                     try (ResultSet rs = psItem.getGeneratedKeys()) {
                                         if (!rs.next()) {
-                                            throw new RuntimeException("Inserting item failed.");
+                                            throw new RuntimeException(I18nUtil.getExceptionMessage("Localization.legacy.exception.fcd203684e3d5e9c"));
                                         }
 
-                                        psEquip.setLong(1, rs.getLong(1));
+                                        psEquip.setInt(1, rs.getInt(1));
                                     }
 
                                     Equip equip = (Equip) item;
@@ -328,7 +330,7 @@ public enum ItemFactory {
                     while (rs.next()) {
                         short bundles = 0;
                         try (PreparedStatement psBundle = con.prepareStatement("SELECT `bundles` FROM `inventorymerchant` WHERE `inventoryitemid` = ?")) {
-                            psBundle.setLong(1, rs.getLong("inventoryitemid"));
+                            psBundle.setInt(1, rs.getInt("inventoryitemid"));
 
                             try (ResultSet rs2 = psBundle.executeQuery()) {
                                 if (rs2.next()) {
@@ -397,7 +399,7 @@ public enum ItemFactory {
                     final InventoryType mit = pair.getRight();
                     i++;
 
-                    final long genKey;
+                    final int genKey;
                     // Item
                     try (PreparedStatement ps = con.prepareStatement("INSERT INTO `inventoryitems` VALUES (DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
                         ps.setInt(1, value);
@@ -416,16 +418,16 @@ public enum ItemFactory {
 
                         try (ResultSet rs = ps.getGeneratedKeys()) {
                             if (!rs.next()) {
-                                throw new RuntimeException("Inserting item failed.");
+                                throw new RuntimeException(I18nUtil.getExceptionMessage("Localization.legacy.exception.fcd203684e3d5e9c"));
                             }
 
-                            genKey = rs.getLong(1);
+                            genKey = rs.getInt(1);
                         }
                     }
 
                     // Merchant
                     try (PreparedStatement ps = con.prepareStatement("INSERT INTO `inventorymerchant` VALUES (DEFAULT, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
-                        ps.setLong(1, genKey);
+                        ps.setInt(1, genKey);
                         ps.setInt(2, id);
                         ps.setInt(3, bundles);
                         ps.executeUpdate();
@@ -434,7 +436,7 @@ public enum ItemFactory {
                     // Equipment
                     if (mit.equals(InventoryType.EQUIP) || mit.equals(InventoryType.EQUIPPED)) {
                         try (PreparedStatement ps = con.prepareStatement("INSERT INTO `inventoryequipment` VALUES (DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                            ps.setLong(1, genKey);
+                            ps.setInt(1, genKey);
 
                             Equip equip = (Equip) item;
                             ps.setInt(2, equip.getUpgradeSlots());

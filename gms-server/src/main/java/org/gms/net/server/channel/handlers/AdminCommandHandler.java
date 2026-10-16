@@ -21,6 +21,8 @@
  */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.inventory.Inventory;
@@ -78,7 +80,7 @@ public final class AdminCommandHandler extends AbstractPacketHandler {
                 c.getPlayer().setExp(p.readInt());
                 break;
             case 0x03: // /ban <name>
-                c.getPlayer().yellowMessage("Please use !ban <IGN> <Reason>");
+                c.getPlayer().yellowMessage(I18nUtil.getMessage("Localization.legacy.message.3e66f2b1c73a9b87"));
                 break;
             case 0x04: // /block <name> <duration (in days)> <HACK/BOT/AD/HARASS/CURSE/SCAM/MISCONDUCT/SELL/ICASH/TEMP/GM/IPROGRAM/MEGAPHONE>
                 victim = p.readString();
@@ -149,7 +151,7 @@ public final class AdminCommandHandler extends AbstractPacketHandler {
                 break;
             case 0x18: // Maple & Mobhp
                 int mobHp = p.readInt();
-                c.getPlayer().dropMessage("Monsters HP");
+                c.getPlayer().dropMessage(I18nUtil.getMessage("Localization.legacy.message.30f89833923081e6"));
                 List<MapObject> monsters = c.getPlayer().getMap().getMapObjectsInRange(c.getPlayer().getPosition(), Double.POSITIVE_INFINITY, Arrays.asList(MapObjectType.MONSTER));
                 for (MapObject mobs : monsters) {
                     Monster monster = (Monster) mobs;
@@ -173,13 +175,13 @@ public final class AdminCommandHandler extends AbstractPacketHandler {
                 break;
             case 0x77: //Testing purpose
                 if (p.available() == 4) {
-                    log.debug("int: {}", p.readInt());
+                    log.debug(I18nUtil.getLogMessage("Localization.legacy.log.dc082d0edfaa17e8"), p.readInt());
                 } else if (p.available() == 2) {
-                    log.debug("short: {}", p.readShort());
+                    log.debug(I18nUtil.getLogMessage("Localization.legacy.log.12021cce93907531"), p.readShort());
                 }
                 break;
             default:
-                log.info("New GM packet encountered (MODE: {}): {}", mode, p);
+                log.info(I18nUtil.getLogMessage("Localization.legacy.log.8bcfe8e3cdd7f78e"), mode, p);
                 break;
         }
     }

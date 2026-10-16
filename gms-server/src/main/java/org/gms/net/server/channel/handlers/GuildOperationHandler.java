@@ -121,13 +121,13 @@ public final class GuildOperationHandler extends AbstractPacketHandler {
                 break;
             case 0x06:
                 if (mc.getGuildId() > 0) {
-                    log.warn("[Hack] Chr {} attempted to join a guild when s/he is already in one.", mc.getName());
+                    log.warn(I18nUtil.getLogMessage("Localization.legacy.log.cdb080f26fc4071d"), mc.getName());
                     return;
                 }
                 int gid = p.readInt();
                 int cid = p.readInt();
                 if (cid != mc.getId()) {
-                    log.warn("[Hack] Chr {} attempted to join a guild with a different chrId", mc.getName());
+                    log.warn(I18nUtil.getLogMessage("Localization.legacy.log.5efa3f1c888df755"), mc.getName());
                     return;
                 }
 
@@ -161,7 +161,7 @@ public final class GuildOperationHandler extends AbstractPacketHandler {
                 cid = p.readInt();
                 String name = p.readString();
                 if (cid != mc.getId() || !name.equals(mc.getName()) || mc.getGuildId() <= 0) {
-                    log.warn("[Hack] Chr {} tried to quit guild under the name {} and current guild id of {}", mc.getName(), name, mc.getGuildId());
+                    log.warn(I18nUtil.getLogMessage("Localization.legacy.log.c2b958e624df7013"), mc.getName(), name, mc.getGuildId());
                     return;
                 }
 
@@ -186,7 +186,7 @@ public final class GuildOperationHandler extends AbstractPacketHandler {
                 cid = p.readInt();
                 name = p.readString();
                 if (mc.getGuildRank() > 2 || mc.getGuildId() <= 0) {
-                    log.warn("[Hack] Chr {} is trying to expel without rank 1 or 2", mc.getName());
+                    log.warn(I18nUtil.getLogMessage("Localization.legacy.log.12365bf3f3f9f5ff"), mc.getName());
                     return;
                 }
 
@@ -197,7 +197,7 @@ public final class GuildOperationHandler extends AbstractPacketHandler {
                 break;
             case 0x0d:
                 if (mc.getGuildId() <= 0 || mc.getGuildRank() != 1) {
-                    log.warn("[Hack] Chr {} tried to change guild rank titles when s/he does not have permission", mc.getName());
+                    log.warn(I18nUtil.getLogMessage("Localization.legacy.log.76cfc3ad2d6cc3a0"), mc.getName());
                     return;
                 }
                 String[] ranks = new String[5];
@@ -211,7 +211,7 @@ public final class GuildOperationHandler extends AbstractPacketHandler {
                 cid = p.readInt();
                 byte newRank = p.readByte();
                 if (mc.getGuildRank() > 2 || (newRank <= 2 && mc.getGuildRank() != 1) || mc.getGuildId() <= 0) {
-                    log.warn("[Hack] Chr {} is trying to change rank outside of his/her permissions.", mc.getName());
+                    log.warn(I18nUtil.getLogMessage("Localization.legacy.log.1957688fcdf63ee8"), mc.getName());
                     return;
                 }
                 if (newRank <= 1 || newRank > 5) {
@@ -221,11 +221,11 @@ public final class GuildOperationHandler extends AbstractPacketHandler {
                 break;
             case 0x0f:
                 if (mc.getGuildId() <= 0 || mc.getGuildRank() != 1 || mc.getMapId() != MapId.GUILD_HQ) {
-                    log.warn("[Hack] Chr {} tried to change guild emblem without being the guild leader", mc.getName());
+                    log.warn(I18nUtil.getLogMessage("Localization.legacy.log.950fc52910543f54"), mc.getName());
                     return;
                 }
                 if (mc.getMeso() < GameConfig.getServerInt("change_emblem_cost")) {
-                    c.sendPacket(PacketCreator.serverNotice(1, "You do not have " + GameConstants.numberWithCommas(GameConfig.getServerInt("change_emblem_cost")) + " mesos to change the Guild emblem."));
+                    c.sendPacket(PacketCreator.serverNotice(1, I18nUtil.getMessage("Localization.legacy.message.f600cf40b2394f6b") + GameConstants.numberWithCommas(GameConfig.getServerInt("change_emblem_cost")) + I18nUtil.getMessage("Localization.legacy.message.1a4c14ecab3c216e")));
                     return;
                 }
                 short bg = p.readShort();
@@ -246,7 +246,7 @@ public final class GuildOperationHandler extends AbstractPacketHandler {
             case 0x10:
                 if (mc.getGuildId() <= 0 || mc.getGuildRank() > 2) {
                     if (mc.getGuildId() <= 0) {
-                        log.warn("[Hack] Chr {} tried to change guild notice while not in a guild", mc.getName());
+                        log.warn(I18nUtil.getLogMessage("Localization.legacy.log.588c063532012cd6"), mc.getName());
                     }
                     return;
                 }
@@ -283,7 +283,7 @@ public final class GuildOperationHandler extends AbstractPacketHandler {
 
                 break;
             default:
-                log.warn("Unhandled GUILD_OPERATION packet: {}", p);
+                log.warn(I18nUtil.getLogMessage("Localization.legacy.log.660c2f5b9c78d59d"), p);
         }
     }
 }

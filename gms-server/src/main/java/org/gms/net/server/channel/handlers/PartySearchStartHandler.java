@@ -21,6 +21,8 @@
  */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.net.AbstractPacketHandler;
@@ -42,19 +44,19 @@ public class PartySearchStartHandler extends AbstractPacketHandler {
 
         Character chr = c.getPlayer();
         if (min > max) {
-            chr.dropMessage(1, "The min. value is higher than the max!");
+            chr.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.b1087b7b7c1d8887"));
             c.sendPacket(PacketCreator.enableActions());
             return;
         }
 
         if (max - min > 30) {
-            chr.dropMessage(1, "You can only search for party members within a range of 30 levels.");
+            chr.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.e600ef14700a3ffd"));
             c.sendPacket(PacketCreator.enableActions());
             return;
         }
 
         if (chr.getLevel() < min || chr.getLevel() > max) {
-            chr.dropMessage(1, "The range of level for search has to include your own level.");
+            chr.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.7ed0a75e9e8fd19f"));
             c.sendPacket(PacketCreator.enableActions());
             return;
         }

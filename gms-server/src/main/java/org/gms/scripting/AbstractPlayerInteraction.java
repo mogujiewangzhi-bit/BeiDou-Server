@@ -535,7 +535,7 @@ public class AbstractPlayerInteraction {
 
         target = getPlayer().getPet(slot);
         if (target == null) {
-            getPlayer().message("Pet could not be evolved...");
+            getPlayer().message(I18nUtil.getMessage("Localization.legacy.message.70abb4a7e5b0c36c"));
             return (null);
         }
 

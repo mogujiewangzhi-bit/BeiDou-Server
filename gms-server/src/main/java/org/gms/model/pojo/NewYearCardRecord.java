@@ -19,6 +19,8 @@
 */
 package org.gms.model.pojo;
 
+import org.gms.util.I18nUtil;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -177,30 +179,30 @@ public class NewYearCardRecord {
                 chr.addNewYearRecord(newYearCardRecord);
             });
         } catch (Exception e) {
-            log.error("loadPlayerNewYearCards error", e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.2a40f18ca69646e0"), e);
         }
     }
 
     public static void printNewYearRecords(Character chr) {
-        chr.dropMessage(5, "New Years: " + chr.getNewYearRecords().size());
+        chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.b2a92b274502c7ac") + chr.getNewYearRecords().size());
 
         for (NewYearCardRecord nyc : chr.getNewYearRecords()) {
             chr.dropMessage(5, "-------------------------------");
 
             chr.dropMessage(5, "Id: " + nyc.id);
 
-            chr.dropMessage(5, "Sender id: " + nyc.senderId);
-            chr.dropMessage(5, "Sender name: " + nyc.senderName);
-            chr.dropMessage(5, "Sender discard: " + nyc.senderDiscardCard);
+            chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.cf5fd9b3e5cb0009") + nyc.senderId);
+            chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.e6cc585951ab695a") + nyc.senderName);
+            chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.d023ff0a770775a1") + nyc.senderDiscardCard);
 
-            chr.dropMessage(5, "Receiver id: " + nyc.receiverId);
-            chr.dropMessage(5, "Receiver name: " + nyc.receiverName);
-            chr.dropMessage(5, "Receiver discard: " + nyc.receiverDiscardCard);
-            chr.dropMessage(5, "Received: " + nyc.receiverReceivedCard);
+            chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.9e29e804ad6b2be9") + nyc.receiverId);
+            chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.77ffaf9d8c9680dc") + nyc.receiverName);
+            chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.a890e73745c92e0b") + nyc.receiverDiscardCard);
+            chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.5db758d6e17ab2df") + nyc.receiverReceivedCard);
 
-            chr.dropMessage(5, "Message: " + nyc.message);
-            chr.dropMessage(5, "Date sent: " + nyc.dateSent);
-            chr.dropMessage(5, "Date recv: " + nyc.dateReceived);
+            chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.6d2d6e90015608f5") + nyc.message);
+            chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.348b4d2d6d591547") + nyc.dateSent);
+            chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.36af60f6ce1d10ec") + nyc.dateReceived);
         }
     }
 
@@ -280,7 +282,7 @@ public class NewYearCardRecord {
                         other.removeNewYearRecord(nyc);
                         other.getMap().broadcastMessage(PacketCreator.onNewYearCardRes(other, nyc, 0xE, 0));
 
-                        other.dropMessage(6, "[New Year] " + chr.getName() + " threw away the New Year card.");
+                        other.dropMessage(6, I18nUtil.getMessage("Localization.legacy.message.1f3e235075bd3c2f") + chr.getName() + I18nUtil.getMessage("Localization.legacy.message.3e5e48de63513438"));
                     }
                 }
             } else {
@@ -298,7 +300,7 @@ public class NewYearCardRecord {
                         other.removeNewYearRecord(nyc);
                         other.getMap().broadcastMessage(PacketCreator.onNewYearCardRes(other, nyc, 0xE, 0));
 
-                        other.dropMessage(6, "[New Year] " + chr.getName() + " threw away the New Year card.");
+                        other.dropMessage(6, I18nUtil.getMessage("Localization.legacy.message.1f3e235075bd3c2f") + chr.getName() + I18nUtil.getMessage("Localization.legacy.message.3e5e48de63513438"));
                     }
                 }
             }

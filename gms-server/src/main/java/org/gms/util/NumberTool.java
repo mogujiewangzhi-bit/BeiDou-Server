@@ -8,7 +8,7 @@ public class NumberTool {
     // Converts 8 bytes to a long.
     public static long BytesToLong(byte[] aToConvert) {
         if (aToConvert.length != Long.BYTES) {
-            throw new IllegalArgumentException(String.format("Size of input should be %d", (Long.SIZE / 8)));
+            throw new IllegalArgumentException(String.format(I18nUtil.getExceptionMessage("Localization.legacy.exception.1de4b0e4892e98ed"), (Long.SIZE / 8)));
         }
 
         long nResult = 0;

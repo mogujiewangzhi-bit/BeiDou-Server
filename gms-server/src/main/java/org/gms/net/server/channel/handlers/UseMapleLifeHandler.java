@@ -19,6 +19,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.net.AbstractPacketHandler;
@@ -35,7 +37,7 @@ public class UseMapleLifeHandler extends AbstractPacketHandler {
         long timeNow = currentServerTime();
 
         if (timeNow - player.getLastUsedCashItem() < 3000) {
-            player.dropMessage(5, "Please wait a moment before trying again.");
+            player.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.dbe0414753c1f11c"));
             c.sendPacket(PacketCreator.sendMapleLifeError(3));
             c.sendPacket(PacketCreator.enableActions());
             return;

@@ -21,6 +21,8 @@
  */
 package org.gms.server.quest.requirements;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.QuestStatus;
 import org.slf4j.Logger;
@@ -70,7 +72,7 @@ public class MobRequirement extends AbstractQuestRequirement {
             try {
                 progress = Integer.parseInt(status.getProgress(mobID));
             } catch (NumberFormatException ex) {
-                log.warn("Mob: {}, quest: {}, chrId: {}, progress: {}", mobID, questID, chr.getId(), status.getProgress(mobID), ex);
+                log.warn(I18nUtil.getLogMessage("Localization.legacy.log.d2bab855295dfdd7"), mobID, questID, chr.getId(), status.getProgress(mobID), ex);
                 return false;
             }
 

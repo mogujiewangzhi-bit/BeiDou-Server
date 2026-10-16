@@ -111,7 +111,7 @@ public enum AutobanFactory {
     public static void initConfig(Map<String, AutobanConfigDO> configs) {
         CONFIG_CACHE.clear();
         CONFIG_CACHE.putAll(configs);
-        log.info("Loaded {} autoban configs", configs.size());
+        log.info(I18nUtil.getLogMessage("Localization.legacy.log.db48677ad9e93e80"), configs.size());
     }
 
     /**
@@ -175,7 +175,7 @@ public enum AutobanFactory {
         }
         if (GameConfig.getServerBoolean("use_auto_ban_log")) {
             final String chrName = chr != null ? Character.makeMapleReadable(chr.getName()) : "";
-            log.info("Autoban alert - chr {} caused {}-{}", chrName, this.name(), reason);
+            log.info(I18nUtil.getLogMessage("Localization.legacy.log.5a048c8cbd65ab3e"), chrName, this.name(), reason);
         }
     }
 

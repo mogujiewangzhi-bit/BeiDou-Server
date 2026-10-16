@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.gms.server.maps;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.constants.game.GameConstants;
@@ -154,7 +156,7 @@ public class GenericPortal implements Portal {
                 chr.changeMap(to, pto); //late resolving makes this harder but prevents us from loading the whole world at once
                 changed = true;
             } else {
-                chr.dropMessage(5, "You cannot enter this map with the chalkboard opened.");
+                chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.4f8028438209bd16"));
             }
         }
         if (!changed) {

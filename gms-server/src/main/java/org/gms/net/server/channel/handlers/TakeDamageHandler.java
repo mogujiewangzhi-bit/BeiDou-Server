@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.BuffStat;
 import org.gms.client.Character;
 import org.gms.client.Client;
@@ -146,7 +148,7 @@ public final class TakeDamageHandler extends AbstractPacketHandler {
                 }
             } catch (ClassCastException e) {
                 //this happens due to mob on last map damaging player just before changing maps
-                log.warn("Attack is not a mob-type, rather is a {} entity", map.getMapObject(oid).getClass().getSimpleName(), e);
+                log.warn(I18nUtil.getLogMessage("Localization.legacy.log.07655f3f8eb1a246"), map.getMapObject(oid).getClass().getSimpleName(), e);
                 return;
             }
 

@@ -21,6 +21,8 @@
  */
 package org.gms.net;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.constants.net.ServerConstants;
 import org.gms.net.netty.LoginServer;
 import org.gms.net.opcodes.Opcode;
@@ -83,7 +85,7 @@ public final class PacketProcessor {
 
     public static PacketProcessor getChannelServerProcessor(int world, int channel) {
         if (channelDeps == null) {
-            throw new IllegalStateException("Unable to get channel server processor - dependencies are not registered");
+            throw new IllegalStateException(I18nUtil.getExceptionMessage("Localization.legacy.exception.283fdf74e877bdf6"));
         }
 
         return getProcessor(world, channel);
@@ -101,7 +103,7 @@ public final class PacketProcessor {
         try {
             handlers[code.getValue()] = handler;
         } catch (ArrayIndexOutOfBoundsException e) {
-            log.error("Error registering handler {}", code.getName(), e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.3ffd38af614d95c9"), code.getName(), e);
         }
     }
 

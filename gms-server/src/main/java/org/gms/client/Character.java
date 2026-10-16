@@ -48,6 +48,10 @@ import org.gms.constants.string.ExtendType;
 import org.gms.dao.entity.*;
 import org.gms.exception.NotEnabledException;
 import org.gms.manager.ServerManager;
+import org.gms.service.AdminRewardReceipt;
+import org.gms.server.superchar.SuperCharacterPlan;
+import org.gms.server.superchar.SuperCharacterSupplies;
+import java.util.function.Supplier;
 import org.gms.model.dto.InventorySearchReqDTO;
 import org.gms.model.dto.InventorySearchRtnDTO;
 import org.gms.model.pojo.NewYearCardRecord;
@@ -104,13 +108,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.IntPredicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static java.util.concurrent.TimeUnit.*;
 
 public class Character extends AbstractCharacterObject {
+    private volatile boolean superCharacterReloadRequired;
     private static final Logger log = LoggerFactory.getLogger(Character.class);
 
     @Getter
@@ -2439,7 +2443,7 @@ public class Character extends AbstractCharacterObject {
         try {
             Server.getInstance().disbandGuild(guildId);
         } catch (Exception e) {
-            log.error(I18nUtil.getLogMessage("Character.disbandGuild.error1"), id, name, guildId, e);
+            e.printStackTrace();
         }
     }
 
@@ -2978,6 +2982,22 @@ public class Character extends AbstractCharacterObject {
         sendPacket(PacketCreator.getShowExpGain((int) gain, equip, party, inChat, white));
     }
 
+    private boolean offlineGrantInitialization;
+
+    public void beginOfflineGrantInitialization() {
+        offlineGrantInitialization = true;
+    }
+
+    public void endOfflineGrantInitialization() {
+        offlineGrantInitialization = false;
+    }
+
+    public boolean gainOfflineGrantExp(int gain) {
+        if (!offlineGrantInitialization || gain <= 0 || level >= getMaxLevel() || !allowExpGain) return false;
+        gainExpInternal(gain, 0, 0, false, false, true);
+        return true;
+    }
+
     private synchronized void gainExpInternal(long gain, int equip, int party, boolean show, boolean inChat, boolean white) {   // need of method synchonization here detected thanks to MedicOP
         long total = Math.max(gain + equip + party, -exp.get());
 
@@ -2997,8 +3017,8 @@ public class Character extends AbstractCharacterObject {
             while (exp.get() >= ExpTable.getExpNeededForLevel(level)) {
                 levelUp(true);
 
-                String msg = I18nUtil.getMessage("Character.levelUp.globalNotice", getName(), getMap().getMapName(), getLevel());
-                if (GameConfig.getServerBoolean("use_announce_global_level_up") && !isGM()) {
+                if (!offlineGrantInitialization && GameConfig.getServerBoolean("use_announce_global_level_up") && !isGM()) {
+                    String msg = I18nUtil.getMessage("Character.levelUp.globalNotice", getName(), getMap().getMapName(), getLevel());
                     for (Character player : getWorldServer().getPlayerStorage().getAllCharacters()) {
                         // 如果玩家在商城，将会以弹窗的形式发送，一堆弹窗会把玩家逼疯！
                         if (player.getCashShop().isOpened()) {
@@ -3021,7 +3041,7 @@ public class Character extends AbstractCharacterObject {
             } else {
                 lastExpGainTime = System.currentTimeMillis();
 
-                if (GameConfig.getServerBoolean("use_exp_gain_log")) {
+                if (!offlineGrantInitialization && GameConfig.getServerBoolean("use_exp_gain_log")) {
                     ExpLogRecord expLogRecord = new ExpLogger.ExpLogRecord(
                             getWorldServer().getExpRate(),
                             expCoupon,
@@ -3115,55 +3135,6 @@ public class Character extends AbstractCharacterObject {
         } else {
             enableActions();
         }
-    }
-
-    /**
-     * 将金币扣除与调用方的数据库事务绑定。
-     * 角色保存与其他金币变更在事务完成前都会等待，
-     * 只有持久化成功后才发布新的内存余额。
-     *
-     * @param cost        需要扣除的正整数金币
-     * @param persistence 接收扣费后余额，并在同一事务中持久化业务与金币
-     * @return 事务和内存扣费是否均成功
-     */
-    public synchronized boolean spendMesoTransactionally(int cost, IntPredicate persistence) {
-        if (cost <= 0) {
-            return false;
-        }
-
-        int balanceAfter;
-        petLock.lock();
-        try {
-            int currentBalance = meso.get();
-            if (currentBalance < cost) {
-                return false;
-            }
-
-            balanceAfter = currentBalance - cost;
-            boolean persisted;
-            try {
-                persisted = persistence.test(balanceAfter);
-            } catch (RuntimeException e) {
-                log.error(I18nUtil.getLogMessage("Character.spendMesoTransactionally.error1"),
-                        id, cost, e);
-                return false;
-            }
-            if (!persisted) {
-                return false;
-            }
-            meso.set(balanceAfter);
-        } finally {
-            petLock.unlock();
-        }
-
-        try {
-            updateSingleStat(Stat.MESO, balanceAfter, false);
-            sendPacket(PacketCreator.getShowMesoGain(-cost, true));
-        } catch (RuntimeException e) {
-            log.error(I18nUtil.getLogMessage("Character.spendMesoTransactionally.error2"),
-                    id, cost, e);
-        }
-        return true;
     }
 
     public void genericGuildMessage(int code) {
@@ -3436,13 +3407,13 @@ public class Character extends AbstractCharacterObject {
         chrLock.lock();
         try {
             log.debug("-------------------");
-            log.debug("CACHED BUFF COUNT: {}", buffEffectsCount.entrySet().stream()
+            log.debug(I18nUtil.getLogMessage("Localization.legacy.log.c86df347dfd627d3"), buffEffectsCount.entrySet().stream()
                     .map(entry -> entry.getKey() + ": " + entry.getValue())
                     .collect(Collectors.joining(", "))
             );
 
             log.debug("-------------------");
-            log.debug("CACHED BUFFS: {}", buffEffects.entrySet().stream()
+            log.debug(I18nUtil.getLogMessage("Localization.legacy.log.1fbec4985f9eb75e"), buffEffects.entrySet().stream()
                     .map(entry -> entry.getKey() + ": (" + entry.getValue().entrySet().stream()
                             .map(innerEntry -> innerEntry.getKey().name() + innerEntry.getValue().value)
                             .collect(Collectors.joining(", ")) + ")")
@@ -3450,7 +3421,7 @@ public class Character extends AbstractCharacterObject {
             );
 
             log.debug("-------------------");
-            log.debug("IN ACTION: {}", effects.entrySet().stream()
+            log.debug(I18nUtil.getLogMessage("Localization.legacy.log.2ecef2547a29aa97"), effects.entrySet().stream()
                     .map(entry -> entry.getKey().name() + " -> " + ItemInformationProvider.getInstance().getName(entry.getValue().effect.getSourceId()))
                     .collect(Collectors.joining(", "))
             );
@@ -3462,8 +3433,6 @@ public class Character extends AbstractCharacterObject {
 
     public void cancelAllBuffs(boolean softcancel) {
         if (softcancel) {
-            // cancelEffectFromBuffStat 会重入 cancelEffect，外层也须按 prtLock -> effLock -> chrLock 取锁。
-            prtLock.lock();
             effLock.lock();
             chrLock.lock();
             try {
@@ -3479,7 +3448,6 @@ public class Character extends AbstractCharacterObject {
             } finally {
                 chrLock.unlock();
                 effLock.unlock();
-                prtLock.unlock();
             }
         } else {
             Map<StatEffect, Long> mseBuffs = new LinkedHashMap<>();
@@ -3659,38 +3627,31 @@ public class Character extends AbstractCharacterObject {
     }
 
     public void updateActiveEffects() {
-        // isUpdatingEffect -> StatEffect.isActive 会读取同图队友，必须与 cancelEffect、
-        // updateLocalStats 保持 prtLock -> effLock 顺序，避免切图与技能处理互相等待。
-        prtLock.lock();
+        effLock.lock();     // thanks davidlafriniere, maple006, RedHat for pointing a deadlock occurring here
         try {
-            effLock.lock();
-            try {
-                Set<BuffStat> updatedBuffs = new LinkedHashSet<>();
-                Set<StatEffect> activeEffects = new LinkedHashSet<>();
+            Set<BuffStat> updatedBuffs = new LinkedHashSet<>();
+            Set<StatEffect> activeEffects = new LinkedHashSet<>();
 
-                for (BuffStatValueHolder mse : effects.values()) {
-                    activeEffects.add(mse.effect);
-                }
+            for (BuffStatValueHolder mse : effects.values()) {
+                activeEffects.add(mse.effect);
+            }
 
-                for (Map<BuffStat, BuffStatValueHolder> buff : buffEffects.values()) {
-                    StatEffect mse = getEffectFromBuffSource(buff);
-                    if (isUpdatingEffect(activeEffects, mse)) {
-                        for (Pair<BuffStat, Integer> p : mse.getStatups()) {
-                            updatedBuffs.add(p.getLeft());
-                        }
+            for (Map<BuffStat, BuffStatValueHolder> buff : buffEffects.values()) {
+                StatEffect mse = getEffectFromBuffSource(buff);
+                if (isUpdatingEffect(activeEffects, mse)) {
+                    for (Pair<BuffStat, Integer> p : mse.getStatups()) {
+                        updatedBuffs.add(p.getLeft());
                     }
                 }
-
-                for (BuffStat mbs : updatedBuffs) {
-                    effects.remove(mbs);
-                }
-
-                updateEffects(updatedBuffs);
-            } finally {
-                effLock.unlock();
             }
+
+            for (BuffStat mbs : updatedBuffs) {
+                effects.remove(mbs);
+            }
+
+            updateEffects(updatedBuffs);
         } finally {
-            prtLock.unlock();
+            effLock.unlock();
         }
     }
 
@@ -3777,8 +3738,6 @@ public class Character extends AbstractCharacterObject {
     }
 
     public void cancelBuffStats(BuffStat stat) {
-        // dropBuffStats 选择备用效果时会读取同图队友，与 cancelEffect 保持相同取锁顺序。
-        prtLock.lock();
         effLock.lock();
         try {
             List<Pair<Integer, BuffStatValueHolder>> cancelList = new LinkedList<>();
@@ -3803,7 +3762,6 @@ public class Character extends AbstractCharacterObject {
             }
         } finally {
             effLock.unlock();
-            prtLock.unlock();
         }
 
         cancelPlayerBuffs(Collections.singletonList(stat));
@@ -4988,7 +4946,11 @@ public class Character extends AbstractCharacterObject {
     }
 
     public int getMaxClassLevel() {
-        return isCygnus() ? 120 : 200;
+        return getMaxClassLevel(job);
+    }
+
+    public static int getMaxClassLevel(Job job) {
+        return GameConstants.isCygnus(job.getId()) ? 120 : 200;
     }
 
     public int getMaxLevel() {
@@ -5184,8 +5146,16 @@ public class Character extends AbstractCharacterObject {
     }
 
     public void setGMLevel(int level) {
+        boolean wasGm = isGM();
         this.gmLevel = Math.max(Math.min(level, 6), 0);
         whiteChat = gmLevel >= 4;   // thanks ozanrijen for suggesting default white chat
+        if (wasGm && !isGM() && client != null && map != null) {
+            for (PlayerBuffValueHolder holder : getAllBuffs()) {
+                if (holder.effect.isBeiDouBlessingSource()) {
+                    cancelEffect(holder.effect, false, -1);
+                }
+            }
+        }
     }
 
     public void closePartySearchInteractions() {
@@ -5261,12 +5231,6 @@ public class Character extends AbstractCharacterObject {
             return;
         }
 
-        if (merchant.isClosedForBan()) {
-            merchant.closeForBan();
-            this.setHiredMerchant(null);
-            return;
-        }
-
         if (merchant.isOwner(this) && !merchant.isPublished()) {
             merchant.closeOwnerMerchant(this);
             return;
@@ -5281,10 +5245,7 @@ public class Character extends AbstractCharacterObject {
             }
         } else {
             if (merchant.isOwner(this)) {
-                if (!merchant.setOpen(true)) {
-                    merchant.closeForBan();
-                    return;
-                }
+                merchant.setOpen(true);
             } else {
                 merchant.removeVisitor(this);
             }
@@ -5642,9 +5603,8 @@ public class Character extends AbstractCharacterObject {
             sendPacket(PacketCreator.giveBuff(energyBar, 0, stat));
             sendPacket(PacketCreator.showOwnBuffEffect(energycharge.getId(), 2));
             getMap().broadcastPacket(this, PacketCreator.showBuffEffect(id, energycharge.getId(), 2));
-            // 海盗状态封包的时长单位为秒，StatEffect 内部使用毫秒。
             getMap().broadcastPacket(this, PacketCreator.giveForeignPirateBuff(id, energycharge.getId(),
-                    ceffect.getDuration() / 1000, stat));
+                    ceffect.getDuration(), stat));
         }
         if (energyBar >= 10000 && energyBar < 11000) {
             energyBar = 15000;
@@ -5994,7 +5954,7 @@ public class Character extends AbstractCharacterObject {
 
             int maxClassLevel = getMaxClassLevel();
             if (level == maxClassLevel) {
-                if (!this.isGM()) {
+                if (!this.isGM() && !offlineGrantInitialization) {
                     if (GameConfig.getServerBoolean("playernpc_auto_deploy")) {
                         ThreadManager.getInstance().newTask(() -> PlayerNPC.spawnPlayerNPC(GameConstants.getHallOfFameMapid(job), Character.this));
                     }
@@ -6027,12 +5987,22 @@ public class Character extends AbstractCharacterObject {
             statup.add(new Pair<>(Stat.STR, attrStr));
             statup.add(new Pair<>(Stat.DEX, attrDex));
 
-            sendPacket(PacketCreator.updatePlayerStats(statup, true, this));
+            if (!offlineGrantInitialization) sendPacket(PacketCreator.updatePlayerStats(statup, true, this));
         } finally {
             statWlock.unlock();
             effLock.unlock();
         }
 
+        // Login sends the final character state once all queued rewards are saved.
+        if (offlineGrantInitialization) {
+            if (level % 20 == 0 && GameConfig.getServerBoolean("use_add_slots_by_level") && !isGM()) {
+                for (byte i = 1; i < 5; i++) {
+                    Inventory inv = getInventory(InventoryType.getByType(i));
+                    inv.setSlotLimit((byte) Math.min(96, inv.getSlotLimit() + 4));
+                }
+            }
+            return;
+        }
         getMap().broadcastMessage(this, PacketCreator.showForeignEffect(getId(), 0), false);
         setMPC(new PartyCharacter(this));
         silentPartyUpdate();
@@ -6830,7 +6800,7 @@ public class Character extends AbstractCharacterObject {
                 }
             }
         } catch (Exception e) {
-            log.warn("Character.mobKilled. chrId {}, last quest processed: {}", this.id, lastQuestProcessed, e);
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.a75f348563829cc2"), this.id, lastQuestProcessed, e);
         }
     }
 
@@ -7344,7 +7314,7 @@ public class Character extends AbstractCharacterObject {
             if (tap >= 0) {
                 updateStrDexIntLukSp(tstr, tdex, tint, tluk, tap, tsp, GameConstants.getSkillBook(job.getId()));
             } else {
-                log.warn("Chr {} tried to have its stats reset without enough AP available", getName());
+                log.warn(I18nUtil.getLogMessage("Localization.legacy.log.72613dca085d0573"), getName());
             }
         } finally {
             statWlock.unlock();
@@ -7518,7 +7488,7 @@ public class Character extends AbstractCharacterObject {
 
                     int updateRows = ps.executeUpdate();
                     if (updateRows < 1) {
-                        log.error("Error trying to insert chr {}", name);
+                        log.error(I18nUtil.getLogMessage("Localization.legacy.log.9b0c6e19a4a2ce85"), name);
                         return false;
                     }
 
@@ -7526,7 +7496,7 @@ public class Character extends AbstractCharacterObject {
                         if (rs.next()) {
                             this.id = rs.getInt(1);
                         } else {
-                            log.error("Inserting chr {} failed", name);
+                            log.error(I18nUtil.getLogMessage("Localization.legacy.log.6e58d44124c0503b"), name);
                             return false;
                         }
                     }
@@ -7606,7 +7576,7 @@ public class Character extends AbstractCharacterObject {
                 con.setAutoCommit(true);
             }
         } catch (Throwable t) {
-            log.error("Error creating chr {}, level: {}, job: {}", name, level, job.getId(), t);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.a17b557506803813"), name, level, job.getId(), t);
         }
 
         return false;
@@ -7629,20 +7599,27 @@ public class Character extends AbstractCharacterObject {
 
     //ItemFactory saveItems and monsterbook.saveCards are the most time consuming here.
     public synchronized void saveCharToDB(boolean notAutosave) {
+        saveCharToDB(notAutosave, null, List.of());
+    }
+
+    public synchronized boolean saveCharToDB(boolean notAutosave, Connection rewardConnection, List<Long> rewardIds) {
+        if (superCharacterReloadRequired) return false;
         if (!loggedIn) {
             // 如果已经退出登录，取消自动保存当前角色任务
             CharacterSaveService service = getCharacterSaveService();
             service.unregisterSaveCharacter(this.getId());
-            return;
+            return false;
         }
 
         log.info(I18nUtil.getLogMessage(notAutosave ? "Character.saveCharToDB.info1" : "Character.saveCharToDB.info2"), name);
 
-        Server.getInstance().updateCharacterEntry(this);
+        if (rewardConnection == null) Server.getInstance().updateCharacterEntry(this);
 
-        try (Connection con = DatabaseConnection.getConnection()) {
+        Connection con = rewardConnection;
+        try {
+            if (con == null) con = DatabaseConnection.getConnection();
             con.setAutoCommit(false);
-            con.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
+            if (rewardConnection == null) con.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
 
             try {
                 try (PreparedStatement ps = con.prepareStatement("UPDATE characters SET level = ?, fame = ?, str = ?, dex = ?, luk = ?, `int` = ?, exp = ?, gachaexp = ?, hp = ?, mp = ?, maxhp = ?, maxmp = ?, sp = ?, ap = ?, gm = ?, skincolor = ?, gender = ?, job = ?, hair = ?, face = ?, map = ?, meso = ?, hpMpUsed = ?, spawnpoint = ?, party = ?, buddyCapacity = ?, messengerid = ?, messengerposition = ?, mountlevel = ?, mountexp = ?, mounttiredness= ?, equipslots = ?, useslots = ?, setupslots = ?, etcslots = ?,  monsterbookcover = ?, vanquisherStage = ?, dojoPoints = ?, lastDojoStage = ?, finishedDojoTutorial = ?, vanquisherKills = ?, matchcardwins = ?, matchcardlosses = ?, matchcardties = ?, omokwins = ?, omoklosses = ?, omokties = ?, dataString = ?, fquest = ?, jailexpire = ?, partnerId = ?, marriageItemId = ?, lastExpGainTime = ?, ariantPoints = ?, partySearch = ? WHERE id = ?", Statement.RETURN_GENERATED_KEYS)) {
@@ -7763,7 +7740,7 @@ public class Character extends AbstractCharacterObject {
 
                     int updateRows = ps.executeUpdate();
                     if (updateRows < 1) {
-                        throw new RuntimeException("Character not in database (" + id + ")");
+                        throw new RuntimeException(I18nUtil.getExceptionMessage("Localization.legacy.exception.709b7adc9894a92b") + id + ")");
                     }
                 }
 
@@ -7780,7 +7757,7 @@ public class Character extends AbstractCharacterObject {
                 }
 
                 for (Pet pet : petList) {
-                    pet.saveToDb();
+                    pet.saveToDb(con);
                 }
 
                 // Key config
@@ -7957,7 +7934,7 @@ public class Character extends AbstractCharacterObject {
                             rs.next();
                             for (int mob : qs.getProgress().keySet()) {
                                 psProgress.setInt(1, id);
-                                psProgress.setLong(2, rs.getLong(1));
+                                psProgress.setInt(2, rs.getInt(1));
                                 psProgress.setInt(3, mob);
                                 psProgress.setString(4, qs.getProgress(mob));
                                 psProgress.addBatch();
@@ -7966,7 +7943,7 @@ public class Character extends AbstractCharacterObject {
 
                             for (int i = 0; i < qs.getMedalMaps().size(); i++) {
                                 psMedal.setInt(1, id);
-                                psMedal.setLong(2, rs.getLong(1));
+                                psMedal.setInt(2, rs.getInt(1));
                                 psMedal.setInt(3, qs.getMedalMaps().get(i));
                                 psMedal.addBatch();
                             }
@@ -8004,27 +7981,38 @@ public class Character extends AbstractCharacterObject {
                     usedStorage = false;
                 }
 
-                con.commit();
+                AdminRewardReceipt.markDelivered(con, id, rewardIds);
+                if (rewardConnection == null) con.commit();
             } catch (Exception e) {
                 con.rollback();
                 throw e;
             } finally {
-                con.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
-                con.setAutoCommit(true);
+                if (rewardConnection == null) {
+                    con.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
+                    con.setAutoCommit(true);
+                }
             }
+            return true;
         } catch (Exception e) {
-            log.error("Error saving chr {}, level: {}, job: {}", name, level, job.getId(), e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.6f81c61eab14455c"), name, level, job.getId(), e);
+            return false;
+        } finally {
+            if (rewardConnection == null && con != null) {
+                try { con.close(); } catch (SQLException e) {
+                    log.error(I18nUtil.getLogMessage("Grant.closeFailed"), e);
+                }
+            }
         }
     }
 
     public void sendPolice(int greason, String reason, int duration) {
-        sendPacket(PacketCreator.sendPolice(String.format("You have been blocked by the#b %s Police for %s.#k", "Cosmic", reason)));
+        sendPacket(PacketCreator.sendPolice(String.format(I18nUtil.getMessage("Localization.legacy.message.c762fe97892faecd"), "Cosmic", reason)));
         this.banned = true;
         TimerManager.getInstance().schedule(() -> client.disconnect(false, false), duration);
     }
 
     public void sendPolice(String text) {
-        final String message = getName() + " received this - " + text;
+        final String message = getName() + I18nUtil.getMessage("Localization.legacy.message.6f0808b7942e6dc2") + text;
         if (Server.getInstance().isGmOnline(this.getWorld())) { //Alert and log if a GM is online
             Server.getInstance().broadcastGMMessage(this.getWorld(), PacketCreator.sendYellowTip(message));
         } else { //Auto DC and log if no GM is online
@@ -8167,6 +8155,7 @@ public class Character extends AbstractCharacterObject {
     }
 
     public void hpChangeAction(int oldHp) {
+        if (offlineGrantInitialization) return;
         boolean playerDied = false;
         if (hp <= 0) {
             if (oldHp > hp) {
@@ -8385,13 +8374,115 @@ public class Character extends AbstractCharacterObject {
         }
     }
 
+    /** Serializes the operation with ordinary saves and existing stat/inventory operations. */
+    public synchronized <T> T withSuperCharacterState(Supplier<T> operation) {
+        if (gmLevel != 6 || superCharacterReloadRequired) {
+            throw new IllegalArgumentException("permission");
+        }
+        if (!client.tryLockClient()) throw new IllegalArgumentException("busy");
+        List<Lock> stateLocks = new ArrayList<>();
+        List<Inventory> locked = new ArrayList<>();
+        try {
+            // Fail fast: legacy operations use several lock orders; never wait while holding a subset.
+            for (Lock lock : List.of(effLock, chrLock, statWlock)) {
+                if (!lock.tryLock()) throw new IllegalArgumentException("busy");
+                stateLocks.add(lock);
+            }
+            for (Inventory iv : inventory) {
+                if (iv != null) {
+                    if (!iv.tryLockInventory()) throw new IllegalArgumentException("busy");
+                    locked.add(iv);
+                }
+            }
+            return operation.get();
+        } finally {
+            Collections.reverse(locked);
+            for (Inventory iv : locked) iv.unlockInventory();
+            Collections.reverse(stateLocks);
+            for (Lock lock : stateLocks) lock.unlock();
+            client.unlockClient();
+        }
+    }
+
+    /** Call only after the database transaction is durably committed, under the operation locks. */
+    public void applyCommittedSuperCharacter(SuperCharacterPlan plan) {
+        if (!Thread.holdsLock(this) || gmLevel != 6) throw new IllegalStateException("permission");
+        Map<Skill, SkillEntry> oldSkills = new LinkedHashMap<>(skills);
+        job = Job.getById(plan.options().career().job());
+        level = plan.level();
+        exp.set(0);
+        attrStr = plan.attributes().get("str");
+        attrDex = plan.attributes().get("dex");
+        attrInt = plan.attributes().get("int");
+        attrLuk = plan.attributes().get("luk");
+        maxHp = maxMp = hp = mp = 30000;
+        remainingAp = 0;
+        Arrays.fill(remainingSp, 0);
+        skills.clear();
+        skills.putAll(plan.skills());
+        for (int type = 1; type <= 5; type++) inventory[type].setSlotLimit(getMaxInventorySlots());
+        for (Equip equip : plan.added()) inventory[1].addItemFromDB(equip);
+        List<ModifyInventory> supplyChanges = SuperCharacterSupplies.apply(this, plan.supplies());
+        // Database state is already final; no changeSkillLevel() calls that save on another connection.
+        cancelAllBuffs(false);
+        checkBerserk(isHidden());
+        recalcLocalStats();
+        hp = maxHp;
+        mp = maxMp;
+        List<Pair<Stat, Integer>> stats = new ArrayList<>();
+        stats.add(new Pair<>(Stat.JOB, job.getId()));
+        stats.add(new Pair<>(Stat.LEVEL, level));
+        stats.add(new Pair<>(Stat.EXP, 0));
+        stats.add(new Pair<>(Stat.STR, attrStr));
+        stats.add(new Pair<>(Stat.DEX, attrDex));
+        stats.add(new Pair<>(Stat.INT, attrInt));
+        stats.add(new Pair<>(Stat.LUK, attrLuk));
+        stats.add(new Pair<>(Stat.HP, hp));
+        stats.add(new Pair<>(Stat.MP, mp));
+        stats.add(new Pair<>(Stat.MAXHP, clientMaxHp));
+        stats.add(new Pair<>(Stat.MAXMP, clientMaxMp));
+        stats.add(new Pair<>(Stat.AVAILABLEAP, 0));
+        stats.add(new Pair<>(Stat.AVAILABLESP, 0));
+        sendPacket(PacketCreator.updatePlayerStats(stats, true, this));
+        for (Skill skill : oldSkills.keySet()) {
+            if (!skills.containsKey(skill)) sendPacket(PacketCreator.updateSkill(skill.getId(), (byte)-1, 0, -1));
+        }
+        for (var entry : skills.entrySet()) {
+            SkillEntry value = entry.getValue();
+            if (!GameConstants.isHiddenSkills(entry.getKey().getId())) {
+                sendPacket(PacketCreator.updateSkill(entry.getKey().getId(), value.skillLevel, value.masterLevel, value.expiration));
+            }
+        }
+        for (int type = 1; type <= 5; type++) sendPacket(PacketCreator.updateInventorySlotLimit(type, getMaxInventorySlots()));
+        if (!plan.added().isEmpty()) {
+            List<ModifyInventory> changes = plan.added().stream().map(item -> new ModifyInventory(0, item)).toList();
+            sendPacket(PacketCreator.modifyInventory(true, changes));
+        }
+        if (!supplyChanges.isEmpty()) sendPacket(PacketCreator.modifyInventory(true, supplyChanges));
+        equipChanged();
+        Server.getInstance().updateCharacterEntry(this);
+    }
+
+    /** Avoid an old/partially synchronized object overwriting committed data after a connection fault. */
+    public void requireSuperCharacterReload() {
+        superCharacterReloadRequired = true;
+        try {
+            client.disconnect(false, false);
+        } catch (Exception ignored) {
+            // The save guard must remain active even when transport shutdown itself fails.
+        }
+    }
+
+    public static int getMaxInventorySlots() {
+        return 96;
+    }
     public byte getSlots(int type) {
         return type == InventoryType.CASH.getType() ? 96 : inventory[type].getSlotLimit();
     }
 
     public boolean canGainSlots(int type, int slots) {
         slots += inventory[type].getSlotLimit();
-        return slots <= 96;
+        return slots <= getMaxInventorySlots();
     }
 
     public boolean gainSlots(int type, int slots) {
@@ -8594,7 +8685,7 @@ public class Character extends AbstractCharacterObject {
                 }
             }
 
-            dropMessage(6, "EQUIPMENT MERGE operation results:");
+            dropMessage(6, I18nUtil.getMessage("Localization.legacy.message.dbff2af0befed4c6"));
             for (Entry<Equip, List<Pair<StatUpgrade, Integer>>> eqpUpg : equipUpgrades.entrySet()) {
                 List<Pair<StatUpgrade, Integer>> eqpStatups = eqpUpg.getValue();
                 if (!eqpStatups.isEmpty()) {
@@ -9067,11 +9158,12 @@ public class Character extends AbstractCharacterObject {
     }
 
     private void updateSingleStat(Stat stat, int newval, boolean itemReaction) {
+        if (offlineGrantInitialization) return;
         sendPacket(PacketCreator.updatePlayerStats(Collections.singletonList(new Pair<>(stat, Integer.valueOf(newval))), itemReaction, this));
     }
 
     public void sendPacket(Packet packet) {
-        if (client != null) {
+        if (client != null && !offlineGrantInitialization) {
             client.sendPacket(packet);
         }
     }
@@ -9392,7 +9484,7 @@ public class Character extends AbstractCharacterObject {
         sendPacket(PacketCreator.sendPolice(I18nUtil.getMessage("Character.autoBan.message1")));  //发送自动封禁提示
         TimerManager.getInstance().schedule(() -> client.disconnect(false, false), 5000);
 
-        Server.getInstance().broadcastGMMessage(this.getWorld(), PacketCreator.serverNotice(6, Character.makeMapleReadable(this.name) + " was autobanned for " + reason));
+        Server.getInstance().broadcastGMMessage(this.getWorld(), PacketCreator.serverNotice(6, Character.makeMapleReadable(this.name) + I18nUtil.getMessage("Localization.legacy.message.36303a800e65638b") + reason));
     }
 
     public void block(int reason, int days, String desc) {
@@ -9568,7 +9660,7 @@ public class Character extends AbstractCharacterObject {
         }
 
         if (!showMsg.isEmpty()) {
-            this.showHint("#ePLAYER EQUIPMENTS:#n\r\n\r\n" + showMsg, 400);
+            this.showHint(I18nUtil.getMessage("Localization.legacy.message.83e75e27de459dd0") + showMsg, 400);
         }
     }
 

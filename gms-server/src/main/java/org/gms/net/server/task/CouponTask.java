@@ -19,6 +19,8 @@
 */
 package org.gms.net.server.task;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.net.server.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +38,7 @@ public class CouponTask implements Runnable {
             Server.getInstance().updateActiveCoupons();
             Server.getInstance().commitActiveCoupons();
         } catch (Exception e) {
-            log.error("Error updating coupon effects", e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.8fba2382cacdbe11"), e);
         }
     }
 }

@@ -23,6 +23,8 @@
 */
 package org.gms.client.processor.stat;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.Skill;
@@ -49,7 +51,7 @@ public class AssignSPProcessor {
         Character player = c.getPlayer();
         if ((!GameConstants.isPqSkillMap(player.getMapId()) && GameConstants.isPqSkill(skillid)) || (!player.isGM() && GameConstants.isGMSkills(skillid)) || (!GameConstants.isInJobTree(skillid, player.getJob().getId()) && !player.isGM())) {
             AutobanFactory.PACKET_EDIT.alert(player, "tried to packet edit in distributing sp.");
-            log.warn("Chr {} tried to use skill {} without it being in their job.", c.getPlayer().getName(), skillid);
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.f2f1769a0a57f503"), c.getPlayer().getName(), skillid);
 
             c.disconnect(true, false);
             return false;

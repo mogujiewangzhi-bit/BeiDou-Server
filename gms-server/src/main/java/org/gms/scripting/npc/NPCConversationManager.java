@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.gms.scripting.npc;
 
+import org.gms.util.I18nUtil;
+
 import lombok.Getter;
 import org.gms.client.Character;
 import org.gms.client.*;
@@ -70,7 +72,6 @@ import org.gms.server.partyquest.MonsterCarnival;
 import org.gms.server.partyquest.Pyramid;
 import org.gms.server.partyquest.Pyramid.PyramidMode;
 import org.gms.util.PacketCreator;
-import org.gms.util.I18nUtil;
 
 import java.awt.*;
 import java.sql.SQLException;
@@ -231,7 +232,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             nextLevelContext.clear();
             getClient().sendPacket(PacketCreator.getNPCTalkStyle(npc, text, styles));
         } else {    // thanks Conrad for noticing empty styles crashing players
-            sendOk("Sorry, there are no options of cosmetics available for you here at the moment.");
+            sendOk(I18nUtil.getMessage("Localization.legacy.message.2f74a69d8ac898f0"));
             dispose();
         }
     }
@@ -422,7 +423,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         if (shop != null) {
             shop.sendShop(c);
         } else {    // check for missing shopids thanks to resinate
-            log.warn("Shop ID: {} is missing from database.", id);
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.06acd2b6baba4d67"), id);
             ShopFactory.getInstance().getShop(11000).sendShop(c);
         }
     }
@@ -465,37 +466,26 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     //     }
     // }
 
-    public boolean upgradeAlliance(int cost, int maxCapacity) {
-        Guild guild = c.getPlayer().getGuild();
-        if (guild == null) {
-            return false;
-        }
-        Alliance alliance = Server.getInstance().getAlliance(guild.getAllianceId());
-        if (alliance == null || !alliance.purchaseCapacity(c.getPlayer(), cost, maxCapacity)) {
-            return false;
-        }
+    public void upgradeAlliance() {
+        Alliance alliance = Server.getInstance().getAlliance(c.getPlayer().getGuild().getAllianceId());
+        alliance.increaseCapacity(1);
 
-        try {
-            Server.getInstance().allianceMessage(alliance.getId(), GuildPackets.getGuildAlliances(alliance, c.getWorld()), -1, -1);
-            Server.getInstance().allianceMessage(alliance.getId(), GuildPackets.allianceNotice(alliance.getId(), alliance.getNotice()), -1, -1);
-            c.sendPacket(GuildPackets.updateAllianceInfo(alliance, c.getWorld()));
-        } catch (RuntimeException e) {
-            log.error(I18nUtil.getLogMessage("NPCConversationManager.alliance.error1"),
-                    alliance.getId(), e);
-        }
-        return true;
+        Server.getInstance().allianceMessage(alliance.getId(), GuildPackets.getGuildAlliances(alliance, c.getWorld()), -1, -1);
+        Server.getInstance().allianceMessage(alliance.getId(), GuildPackets.allianceNotice(alliance.getId(), alliance.getNotice()), -1, -1);
+
+        c.sendPacket(GuildPackets.updateAllianceInfo(alliance, c.getWorld()));  // thanks Vcoc for finding an alliance update to leader issue
     }
 
-    public boolean disbandAlliance(int allianceId) {
-        return Alliance.disbandAlliance(allianceId);
+    public void disbandAlliance(Client c, int allianceId) {
+        Alliance.disbandAlliance(allianceId);
     }
 
     public boolean canBeUsedAllianceName(String name) {
         return Alliance.canBeUsedAllianceName(name);
     }
 
-    public Alliance createAlliance(String name, int cost) {
-        return Alliance.createAlliance(getParty(), name, cost);
+    public Alliance createAlliance(String name) {
+        return Alliance.createAlliance(getParty(), name);
     }
 
     public int getAllianceCapacity() {
@@ -649,19 +639,19 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
                 return "";
 
             case REACTOR:
-                return "    Obtainable through #rexploring#k (loot boxes).";
+                return I18nUtil.getMessage("Localization.legacy.message.47b8230457e2eef6");
 
             case SCRIPT:
-                return "    Obtainable through #rexploring#k (field interaction).";
+                return I18nUtil.getMessage("Localization.legacy.message.2a3bc69e85894a26");
 
             case QUEST_BOOK:
-                return "    Obtainable through #rquestline#k (collecting book).";
+                return I18nUtil.getMessage("Localization.legacy.message.c37193e5be2c2a25");
 
             case QUEST_REWARD:
-                return "    Obtainable through #rquestline#k (quest reward).";
+                return I18nUtil.getMessage("Localization.legacy.message.21441e1b8e4cbffb");
 
             default:
-                return "    Obtainable through #rquestline#k.";
+                return I18nUtil.getMessage("Localization.legacy.message.0496f5d4069bfcce");
         }
     }
 
@@ -815,7 +805,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             final MapleMap lobbyMap = getPlayer().getMap();
             if (challenger != null) {
                 if (challenger.getParty() == null) {
-                    throw new RuntimeException("No opponent found!");
+                    throw new RuntimeException(I18nUtil.getExceptionMessage("Localization.legacy.exception.59817346fc27aec1"));
                 }
 
                 for (PartyCharacter mpc : challenger.getParty().getMembers()) {
@@ -875,7 +865,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
             final MapleMap lobbyMap = getPlayer().getMap();
             if (challenger != null) {
                 if (challenger.getParty() == null) {
-                    throw new RuntimeException("No opponent found!");
+                    throw new RuntimeException(I18nUtil.getExceptionMessage("Localization.legacy.exception.59817346fc27aec1"));
                 }
 
                 for (PartyCharacter mpc : challenger.getParty().getMembers()) {
@@ -1036,7 +1026,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         Character leader = null;
         MapleMap map = c.getChannelServer().getMapFactory().getMap(980000100 + 100 * field);
         if (map.getAllPlayer().size() != getPlayer().getParty().getMembers().size()) {
-            sendOk("An unexpected error regarding the other party has occurred.");
+            sendOk(I18nUtil.getMessage("Localization.legacy.message.5d20239bfe6cbc4f"));
             return;
         }
         for (MapObject mmo : map.getAllPlayer()) {
@@ -1075,41 +1065,41 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
 
     public String startAriantBattle(ExpeditionType expedType, int mapid) {
         if (!GameConstants.isAriantColiseumLobby(mapid)) {
-            return "You cannot start an Ariant tournament from outside the Battle Arena Entrance.";
+            return I18nUtil.getMessage("Localization.legacy.message.90da06e7bf9a0dc2");
         }
 
         Expedition exped = this.getMap().getChannelServer().getExpedition(expedType);
         if (exped == null) {
-            return "Please register on an expedition before attempting to start an Ariant tournament.";
+            return I18nUtil.getMessage("Localization.legacy.message.70dea32df9c153ae");
         }
 
         List<Character> players = exped.getActiveMembers();
 
         int playersSize = players.size();
         if (!(playersSize >= exped.getMinSize() && playersSize <= exped.getMaxSize())) {
-            return "Make sure there are between #r" + exped.getMinSize() + " ~ " + exped.getMaxSize() + " players#k in this room to start the battle.";
+            return I18nUtil.getMessage("Localization.legacy.message.248703f3d5b036e5") + exped.getMinSize() + " ~ " + exped.getMaxSize() + I18nUtil.getMessage("Localization.legacy.message.34cc7fa4ef2771db");
         }
 
         MapleMap leaderMap = this.getMap();
         for (Character mc : players) {
             if (mc.getMap() != leaderMap) {
-                return "All competing players should be on this area to start the battle.";
+                return I18nUtil.getMessage("Localization.legacy.message.dd26f0d622b0af34");
             }
 
             if (mc.getParty() != null) {
-                return "All competing players must not be on a party to start the battle.";
+                return I18nUtil.getMessage("Localization.legacy.message.e892edce7b113863");
             }
 
             int level = mc.getLevel();
             if (!(level >= expedType.getMinLevel() && level <= expedType.getMaxLevel())) {
-                return "There are competing players outside of the acceptable level range in this room. All players must be on #blevel between 20~30#k to start the battle.";
+                return I18nUtil.getMessage("Localization.legacy.message.b5649cd0960d9ebd");
             }
         }
 
         if (setupAriantBattle(exped, mapid)) {
             return "";
         } else {
-            return "Other players are already competing on the Ariant tournament in this room. Please wait a while until the arena becomes available again.";
+            return I18nUtil.getMessage("Localization.legacy.message.24c8afeaa3f8ccc0");
         }
     }
 

@@ -21,6 +21,8 @@
 */
 package org.gms.server;
 
+import org.gms.util.I18nUtil;
+
 import lombok.Getter;
 import org.gms.net.server.Server;
 import org.slf4j.Logger;
@@ -166,7 +168,7 @@ public class TimerManager implements TimerManagerMBean {
             try {
                 r.run();
             } catch (Throwable t) {
-                log.error("Error in scheduled task", t);
+                log.error(I18nUtil.getLogMessage("Localization.legacy.log.eb9b08b6d7a0ef9e"), t);
             }
         }
     }

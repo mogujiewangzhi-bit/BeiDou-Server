@@ -21,6 +21,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.config.GameConfig;
@@ -160,7 +162,7 @@ public final class MoveLifeHandler extends AbstractMovementPacketHandler {
             p.seek(movementDataStart);
 
             if (GameConfig.getServerBoolean("use_debug_show_life_move")) {
-                log.info("{} rawAct: {}, opt: {}, skillId: {}, skillLv: {}, allowSkill: {}, mobMp: {}",
+                log.info(I18nUtil.getLogMessage("Localization.legacy.log.dfb8ee515a81870a"),
                         isSkill ? "SKILL" : (isAttack ? "ATTCK" : ""), rawActivity, pOption, useSkillId,
                         useSkillLevel, nextMovementCouldBeSkill, mobMp);
             }

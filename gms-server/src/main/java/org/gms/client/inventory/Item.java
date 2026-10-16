@@ -70,6 +70,12 @@ public class Item implements Comparable<Item> {
         this.itemLog = new LinkedList<>();
     }
 
+    public Item(int id, short position, short quantity, Pet pet) {
+        this(id, position, quantity);
+        this.pet = pet;
+        this.petid = pet.getUniqueId();
+    }
+
     public Item copy() {
         Item ret = new Item(id, position, quantity, petid);
         ret.flag = flag;

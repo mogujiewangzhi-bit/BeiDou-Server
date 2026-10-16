@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.autoban.AutobanFactory;
@@ -45,7 +47,7 @@ public final class GeneralChatHandler extends AbstractPacketHandler {
         }
         if (s.length() > Byte.MAX_VALUE && !chr.isGM()) {
             AutobanFactory.PACKET_EDIT.alert(c.getPlayer(), c.getPlayer().getName() + " tried to packet edit in General Chat.");
-            log.warn("Chr {} tried to send text with length of {}", c.getPlayer().getName(), s.length());
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.4b26a649cba03770"), c.getPlayer().getName(), s.length());
             c.disconnect(true, false);
             return;
         }
@@ -55,7 +57,7 @@ public final class GeneralChatHandler extends AbstractPacketHandler {
         } else if (heading != '/') {
             int show = p.readByte();
             if (chr.getMap().isMuted() && !chr.isGM()) {
-                chr.dropMessage(5, "The map you are in is currently muted. Please try again later.");
+                chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.dd2c9fc92f92c209"));
                 return;
             }
 

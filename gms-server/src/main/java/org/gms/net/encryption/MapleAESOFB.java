@@ -21,6 +21,8 @@
 */
 package org.gms.net.encryption;
 
+import org.gms.util.I18nUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.gms.util.HexTool;
@@ -89,7 +91,7 @@ public class MapleAESOFB {
             cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.ENCRYPT_MODE, skey);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
-            log.warn("Cypher initialization error with skey: {}", skey, e);
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.b9f361f49bdca290"), skey, e);
             throw new RuntimeException(e);
         }
 

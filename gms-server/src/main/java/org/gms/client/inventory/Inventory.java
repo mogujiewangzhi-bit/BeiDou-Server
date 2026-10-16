@@ -21,6 +21,8 @@
 */
 package org.gms.client.inventory;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.inventory.manipulator.InventoryManipulator;
@@ -125,7 +127,7 @@ public class Inventory implements Iterable<Item> {
         for (Item item : list()) {
             String itemName = ii.getName(item.getItemId());
             if (itemName == null) {
-                log.error("[CRITICAL] Item {} has no name", item.getItemId());
+                log.error(I18nUtil.getLogMessage("Localization.legacy.log.70f3eb673695510c"), item.getItemId());
                 continue;
             }
 
@@ -650,6 +652,10 @@ public class Inventory implements Iterable<Item> {
 
     public void lockInventory() {
         lock.lock();
+    }
+
+    public boolean tryLockInventory() {
+        return lock.tryLock();
     }
 
     public void unlockInventory() {

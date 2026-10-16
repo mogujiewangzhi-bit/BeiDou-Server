@@ -56,7 +56,7 @@ public class RateLimitUtil {
             }
             return true;
         } catch (Exception e) {
-            log.error("Rate limit check error", e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.18e8050f27565858"), e);
         }
         return false;
     }

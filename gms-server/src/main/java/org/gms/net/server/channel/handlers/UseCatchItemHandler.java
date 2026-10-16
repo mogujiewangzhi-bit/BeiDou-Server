@@ -21,6 +21,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.autoban.AutobanManager;
@@ -98,7 +100,7 @@ public final class UseCatchItemHandler extends AbstractPacketHandler {
                                     chr.getMap().broadcastMessage(PacketCreator.catchMonster(monsterid, itemId, (byte) 0));
                                 }
                             } else {
-                                chr.dropMessage(5, "Make a ETC slot available before using this item.");
+                                chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.3296bfe086534e5a"));
                             }
 
                             abm.spam(10);
@@ -183,7 +185,7 @@ public final class UseCatchItemHandler extends AbstractPacketHandler {
                         InventoryManipulator.removeById(c, InventoryType.USE, itemId, 1, true, true);
                         InventoryManipulator.addById(c, ItemId.FISH_NET_WITH_A_CATCH, (short) 1, "", -1);
                     } else {
-                        chr.message("You cannot use the Fishing Net yet.");
+                        chr.message(I18nUtil.getMessage("Localization.legacy.message.7aa1ad9237056cf8"));
                     }
                     c.sendPacket(PacketCreator.enableActions());
                 }
@@ -211,7 +213,7 @@ public final class UseCatchItemHandler extends AbstractPacketHandler {
                                 c.sendPacket(PacketCreator.catchMessage(0));
                             }
                         } else {
-                            chr.message("You cannot use the Fishing Net yet.");
+                            chr.message(I18nUtil.getMessage("Localization.legacy.message.7aa1ad9237056cf8"));
                         }
                     }
                 }

@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.Skill;
@@ -111,7 +113,7 @@ public final class SummonDamageHandler extends AbstractDealDamageHandler {
                 if (damage > maxDmg) {
                     AutobanFactory.DAMAGE_HACK.alert(c.getPlayer(), "Possible packet editing summon damage exploit.");
                     final String mobName = MonsterInformationProvider.getInstance().getMobNameFromId(target.getId());
-                    log.info("Possible exploit - chr {} used a summon of skillId {} to attack {} with damage {} (max: {})",
+                    log.info(I18nUtil.getLogMessage("Localization.legacy.log.e3c64a9d748c79d6"),
                             c.getPlayer().getName(), summon.getSkill(), mobName, damage, maxDmg);
                     damage = maxDmg;
                 }

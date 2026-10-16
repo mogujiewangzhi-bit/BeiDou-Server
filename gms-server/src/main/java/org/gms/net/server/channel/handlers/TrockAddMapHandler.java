@@ -21,6 +21,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.net.AbstractPacketHandler;
@@ -56,7 +58,7 @@ public final class TrockAddMapHandler extends AbstractPacketHandler {
 
                 c.sendPacket(PacketCreator.trockRefreshMapList(chr, false, vip));
             } else {
-                chr.message("You may not save this map.");
+                chr.message(I18nUtil.getMessage("Localization.legacy.message.5878aaa0dec14ab5"));
             }
         }
     }

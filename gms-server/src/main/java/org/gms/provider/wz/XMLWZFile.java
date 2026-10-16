@@ -21,6 +21,8 @@
 */
 package org.gms.provider.wz;
 
+import org.gms.util.I18nUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.gms.provider.Data;
@@ -59,7 +61,7 @@ public class XMLWZFile implements DataProvider {
                 }
             }
         } catch (IOException e) {
-            log.warn("Can not open file/directory at " + lroot.toAbsolutePath().toString());
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.5272f4be1a1b3465") + lroot.toAbsolutePath().toString());
         }
     }
 
@@ -74,7 +76,7 @@ public class XMLWZFile implements DataProvider {
         try (FileInputStream fis = new FileInputStream(dataFile.toString())) {
             domMapleData = new XMLDomMapleData(fis, imageDataDir.getParent());
         } catch (FileNotFoundException e) {
-            throw new RuntimeException("Datafile " + path + " does not exist in " + root.toAbsolutePath());
+            throw new RuntimeException(I18nUtil.getExceptionMessage("Localization.legacy.exception.8b5888828d6ee728") + path + I18nUtil.getExceptionMessage("Localization.legacy.exception.8a8a5f35946cb589") + root.toAbsolutePath());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

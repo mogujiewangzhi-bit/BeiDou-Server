@@ -19,6 +19,8 @@
 */
 package org.gms.net.server.coordinator.partysearch;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Job;
 import org.gms.config.GameConfig;
@@ -404,7 +406,7 @@ public class PartySearchCoordinator {
                 addQueueLeader(leader);
             } else {
                 if (leader.isLoggedInWorld()) {
-                    leader.dropMessage(5, "Your Party Search token session has finished as your party reached full capacity.");
+                    leader.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.bad877b9c7d56961"));
                 }
                 searchLeaders.remove(leader.getId());
                 searchSettings.remove(leader.getId());
@@ -420,10 +422,10 @@ public class PartySearchCoordinator {
                 if (settings != null) {
                     recycledLeaders.add(new Pair<>(leader, settings));
                     if (GameConfig.getServerBoolean("use_debug") && leader.isGM()) {
-                        leader.dropMessage(5, "Your Party Search token session is now on waiting queue for up to 7 minutes, to get it working right away please stop your Party Search and retry again later.");
+                        leader.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.c69e9e9ffb4fd3ef"));
                     }
                 } else {
-                    leader.dropMessage(5, "Your Party Search token session expired, please stop your Party Search and retry again later.");
+                    leader.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.f7a9de4c3f2511cf"));
                 }
             }
         }

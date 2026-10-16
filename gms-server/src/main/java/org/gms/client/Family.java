@@ -21,6 +21,8 @@
  */
 package org.gms.client;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.net.packet.Packet;
 import org.gms.net.server.Server;
 import org.gms.net.server.world.World;
@@ -116,7 +118,7 @@ public class Family {
                 ps.setInt(2, getLeader().getChrId());
                 ps.executeUpdate();
             } catch (SQLException e) {
-                log.error("Could not save new precepts for family {}", getID(), e);
+                log.error(I18nUtil.getLogMessage("Localization.legacy.log.143f0ec3015401c9"), getID(), e);
             }
         }
     }
@@ -207,7 +209,7 @@ public class Family {
             }
             if (!success) {
                 con.rollback();
-                log.error("Family rep autosave failed for family {}", getID());
+                log.error(I18nUtil.getLogMessage("Localization.legacy.log.7045a40c83d1f2aa"), getID());
             }
             con.setAutoCommit(true);
             //reset repChanged after successful save
@@ -215,7 +217,7 @@ public class Family {
                 entry.savedSuccessfully();
             }
         } catch (SQLException e) {
-            log.error("Could not get connection to DB while saving all members rep", e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.5688d1057f88001c"), e);
         }
     }
 }

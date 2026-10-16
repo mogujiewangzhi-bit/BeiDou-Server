@@ -21,6 +21,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.autoban.AutobanFactory;
@@ -43,12 +45,8 @@ public final class MultiChatHandler extends AbstractPacketHandler {
             return;
         }
 
-        int type = p.readByte(); // 0 for buddies, 1 for parties, 2 for guilds, 3 for alliances
-        // 如果人数超过255仍会溢出，需要和客户端同步修改才能支持更多人数
-        int numRecipients = Byte.toUnsignedInt(p.readByte());
-        if (numRecipients > p.available() / Integer.BYTES) {
-            return;
-        }
+        int type = p.readByte(); // 0 for buddys, 1 for partys
+        int numRecipients = p.readByte();
         int[] recipients = new int[numRecipients];
         for (int i = 0; i < numRecipients; i++) {
             recipients[i] = p.readInt();
@@ -56,7 +54,7 @@ public final class MultiChatHandler extends AbstractPacketHandler {
         String chattext = p.readString();
         if (chattext.length() > Byte.MAX_VALUE && !player.isGM()) {
             AutobanFactory.PACKET_EDIT.alert(c.getPlayer(), c.getPlayer().getName() + " tried to packet edit chats.");
-            log.warn("Chr {} tried to send text with length of {}", c.getPlayer().getName(), chattext.length());
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.4b26a649cba03770"), c.getPlayer().getName(), chattext.length());
             c.disconnect(true, false);
             return;
         }

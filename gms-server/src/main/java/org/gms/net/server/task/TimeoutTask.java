@@ -1,5 +1,7 @@
 package org.gms.net.server.task;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.config.GameConfig;
 import org.gms.net.server.world.World;
@@ -20,7 +22,7 @@ public class TimeoutTask extends BaseTask implements Runnable {
         Collection<Character> chars = wserv.getPlayerStorage().getAllCharacters();
         for (Character chr : chars) {
             if (time - chr.getClient().getLastPacket() > GameConfig.getServerLong("timeout_duration")) {
-                log.info("Chr {} auto-disconnected due to inactivity", chr.getName());
+                log.info(I18nUtil.getLogMessage("Localization.legacy.log.e0ab34ca7923b395"), chr.getName());
                 // 默认1h还没有发过任何包，那就是异常连接，直接断开
                 chr.getClient().timeoutDisconnect();
             }

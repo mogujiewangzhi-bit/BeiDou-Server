@@ -6,6 +6,8 @@
 
 package org.gms.util.packets;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.inventory.Item;
 import org.gms.constants.id.ItemId;
@@ -310,7 +312,7 @@ public class WeddingPackets extends PacketCreator {
         p.writeByte(msg);
         if (msg == 36) {
             p.writeByte(1);
-            p.writeString("You are now engaged.");
+            p.writeString(I18nUtil.getMessage("Localization.legacy.message.ae2a5f5fdd76136a"));
         }
         return p;
     }
@@ -413,7 +415,7 @@ public class WeddingPackets extends PacketCreator {
                 break;
             }
             default: {
-                log.warn("Unknown Wishlist Mode: {}", mode);
+                log.warn(I18nUtil.getLogMessage("Localization.legacy.log.e48b0395bc0d1ad0"), mode);
                 break;
             }
         }

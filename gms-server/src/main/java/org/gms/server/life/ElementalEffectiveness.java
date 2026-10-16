@@ -21,6 +21,8 @@
 */
 package org.gms.server.life;
 
+import org.gms.util.I18nUtil;
+
 public enum ElementalEffectiveness {
     NORMAL, IMMUNE, STRONG, WEAK, NEUTRAL;
 
@@ -35,7 +37,7 @@ public enum ElementalEffectiveness {
             case 4:
                 return NEUTRAL;
             default:
-                throw new IllegalArgumentException("Unkown effectiveness: " + num);
+                throw new IllegalArgumentException(I18nUtil.getExceptionMessage("Localization.legacy.exception.11359eb662693512") + num);
         }
     }
 }

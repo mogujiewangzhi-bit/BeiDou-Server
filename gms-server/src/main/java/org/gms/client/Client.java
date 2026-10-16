@@ -1325,6 +1325,10 @@ public class Client extends ChannelInboundHandlerAdapter {
         lock.lock();
     }
 
+    public boolean tryLockClient() {
+        return lock.tryLock();
+    }
+
     public void unlockClient() {
         lock.unlock();
     }

@@ -21,6 +21,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.net.AbstractPacketHandler;
@@ -42,10 +44,10 @@ public final class SpouseChatHandler extends AbstractPacketHandler {
                 c.sendPacket(PacketCreator.OnCoupleMessage(c.getPlayer().getName(), msg, true));
                 ChatLogger.log(c, "Spouse", msg);
             } else {
-                c.getPlayer().dropMessage(5, "Your spouse is currently offline.");
+                c.getPlayer().dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.525bf8922e25920c"));
             }
         } else {
-            c.getPlayer().dropMessage(5, "You don't have a spouse.");
+            c.getPlayer().dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.0e31442d1cd8e793"));
         }
     }
 }

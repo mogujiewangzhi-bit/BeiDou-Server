@@ -1,5 +1,7 @@
 package org.gms.client.creator;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Job;
 import org.gms.client.inventory.InventoryType;
@@ -74,7 +76,7 @@ public class MakeCharInfo {
                         charWeapons.add(DataTool.getInt(weaponData));
                     }
                 }
-                default -> log.error("Unhandled node inside MakeCharInfo.img.xml: '" + data.getName() + "'");
+                default -> log.error(I18nUtil.getLogMessage("Localization.legacy.log.385f7680938133e7") + data.getName() + "'");
             }
         }
     }

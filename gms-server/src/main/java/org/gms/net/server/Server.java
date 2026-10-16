@@ -821,29 +821,16 @@ public class Server {
         }
     }
 
-    public boolean removeAllianceFromMemory(int id) {
-        boolean synchronizedAllGuilds = true;
+    public void disbandAlliance(int id) {
         synchronized (alliances) {
-            Alliance alliance = alliances.remove(id);
+            Alliance alliance = alliances.get(id);
             if (alliance != null) {
-                synchronized (guilds) {
-                    for (Guild guild : guilds.values()) {
-                        if (guild.getAllianceId() != id) {
-                            continue;
-                        }
-                        try {
-                            guild.setAllianceIdInMemory(0);
-                            guild.resetAllianceGuildPlayersRankInMemory();
-                        } catch (RuntimeException e) {
-                            synchronizedAllGuilds = false;
-                            log.error(I18nUtil.getLogMessage("Server.alliance.error1"),
-                                    id, guild.getId(), e);
-                        }
-                    }
+                for (Integer gid : alliance.getGuilds()) {
+                    guilds.get(gid).setAllianceId(0);
                 }
+                alliances.remove(id);
             }
         }
-        return synchronizedAllGuilds;
     }
 
     public void allianceMessage(int id, Packet packet, int exception, int guildex) {
@@ -861,39 +848,51 @@ public class Server {
         }
     }
 
-    public boolean addGuildToAlliance(int aId, int guildId, int guildMasterId) {
-        Alliance alliance = getAlliance(aId);
-        Guild guild = guilds.get(guildId);
-        if (alliance == null || guild == null) {
-            return false;
-        }
-        synchronized (alliance) {
-            if (!alliance.addGuildAndSave(guildId, guildMasterId)) {
-                return false;
-            }
-            guild.setAllianceIdInMemory(aId);
-            guild.resetAllianceGuildPlayersRankInMemory();
+    public boolean addGuildtoAlliance(int aId, int guildId) {
+        Alliance alliance = alliances.get(aId);
+        if (alliance != null) {
+            alliance.addGuild(guildId);
+            guilds.get(guildId).setAllianceId(aId);
             return true;
         }
+        return false;
     }
 
     public boolean removeGuildFromAlliance(int aId, int guildId) {
-        Alliance alliance = getAlliance(aId);
-        Guild guild = guilds.get(guildId);
-        if (alliance == null || guild == null) {
-            return false;
-        }
-        synchronized (alliance) {
-            if (!alliance.canRemoveGuild(guildId)) {
-                return false;
-            }
-            if (!alliance.removeGuildAndSave(guildId)) {
-                return false;
-            }
-            guild.setAllianceIdInMemory(0);
-            guild.resetAllianceGuildPlayersRankInMemory();
+        Alliance alliance = alliances.get(aId);
+        if (alliance != null) {
+            alliance.removeGuild(guildId);
+            guilds.get(guildId).setAllianceId(0);
             return true;
         }
+        return false;
+    }
+
+    public boolean setAllianceRanks(int aId, String[] ranks) {
+        Alliance alliance = alliances.get(aId);
+        if (alliance != null) {
+            alliance.setRankTitle(ranks);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean setAllianceNotice(int aId, String notice) {
+        Alliance alliance = alliances.get(aId);
+        if (alliance != null) {
+            alliance.setNotice(notice);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean increaseAllianceCapacity(int aId, int inc) {
+        Alliance alliance = alliances.get(aId);
+        if (alliance != null) {
+            alliance.increaseCapacity(inc);
+            return true;
+        }
+        return false;
     }
 
     public int createGuild(int leaderId, String name) {
@@ -948,7 +947,7 @@ public class Server {
                     mc.setMGC(mgc);
                     mgc.setCharacter(mc);
                 } else {
-                    log.error("Could not find chr {} when loading guild {}", mc.getName(), id);
+                    log.error(I18nUtil.getLogMessage("Localization.legacy.log.460b5b63bc3ac01c"), mc.getName(), id);
                 }
 
                 g.setOnline(mc.getId(), true, mc.getClient().getChannel());
@@ -972,20 +971,17 @@ public class Server {
         return 0;
     }
 
-    public boolean setGuildAllianceIdInMemory(int guildId, int allianceId) {
-        Guild guild = guilds.get(guildId);
-        if (guild == null) {
-            return false;
+    public boolean setGuildAllianceId(int gId, int aId) {
+        Guild guild = guilds.get(gId);
+        if (guild != null) {
+            guild.setAllianceId(aId);
+            return true;
         }
-        guild.setAllianceIdInMemory(allianceId);
-        return true;
+        return false;
     }
 
-    public void resetAllianceGuildPlayersRankInMemory(int guildId) {
-        Guild guild = guilds.get(guildId);
-        if (guild != null) {
-            guild.resetAllianceGuildPlayersRankInMemory();
-        }
+    public void resetAllianceGuildPlayersRank(int gId) {
+        guilds.get(gId).resetAllianceGuildPlayersRank();
     }
 
     public void leaveGuild(GuildCharacter mgc) {
@@ -1044,26 +1040,12 @@ public class Server {
         }
     }
 
-    public boolean disbandGuild(int gid) {
-        Guild guild;
+    public void disbandGuild(int gid) {
         synchronized (guilds) {
-            guild = guilds.get(gid);
+            Guild g = guilds.get(gid);
+            g.disbandGuild();
+            guilds.remove(gid);
         }
-        if (guild == null) {
-            log.warn(I18nUtil.getLogMessage("Server.disbandGuild.warn1"), gid);
-            return false;
-        }
-
-        // 家族解散包含数据库更新和跨频道广播，不能持有全局 guilds 锁执行。
-        // 否则任一步骤阻塞都会让所有登录线程卡在 getGuild()。
-        if (!guild.disbandGuild()) {
-            return false;
-        }
-
-        synchronized (guilds) {
-            guilds.remove(gid, guild);
-        }
-        return true;
     }
 
     public boolean increaseGuildCapacity(int gid) {
@@ -1650,12 +1632,12 @@ public class Server {
         // 重入保护在 synchronized 外判断，避免 Spring 关闭钩子等调用方
         // 在 System.exit 时卡在等锁导致 JVM 退出超时、端口不释放。
         if (shuttingDown) {
-            log.warn("Server shutdownInternal skipped: already in progress (restart={})", restart);
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.e96c85b8d61b302d"), restart);
             return;
         }
         synchronized (this) {
             if (shuttingDown) {
-                log.warn("Server shutdownInternal skipped: already in progress (restart={})", restart);
+                log.warn(I18nUtil.getLogMessage("Localization.legacy.log.e96c85b8d61b302d"), restart);
                 return;
             }
             shuttingDown = true;

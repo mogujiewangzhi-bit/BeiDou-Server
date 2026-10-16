@@ -20,6 +20,8 @@
 
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Client;
 import org.gms.net.AbstractPacketHandler;
 import org.gms.net.packet.InPacket;
@@ -37,7 +39,7 @@ public final class WeddingTalkMoreHandler extends AbstractPacketHandler {
         EventInstanceManager eim = c.getPlayer().getEventInstance();
         if (eim != null && !(c.getPlayer().getId() == eim.getIntProperty("groomId") || c.getPlayer().getId() == eim.getIntProperty("brideId"))) {
             eim.gridInsert(c.getPlayer(), 1);
-            c.getPlayer().dropMessage(5, "High Priest John: Your blessings have been added to their love. What a noble act for a lovely couple!");
+            c.getPlayer().dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.e40e174aa33b3048"));
         }
 
         c.sendPacket(WeddingPackets.OnWeddingProgress(true, 0, 0, (byte) 3));

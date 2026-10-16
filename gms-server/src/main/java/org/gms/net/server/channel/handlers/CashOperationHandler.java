@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.Ring;
@@ -102,7 +104,7 @@ public final class CashOperationHandler extends AbstractPacketHandler {
                     final int snCS = p.readInt();
                     ModifiedCashItemDO cItem = CashItemFactory.getItem(snCS);
                     if (!canBuy(chr, cItem, cs.getCash(useNX))) {
-                        log.error("Denied to sell cash item with SN {}", snCS); // preventing NPE here thanks to MedicOP
+                        log.error(I18nUtil.getLogMessage("Localization.legacy.log.2b9cc522f7547cdf"), snCS); // preventing NPE here thanks to MedicOP
                         c.enableCSActions();
                         return;
                     }
@@ -201,7 +203,7 @@ public final class CashOperationHandler extends AbstractPacketHandler {
                             c.sendPacket(PacketCreator.showBoughtInventorySlots(type, chr.getSlots(type)));
                             c.sendPacket(PacketCreator.showCash(chr));
                         } else {
-                            log.warn("Could not add {} slots of type {} for chr {}", qty, type, Character.makeMapleReadable(chr.getName()));
+                            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.4e9f4d24fba40325"), qty, type, Character.makeMapleReadable(chr.getName()));
                         }
                     } else {
                         ModifiedCashItemDO cItem = CashItemFactory.getItem(p.readInt());
@@ -224,7 +226,7 @@ public final class CashOperationHandler extends AbstractPacketHandler {
                             c.sendPacket(PacketCreator.showBoughtInventorySlots(type, chr.getSlots(type)));
                             c.sendPacket(PacketCreator.showCash(chr));
                         } else {
-                            log.warn("Could not add {} slots of type {} for chr {}", qty, type, Character.makeMapleReadable(chr.getName()));
+                            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.4e9f4d24fba40325"), qty, type, Character.makeMapleReadable(chr.getName()));
                         }
                     }
                 } else if (action == 0x07) { // Increase Storage Slots
@@ -243,13 +245,13 @@ public final class CashOperationHandler extends AbstractPacketHandler {
                         }
                         cs.gainCash(cash, -4000);
                         if (chr.getStorage().gainSlots(qty)) {
-                            log.debug("Chr {} bought {} slots to their account storage.", c.getPlayer().getName(), qty);
+                            log.debug(I18nUtil.getLogMessage("Localization.legacy.log.487d4d7a4ba6c4ef"), c.getPlayer().getName(), qty);
                             chr.setUsedStorage();
 
                             c.sendPacket(PacketCreator.showBoughtStorageSlots(chr.getStorage().getSlots()));
                             c.sendPacket(PacketCreator.showCash(chr));
                         } else {
-                            log.warn("Could not add {} slots to {}'s account.", qty, Character.makeMapleReadable(chr.getName()));
+                            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.ecc5069ff9c48983"), qty, Character.makeMapleReadable(chr.getName()));
                         }
                     } else {
                         ModifiedCashItemDO cItem = CashItemFactory.getItem(p.readInt());
@@ -265,13 +267,13 @@ public final class CashOperationHandler extends AbstractPacketHandler {
                         }
                         cs.gainCash(cash, cItem, chr.getWorld());
                         if (chr.getStorage().gainSlots(qty)) {    // thanks ABaldParrot & Thora for detecting storage issues here
-                            log.debug("Chr {} bought {} slots to their account storage", c.getPlayer().getName(), qty);
+                            log.debug(I18nUtil.getLogMessage("Localization.legacy.log.fc44459b766b9d19"), c.getPlayer().getName(), qty);
                             chr.setUsedStorage();
 
                             c.sendPacket(PacketCreator.showBoughtStorageSlots(chr.getStorage().getSlots()));
                             c.sendPacket(PacketCreator.showCash(chr));
                         } else {
-                            log.warn("Could not add {} slots to {}'s account", qty, Character.makeMapleReadable(chr.getName()));
+                            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.fc10d8f03f5d0325"), qty, Character.makeMapleReadable(chr.getName()));
                         }
                     }
                 } else if (action == 0x08) { // Increase Character Slots
@@ -284,7 +286,7 @@ public final class CashOperationHandler extends AbstractPacketHandler {
                         return;
                     }
                     if (!c.canGainCharacterSlot()) {
-                        chr.dropMessage(1, "You have already used up all 12 extra character slots.");
+                        chr.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.ce8fc722265c6608"));
                         c.enableCSActions();
                         return;
                     }
@@ -293,7 +295,7 @@ public final class CashOperationHandler extends AbstractPacketHandler {
                         c.sendPacket(PacketCreator.showBoughtCharacterSlot(c.getCharacterSlots()));
                         c.sendPacket(PacketCreator.showCash(chr));
                     } else {
-                        log.warn("Could not add a chr slot to {}'s account", Character.makeMapleReadable(chr.getName()));
+                        log.warn(I18nUtil.getLogMessage("Localization.legacy.log.ae82ff747723f376"), Character.makeMapleReadable(chr.getName()));
                         c.enableCSActions();
                         return;
                     }
@@ -510,7 +512,7 @@ public final class CashOperationHandler extends AbstractPacketHandler {
                     }
                     c.enableCSActions();
                 } else {
-                    log.warn("Unhandled action: {}, packet: {}", action, p);
+                    log.warn(I18nUtil.getLogMessage("Localization.legacy.log.6c2b4a0ad02e7023"), action, p);
                 }
             } finally {
                 c.releaseClient();

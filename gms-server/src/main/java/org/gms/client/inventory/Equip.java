@@ -712,7 +712,7 @@ public class Equip extends Item {
 
         // 调试信息：显示经验值获取详情
         if (GameConfig.getServerBoolean("use_debug_show_eqp_exp")) {
-            log.info("{} -> EXP Gain: {}, Mastery: {}, Base gain: {}, exp: {} / {}, Kills TNL: {}", ii.getName(getItemId()),
+            log.info(I18nUtil.getLogMessage("Localization.legacy.log.32b955d79e323ae8"), ii.getName(getItemId()),
                     gain, masteryModifier, baseExpGain, itemExp, expNeeded, expNeeded / (baseExpGain / c.getPlayer().getExpRate()));
         }
 
@@ -767,7 +767,7 @@ public class Equip extends Item {
     @Override
     public void setQuantity(short quantity) {
         if (quantity < 0 || quantity > 1) {
-            throw new RuntimeException("Setting the quantity to " + quantity + " on an equip (itemid: " + getItemId() + ")");
+            throw new RuntimeException(I18nUtil.getExceptionMessage("Localization.legacy.exception.54899c18a4a97e33") + quantity + I18nUtil.getExceptionMessage("Localization.legacy.exception.3b24a5bc8f3032d8") + getItemId() + ")");
         }
         super.setQuantity(quantity);
     }

@@ -21,6 +21,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.config.GameConfig;
@@ -62,7 +64,7 @@ public final class FamilyAddHandler extends AbstractPacketHandler {
         } else {
             InviteCoordinator.createInvite(InviteType.FAMILY, chr, addChr, addChr.getId());
             addChr.getClient().sendPacket(PacketCreator.sendFamilyInvite(chr.getId(), chr.getName()));
-            chr.dropMessage("The invite has been sent.");
+            chr.dropMessage(I18nUtil.getMessage("Localization.legacy.message.206a585c05368e72"));
             c.sendPacket(PacketCreator.enableActions());
         }
     }

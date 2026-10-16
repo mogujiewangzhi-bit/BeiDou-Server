@@ -19,6 +19,8 @@
 */
 package org.gms.server.quest.requirements;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.provider.Data;
 import org.gms.provider.DataTool;
@@ -47,7 +49,7 @@ public class MesoRequirement extends AbstractQuestRequirement {
         if (chr.getMeso() >= meso) {
             return true;
         } else {
-            chr.dropMessage(5, "You don't have enough mesos to complete this quest.");
+            chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.ecd3d9be6ef6efe9"));
             return false;
         }
     }

@@ -1,5 +1,7 @@
 package org.gms.net.server.handlers.login;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Client;
 import org.gms.net.AbstractPacketHandler;
 import org.gms.net.packet.InPacket;
@@ -40,7 +42,7 @@ public class CharSelectedWithPicHandler extends AbstractPacketHandler {
         try {
             hwid = Hwid.fromHostString(hostString);
         } catch (IllegalArgumentException e) {
-            log.warn("Invalid host string: {}", hostString, e);
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.fdcc2e3e7bcfee07"), hostString, e);
             c.sendPacket(PacketCreator.getAfterLoginError(17));
             return;
         }

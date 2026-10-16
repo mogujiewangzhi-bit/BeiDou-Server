@@ -21,6 +21,8 @@
 */
 package org.gms.server.events.gm;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.constants.id.MapId;
 import org.gms.server.TimerManager;
@@ -54,7 +56,7 @@ public class Ola {
         this.time = 360000;
 
         chr.getMap().getPortal("join00").setPortalStatus(true);
-        chr.sendPacket(PacketCreator.serverNotice(0, "The portal has now opened. Press the up arrow key at the portal to enter."));
+        chr.sendPacket(PacketCreator.serverNotice(0, I18nUtil.getMessage("Localization.legacy.message.542be40fd7f3da32")));
     }
 
     public boolean isTimerStarted() {

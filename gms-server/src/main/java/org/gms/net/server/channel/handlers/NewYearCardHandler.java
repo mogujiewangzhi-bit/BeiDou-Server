@@ -19,6 +19,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.inventory.Item;
@@ -101,7 +103,7 @@ public final class NewYearCardHandler extends AbstractPacketHandler {
 
                         player.getAbstractPlayerInteraction().gainItem(ItemId.NEW_YEARS_CARD_RECEIVED, (short) 1);
                         if (!newyear.getMessage().isEmpty()) {
-                            player.dropMessage(6, "[New Year] " + newyear.getSenderName() + ": " + newyear.getMessage());
+                            player.dropMessage(6, I18nUtil.getMessage("Localization.legacy.message.1f3e235075bd3c2f") + newyear.getSenderName() + ": " + newyear.getMessage());
                         }
 
                         player.addNewYearRecord(newyear);
@@ -112,17 +114,17 @@ public final class NewYearCardHandler extends AbstractPacketHandler {
                         Character sender = c.getWorldServer().getPlayerStorage().getCharacterById(newyear.getSenderId());
                         if (sender != null && sender.isLoggedInWorld()) {
                             sender.getMap().broadcastMessage(PacketCreator.onNewYearCardRes(sender, newyear, 0xD, 0));
-                            sender.dropMessage(6, "[New Year] Your addressee successfully received the New Year card.");
+                            sender.dropMessage(6, I18nUtil.getMessage("Localization.legacy.message.fe39aa272339b10c"));
                         }
                     } else {
                         player.sendPacket(PacketCreator.onNewYearCardRes(player, -1, 5, 0x10));  // inventory full
                     }
                 } else {
-                    player.dropMessage(6, "[New Year] The sender of the New Year card already dropped it. Nothing to receive.");
+                    player.dropMessage(6, I18nUtil.getMessage("Localization.legacy.message.d2ef29c83c869499"));
                 }
             } else {
                 if (newyear == null) {
-                    player.dropMessage(6, "[New Year] The sender of the New Year card already dropped it. Nothing to receive.");
+                    player.dropMessage(6, I18nUtil.getMessage("Localization.legacy.message.d2ef29c83c869499"));
                 }
             }
         }

@@ -21,6 +21,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.BuddyList;
 import org.gms.client.BuddyList.BuddyAddResult;
 import org.gms.client.BuddyList.BuddyOperation;
@@ -91,9 +93,9 @@ public class BuddylistModifyHandler extends AbstractPacketHandler {
             }
             BuddylistEntry ble = buddylist.get(addName);
             if (ble != null && !ble.isVisible() && group.equals(ble.getGroup())) {
-                c.sendPacket(PacketCreator.serverNotice(1, "You already have \"" + ble.getName() + "\" on your Buddylist"));
+                c.sendPacket(PacketCreator.serverNotice(1, I18nUtil.getMessage("Localization.legacy.message.df5350e45bbc3642") + ble.getName() + I18nUtil.getMessage("Localization.legacy.message.9657737b0d1ed3b6")));
             } else if (buddylist.isFull() && ble == null) {
-                c.sendPacket(PacketCreator.serverNotice(1, "Your buddylist is already full"));
+                c.sendPacket(PacketCreator.serverNotice(1, I18nUtil.getMessage("Localization.legacy.message.e886bd2012649e4a")));
             } else if (ble == null) {
                 try {
                     World world = c.getWorldServer();
@@ -118,7 +120,7 @@ public class BuddylistModifyHandler extends AbstractPacketHandler {
 
                                     try (ResultSet rs = ps.executeQuery()) {
                                         if (!rs.next()) {
-                                            throw new RuntimeException("Result set expected");
+                                            throw new RuntimeException(I18nUtil.getExceptionMessage("Localization.legacy.exception.bec5b5ee8268acd0"));
                                         } else if (rs.getInt("buddyCount") >= charWithId.getBuddyCapacity()) {
                                             buddyAddResult = BuddyAddResult.BUDDYLIST_FULL;
                                         }
@@ -138,7 +140,7 @@ public class BuddylistModifyHandler extends AbstractPacketHandler {
                             }
                         }
                         if (buddyAddResult == BuddyAddResult.BUDDYLIST_FULL) {
-                            c.sendPacket(PacketCreator.serverNotice(1, "\"" + addName + "\"'s Buddylist is full"));
+                            c.sendPacket(PacketCreator.serverNotice(1, "\"" + addName + I18nUtil.getMessage("Localization.legacy.message.de5a49e2e17f4ab5")));
                         } else {
                             int displayChannel;
                             displayChannel = -1;
@@ -159,7 +161,7 @@ public class BuddylistModifyHandler extends AbstractPacketHandler {
                             c.sendPacket(PacketCreator.updateBuddylist(buddylist.getBuddies()));
                         }
                     } else {
-                        c.sendPacket(PacketCreator.serverNotice(1, "A character called \"" + addName + "\" does not exist"));
+                        c.sendPacket(PacketCreator.serverNotice(1, I18nUtil.getMessage("Localization.legacy.message.dabe9083ecdbb602") + addName + I18nUtil.getMessage("Localization.legacy.message.ed4f1598df136325")));
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();

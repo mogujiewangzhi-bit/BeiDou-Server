@@ -1,5 +1,7 @@
 package org.gms.service;
 
+import org.gms.util.I18nUtil;
+
 import com.mybatisflex.core.query.QueryWrapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +55,7 @@ public class NoteService {
      */
     public void show(Character chr) {
         if (chr == null) {
-            throw new IllegalArgumentException("Unable to show notes - chr is null");
+            throw new IllegalArgumentException(I18nUtil.getExceptionMessage("Localization.legacy.exception.4d683694c622ac52"));
         }
 
         List<NotesDO> notesDOList = notesMapper.selectListByQuery(QueryWrapper.create()
@@ -77,7 +79,7 @@ public class NoteService {
             notesMapper.deleteById(noteId);
             return Optional.of(notesDO);
         } catch (Exception e) {
-            log.error("Failed to discard note with id {}", noteId, e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.5df56a2313280995"), noteId, e);
             return Optional.empty();
         }
     }

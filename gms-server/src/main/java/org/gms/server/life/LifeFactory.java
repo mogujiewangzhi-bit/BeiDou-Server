@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.gms.server.life;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.util.RequireUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +70,7 @@ public class LifeFactory {
         } else if (type.equalsIgnoreCase("m")) {
             return getMonster(id);
         } else {
-            log.warn("Unknown Life type: {}", type);
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.df6d09af11f15ecc"), type);
             return null;
         }
     }
@@ -561,7 +563,7 @@ public class LifeFactory {
             }
             return new Monster(mid, stats);
         } catch (NullPointerException npe) {
-            log.error("[SEVERE] MOB {} failed to load.", mid, npe);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.67725fa631c47111"), mid, npe);
             return null;
         }
     }
@@ -580,7 +582,7 @@ public class LifeFactory {
                 return stats.getLevel();
             }
         } catch (NullPointerException npe) {
-            log.error("[SEVERE] MOB {} failed to load.", mid, npe);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.67725fa631c47111"), mid, npe);
         }
 
         return -1;

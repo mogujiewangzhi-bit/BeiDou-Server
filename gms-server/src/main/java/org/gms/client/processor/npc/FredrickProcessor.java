@@ -23,6 +23,8 @@
 */
 package org.gms.client.processor.npc;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.inventory.Inventory;
@@ -284,7 +286,7 @@ public class FredrickProcessor {
                 // (HiredMerchantRequest) closes the store first and sets hasMerchant=false, so it is unaffected.
                 HiredMerchant active = c.getWorldServer().getHiredMerchant(chr.getId());
                 if (chr.hasMerchant() || (active != null && active.isOwner(chr))) {
-                    chr.dropMessage(1, "Please close your hired merchant before retrieving stored items.");
+                    chr.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.632e24f39001e877"));
                     chr.sendPacket(PacketCreator.enableActions());
                     return;
                 }
@@ -304,8 +306,7 @@ public class FredrickProcessor {
                     if (deleteFredrickItems(chr.getId())) {
                         HiredMerchant merchant = chr.getHiredMerchant();
 
-                        // 当前关联也可能是正在访问的其他玩家商店，只清理领取者自己的货架。
-                        if (merchant != null && merchant.isOwner(chr)) {
+                        if (merchant != null) {
                             merchant.clearItems();
                         }
 
@@ -313,13 +314,13 @@ public class FredrickProcessor {
                             Item item = it.getLeft();
                             InventoryManipulator.addFromDrop(chr.getClient(), item, false);
                             String itemName = ItemInformationProvider.getInstance().getName(item.getItemId());
-                            log.debug("Chr {} gained {}x {} ({})", chr.getName(), item.getQuantity(), itemName, item.getItemId());
+                            log.debug(I18nUtil.getLogMessage("Localization.legacy.log.4615ed9148092ad1"), chr.getName(), item.getQuantity(), itemName, item.getItemId());
                         }
 
                         chr.sendPacket(PacketCreator.fredrickMessage((byte) 0x1E));
                         removeFredrickLog(chr.getId());
                     } else {
-                        chr.message("An unknown error has occured.");
+                        chr.message(I18nUtil.getMessage("Localization.legacy.message.48515df0bbee4c2e"));
                     }
                 } catch (SQLException ex) {
                     ex.printStackTrace();

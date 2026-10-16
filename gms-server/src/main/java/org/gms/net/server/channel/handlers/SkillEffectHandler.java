@@ -21,6 +21,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Client;
 import org.gms.constants.skills.Bishop;
 import org.gms.constants.skills.Bowmaster;
@@ -77,7 +79,7 @@ public final class SkillEffectHandler extends AbstractPacketHandler {
                 c.getPlayer().getMap().broadcastMessage(c.getPlayer(), PacketCreator.skillEffect(c.getPlayer(), skillId, level, flags, speed, aids), false);
                 return;
             default:
-                log.warn("Chr {} entered SkillEffectHandler without being handled using {}", c.getPlayer(), skillId);
+                log.warn(I18nUtil.getLogMessage("Localization.legacy.log.4bb4f3543dd573f4"), c.getPlayer(), skillId);
                 return;
         }
     }

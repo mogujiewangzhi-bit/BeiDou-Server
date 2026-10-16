@@ -21,6 +21,8 @@
  */
 package org.gms.server.quest.requirements;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.QuestStatus;
 import org.gms.provider.Data;
@@ -93,7 +95,7 @@ public class IntervalRequirement extends AbstractQuestRequirement {
         if (check || check2) {
             return true;
         } else {
-            chr.message("This quest will become available again in approximately " + getIntervalTimeLeft(chr, this) + ".");
+            chr.message(I18nUtil.getMessage("Localization.legacy.message.2055fa871dcc6e9f") + getIntervalTimeLeft(chr, this) + ".");
             return false;
         }
     }

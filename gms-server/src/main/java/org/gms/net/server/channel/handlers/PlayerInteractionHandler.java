@@ -267,8 +267,8 @@ public final class PlayerInteractionHandler extends AbstractPacketHandler {
                         //c.sendPacket(PacketCreator.getPlayerShopRemoveVisitor(1));
                     } else if (ItemConstants.isHiredMerchant(itemId)) {
                         if (chr.hasMerchant() || c.getWorldServer().getHiredMerchant(chr.getId()) != null) {
-                            chr.dropMessage(1, "You already have a store open.");
-                            log.warn("Character {} attempted to create a duplicate HiredMerchant on channel {}",
+                            chr.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.d44e9c6167570c1c"));
+                            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.27e310f6be3c9d6e"),
                                     chr.getName(), c.getChannel());
                             return;
                         }
@@ -284,8 +284,8 @@ public final class PlayerInteractionHandler extends AbstractPacketHandler {
                             if (channelAdded) {
                                 channelServer.removeHiredMerchant(chr.getId(), merchant);
                             }
-                            chr.dropMessage(1, "You already have a store open.");
-                            log.warn("Character {} could not create HiredMerchant because a channel or world instance already exists",
+                            chr.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.d44e9c6167570c1c"));
+                            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.3d36268aa7d8cd18"),
                                     chr.getName());
                         }
                     }
@@ -403,12 +403,8 @@ public final class PlayerInteractionHandler extends AbstractPacketHandler {
                     chr.getMap().broadcastMessage(PacketCreator.updatePlayerShopBox(shop));
                     shop.setOpen(true);
                 } else if (merchant != null && merchant.isOwner(chr)) {
-                    if (!merchant.setOpen(true)) {
-                        merchant.closeForBan();
-                        c.sendPacket(PacketCreator.getMiniRoomError(18));
-                        return;
-                    }
                     chr.setHasMerchant(true);
+                    merchant.setOpen(true);
                     chr.getMap().addMapObject(merchant);
                     chr.setHiredMerchant(null);
                     chr.getMap().broadcastMessage(PacketCreator.spawnHiredMerchantBox(merchant));
@@ -852,11 +848,8 @@ public final class PlayerInteractionHandler extends AbstractPacketHandler {
                             merchant.closeOwnerMerchant(chr);
                         } else {
                             merchant.clearMessages();
-                            if (merchant.setOpen(true)) {
-                                merchant.getMap().broadcastMessage(PacketCreator.updateHiredMerchantBox(merchant));
-                            } else {
-                                merchant.closeForBan();
-                            }
+                            merchant.setOpen(true);
+                            merchant.getMap().broadcastMessage(PacketCreator.updateHiredMerchantBox(merchant));
                         }
                     }
                 }

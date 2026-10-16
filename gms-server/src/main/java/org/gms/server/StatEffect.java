@@ -21,6 +21,8 @@
  */
 package org.gms.server;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.BuffStat;
 import org.gms.client.Character;
 import org.gms.client.Disease;
@@ -126,7 +128,46 @@ import java.util.Map;
  * @author Frz
  * @author Ronan
  */
-public class StatEffect {
+public class StatEffect implements Cloneable {
+    private boolean beiDouBlessingSource;
+
+    public boolean isBeiDouBlessingSource() { return beiDouBlessingSource; }
+
+    private StatEffect forBeiDouBlessing() {
+        try {
+            StatEffect copy = (StatEffect) super.clone();
+            copy.statups = new ArrayList<>(statups);
+            copy.duration = 900_000;
+            copy.beiDouBlessingSource = true;
+            return copy;
+        } catch (CloneNotSupportedException exception) {
+            throw new AssertionError(exception);
+        }
+    }
+
+    private static boolean applyBeiDouBlessing(Character chr) {
+        try {
+            if (!chr.isGM() || chr.getSkillLevel(SuperGM.BLESS) != 1 || !chr.isAlive()) {
+                return false;
+            }
+            List<StatEffect> effects;
+            try {
+                effects = BeiDouSkills.resolve(BeiDouSkills.BLESSING, SkillFactory::getSkill).stream()
+                        .map(entry -> entry.skill().getEffect(entry.level()).forBeiDouBlessing()).toList();
+            } catch (IllegalStateException exception) {
+                return false;
+            }
+            // Direct source-buff application bypasses costs, cooldowns and party spread.
+            for (StatEffect effect : effects) {
+                effect.applyBuffEffect(chr, chr, true);
+            }
+            chr.sendPacket(PacketCreator.showOwnBuffEffect(SuperGM.BLESS, 1));
+            return true;
+        } finally {
+            // This path bypasses the normal skill acknowledgement, including on failure.
+            chr.sendPacket(PacketCreator.enableActions());
+        }
+    }
     private short watk, matk, wdef, mdef, acc, avoid, speed, jump;
     private short hp, mp;
     private double hpR, mpR;
@@ -924,6 +965,9 @@ public class StatEffect {
 
     // primary: the player caster of the buff
     private boolean applyTo(Character applyfrom, Character applyto, boolean primary, Point pos, boolean useMaxRange, int affectedPlayers) {
+        if (skill && sourceid == SuperGM.BLESS) {
+            return primary && applyfrom == applyto && applyBeiDouBlessing(applyfrom);
+        }
         if (skill && (sourceid == GM.HIDE || sourceid == SuperGM.HIDE)) {
             applyto.toggleHide(false);
             return true;
@@ -1079,11 +1123,11 @@ public class StatEffect {
                 InventoryManipulator.addFromDrop(applyto.getClient(), new Item(ItemId.MAGIC_ROCK, (short) 0, (short) 1), false);
 
                 if (door.getOwnerId() == -3) {
-                    applyto.dropMessage(5, "Mystic Door cannot be cast far from a spawn point. Nearest one is at " + door.getDoorStatus().getRight() + "pts " + door.getDoorStatus().getLeft());
+                    applyto.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.392dd1bd55505a42") + door.getDoorStatus().getRight() + I18nUtil.getMessage("Localization.legacy.message.cc3d0f7a720df33a") + door.getDoorStatus().getLeft());
                 } else if (door.getOwnerId() == -2) {
-                    applyto.dropMessage(5, "Mystic Door cannot be cast on a slope, try elsewhere.");
+                    applyto.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.bf9741205b5d4d09"));
                 } else {
-                    applyto.dropMessage(5, "There are no door portals available for the town at this moment. Try again later.");
+                    applyto.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.3e179f7cf2075672"));
                 }
 
                 applyto.cancelBuffStats(BuffStat.SOULARROW);  // cancel door buff
@@ -1233,12 +1277,15 @@ public class StatEffect {
     }
 
     public int getBuffLocalDuration() {
+        if (beiDouBlessingSource) { return duration; }
         return !GameConfig.getServerBoolean("use_buff_everlasting") ? duration : Integer.MAX_VALUE;
     }
 
     public void silentApplyBuff(Character chr, long localStartTime) {
         int localDuration = getBuffLocalDuration();
-        localDuration = alchemistModifyVal(chr, localDuration, false);
+        if (!beiDouBlessingSource) {
+            localDuration = alchemistModifyVal(chr, localDuration, false);
+        }
         //CancelEffectAction cancelAction = new CancelEffectAction(chr, this, starttime);
         //ScheduledFuture<?> schedule = TimerManager.getInstance().schedule(cancelAction, ((starttime + localDuration) - Server.getInstance().getCurrentTime()));
 
@@ -1276,12 +1323,16 @@ public class StatEffect {
 
     public void updateBuffEffect(Character target, List<Pair<BuffStat, Integer>> activeStats, long starttime) {
         int localDuration = getBuffLocalDuration();
-        localDuration = alchemistModifyVal(target, localDuration, false);
+        if (!beiDouBlessingSource) {
+            localDuration = alchemistModifyVal(target, localDuration, false);
+        }
 
         long leftDuration = (starttime + localDuration) - Server.getInstance().getCurrentTime();
         if (leftDuration > 0) {
             if (isDash() || isInfusion()) {
-                target.sendPacket(PacketCreator.givePirateBuff(activeStats, (skill ? sourceid : -sourceid), (int) leftDuration));
+                int packetDuration = beiDouBlessingSource && isInfusion()
+                        ? (int) (leftDuration / 1000) : (int) leftDuration;
+                target.sendPacket(PacketCreator.givePirateBuff(activeStats, (skill ? sourceid : -sourceid), packetDuration));
             } else {
                 target.sendPacket(PacketCreator.giveBuff((skill ? sourceid : -sourceid), (int) leftDuration, activeStats));
             }
@@ -1334,7 +1385,7 @@ public class StatEffect {
                 }
             }
         }
-        if (primary) {
+        if (primary && !beiDouBlessingSource) {
             localDuration = alchemistModifyVal(applyfrom, localDuration, false);
             applyto.getMap().broadcastMessage(applyto, PacketCreator.showBuffEffect(applyto.getId(), sourceid, 1, (byte) 3), false);
         }

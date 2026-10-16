@@ -1,5 +1,7 @@
 package org.gms.service;
 
+import org.gms.util.I18nUtil;
+
 import lombok.extern.slf4j.Slf4j;
 import org.gms.exception.BizException;
 import org.gms.model.dto.FileTreeNodeDTO;
@@ -40,15 +42,15 @@ public class FileTreeService {
         try {
             return Files.readString(file.toPath(), UTF_8);
         } catch (MalformedInputException e) {
-            log.error("file {} is not using utf8", filename);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.85a00c0ba65647eb"), filename);
             try {
                 return Files.readString(file.toPath(), ISO_8859_1);
             } catch (IOException ex) {
-                log.error("io error", ex);
+                log.error(I18nUtil.getLogMessage("Localization.legacy.log.85a7301ac3674d1b"), ex);
                 throw new BizException("读取文件异常");
             }
         } catch (IOException e) {
-            log.error("io error", e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.85a7301ac3674d1b"), e);
             throw new BizException("读取文件异常");
         }
     }
@@ -59,7 +61,7 @@ public class FileTreeService {
         try {
             Files.writeString(file.toPath(), content, UTF_8);
         } catch (IOException e) {
-            log.error("io error", e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.85a7301ac3674d1b"), e);
             throw new BizException("读取文件异常");
         }
     }
@@ -101,7 +103,7 @@ public class FileTreeService {
                 current = Objects.requireNonNull(current.listFiles())[key];
             }
         } catch (NullPointerException | NumberFormatException | ArrayIndexOutOfBoundsException e) {
-            log.error("file not exists", e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.777b97af3951f61f"), e);
             throw new BizException("文件/文件夹不存在");
         }
 
@@ -109,12 +111,12 @@ public class FileTreeService {
         if (FILE_TREE_PATH_STRICT_MODE) {
             Path userPath = current.toPath().toAbsolutePath().normalize();
             if (!userPath.startsWith(FILE_TREE_BASE_DIR_PATH)) {
-                log.error("file escape base dir : {}", userPath);
+                log.error(I18nUtil.getLogMessage("Localization.legacy.log.943f97b7b413b1c8"), userPath);
                 throw new BizException("检测到路径逃逸尝试");
             }
 
             if (!matchAnyLimitPattern(userPath)) {
-                log.error("file escape limit pattern : {}", userPath);
+                log.error(I18nUtil.getLogMessage("Localization.legacy.log.86a21806ff8041c2"), userPath);
                 throw new BizException("检测到路径逃逸尝试");
             }
         }

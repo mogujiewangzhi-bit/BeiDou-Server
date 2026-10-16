@@ -1,5 +1,7 @@
 package org.gms.net.netty;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Client;
 import org.gms.constants.net.ServerConstants;
 import io.netty.channel.Channel;
@@ -33,7 +35,7 @@ public abstract class ServerChannelInitializer extends ChannelInitializer<Socket
         try {
             remoteAddress = ((InetSocketAddress) channel.remoteAddress()).getAddress().getHostAddress();
         } catch (NullPointerException npe) {
-            log.warn("Unable to get remote address from netty Channel: {}", channel, npe);
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.4b2c3d79c59bd00b"), channel, npe);
         }
 
         return remoteAddress;

@@ -21,6 +21,8 @@
  */
 package org.gms.net.server.world;
 
+import org.gms.util.I18nUtil;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.gms.client.Character;
@@ -312,7 +314,7 @@ public class Party {
                 player.sendPacket(PacketCreator.partyStatusMessage(10));
                 return false;
             } else if (player.getAriantColiseum() != null) {
-                player.dropMessage(5, "You cannot request a party creation while participating the Ariant Battle Arena.");
+                player.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.be356ce094d7f1cc"));
                 return false;
             }
 
@@ -363,11 +365,11 @@ public class Party {
                     }
                 }
             } else {
-                player.sendPacket(PacketCreator.serverNotice(5, "You couldn't join the party since it had already been disbanded."));
+                player.sendPacket(PacketCreator.serverNotice(5, I18nUtil.getMessage("Localization.legacy.message.91efd632bfddf1cd")));
             }
         } else {
             if (!silentCheck) {
-                player.sendPacket(PacketCreator.serverNotice(5, "You can't join the party as you are already in one."));
+                player.sendPacket(PacketCreator.serverNotice(5, I18nUtil.getMessage("Localization.legacy.message.c6dad2ffbb596f17")));
             }
         }
 

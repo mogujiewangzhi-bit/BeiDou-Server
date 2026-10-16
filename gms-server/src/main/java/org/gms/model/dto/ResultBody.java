@@ -1,5 +1,7 @@
 package org.gms.model.dto;
 
+import org.gms.util.I18nUtil;
+
 import com.alibaba.fastjson2.JSONObject;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
@@ -70,7 +72,7 @@ public class ResultBody<T> {
                     body.append(line);
                 }
             } catch (Exception e) {
-                log.error("Error reading request body: {}", e.getMessage(), e);
+                log.error(I18nUtil.getLogMessage("Localization.legacy.log.9bca6d2f898666db"), e.getMessage(), e);
             }
             String requestId = null;
             try {

@@ -21,6 +21,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.inventory.ItemFactory;
@@ -72,52 +74,52 @@ public final class HiredMerchantRequest extends AbstractPacketHandler {
                 return;
             }
         } catch (Exception e) {
-            log.warn("Failed to validate HiredMerchant placement for character {}", chr.getName(), e);
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.acf5f3496eb41477"), chr.getName(), e);
         }
 
         if (!GameConstants.isFreeMarketRoom(chr.getMapId())) {
-            chr.dropMessage(1, "You cannot open your hired merchant here.");
+            chr.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.1daee7627d63d8ae"));
             return;
         }
 
         HiredMerchant existing = c.getWorldServer().getHiredMerchant(chr.getId());
         if (existing != null) {
             if (existing.isPublished()) {
-                chr.dropMessage(1, "You already have a store open on channel " + existing.getChannel() + ".");
+                chr.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.2a2bc2cff5175472") + existing.getChannel() + ".");
                 return;
             }
 
-            log.warn("Cleaning up unpublished HiredMerchant for character {}, original channel {}, still bound {}",
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.475bd8564c6c5dfa"),
                     chr.getName(), existing.getChannel(), chr.getHiredMerchant() == existing);
             try {
                 chr.setHiredMerchant(existing);
                 existing.forceClose();
             } catch (RuntimeException ex) {
-                log.error("Failed to clean up unpublished HiredMerchant for character {}, original channel {}",
+                log.error(I18nUtil.getLogMessage("Localization.legacy.log.ed487c02108fa3db"),
                         chr.getName(), existing.getChannel(), ex);
-                chr.dropMessage(1, "Your previous unfinished store could not be cleaned up. Please contact an administrator.");
+                chr.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.f07ecf925844174d"));
                 chr.sendPacket(PacketCreator.enableActions());
                 return;
             }
 
             try {
                 if (!ItemFactory.MERCHANT.loadItems(chr.getId(), false).isEmpty() || chr.getMerchantMeso() != 0) {
-                    chr.dropMessage(5, "Your unfinished store was closed. Please retrieve its items from Fredrick.");
+                    chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.7df259a2d4639f21"));
                     chr.sendPacket(PacketCreator.retrieveFirstMessage());
                 } else {
-                    chr.dropMessage(1, "Your unfinished store was closed and its items were returned. Please set it up again.");
+                    chr.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.188370af325db299"));
                     chr.sendPacket(PacketCreator.enableActions());
                 }
             } catch (SQLException ex) {
-                log.error("Failed to verify cleanup result for character {}", chr.getName(), ex);
-                chr.dropMessage(1, "Your unfinished store was closed, but its item state could not be verified.");
+                log.error(I18nUtil.getLogMessage("Localization.legacy.log.3aace93f6f59c12b"), chr.getName(), ex);
+                chr.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.7cddf112551a9074"));
                 chr.sendPacket(PacketCreator.enableActions());
             }
             return;
         }
 
         if (chr.hasMerchant()) {
-            chr.dropMessage(1, "Your hired merchant state has not been cleaned up. Please contact an administrator.");
+            chr.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.bb3565f328bd14a6"));
             return;
         }
 
@@ -128,7 +130,7 @@ public final class HiredMerchantRequest extends AbstractPacketHandler {
                 chr.sendPacket(PacketCreator.retrieveFirstMessage());
             }
         } catch (SQLException ex) {
-            log.error("Failed to load HiredMerchant items for character {}", chr.getName(), ex);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.8dcd2051527c367d"), chr.getName(), ex);
         }
     }
 }

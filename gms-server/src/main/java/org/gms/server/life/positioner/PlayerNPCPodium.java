@@ -19,6 +19,8 @@
 */
 package org.gms.server.life.positioner;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.config.GameConfig;
 import org.gms.net.server.Server;
 import org.gms.net.server.channel.Channel;
@@ -80,7 +82,7 @@ public class PlayerNPCPodium {
     private static Point reorganizePlayerNpcs(MapleMap map, int newStep, List<MapObject> mmoList) {
         if (!mmoList.isEmpty()) {
             if (GameConfig.getServerBoolean("use_debug")) {
-                log.info("Re-organizing pnpc map, step {}", newStep);
+                log.info(I18nUtil.getLogMessage("Localization.legacy.log.1ac7754d43aeefe8"), newStep);
             }
 
             List<PlayerNPC> playerNpcs = new ArrayList<>(mmoList.size());

@@ -1,5 +1,7 @@
 package org.gms.net.server.task;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Family;
 import org.gms.constants.game.GameConstants;
 import org.gms.net.server.Server;
@@ -48,16 +50,16 @@ public class FamilyDailyResetTask implements Runnable {
                 ps.setLong(1, resetTime.getTimeInMillis());
                 ps.executeUpdate();
             } catch (SQLException e) {
-                log.error("Could not reset daily rep for families", e);
+                log.error(I18nUtil.getLogMessage("Localization.legacy.log.75a38481fbc12c66"), e);
             }
             try (PreparedStatement ps = con.prepareStatement("DELETE FROM family_entitlement WHERE timestamp <= ?")) {
                 ps.setLong(1, resetTime.getTimeInMillis());
                 ps.executeUpdate();
             } catch (SQLException e) {
-                log.error("Could not do daily reset for family entitlements", e);
+                log.error(I18nUtil.getLogMessage("Localization.legacy.log.4c0576792d79963f"), e);
             }
         } catch (SQLException e) {
-            log.error("Could not get connection to DB", e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.b7ac7101f4660a67"), e);
         }
     }
 }

@@ -21,6 +21,8 @@
 */
 package org.gms.server.life;
 
+import org.gms.util.I18nUtil;
+
 import lombok.Getter;
 import org.gms.client.Character;
 import org.gms.client.Client;
@@ -312,7 +314,7 @@ public class PlayerNPC extends AbstractMapObject {
         }
 
         if (GameConfig.getServerBoolean("use_debug")) {
-            log.info("GOT SID {}, POS {}", scriptId, pos);
+            log.info(I18nUtil.getLogMessage("Localization.legacy.log.f9b7aa5047bef1bc"), scriptId, pos);
         }
 
         int worldId = chr.getWorld();

@@ -19,6 +19,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Client;
 import org.gms.client.Family;
 import org.gms.client.FamilyEntry;
@@ -71,7 +73,7 @@ public class FamilySeparateHandler extends AbstractPacketHandler {
         if (senior.getSenior() != null) {
             senior.getSenior().gainReputation(-(repCost / 2), false);
         }
-        forkOn.announceToSenior(PacketCreator.serverNotice(5, forkOn.getName() + " has left the family."), true);
+        forkOn.announceToSenior(PacketCreator.serverNotice(5, forkOn.getName() + I18nUtil.getMessage("Localization.legacy.message.d1cf9b8100e119c9")), true);
         forkOn.fork();
         c.sendPacket(PacketCreator.getFamilyInfo(forkOn)); //pedigree info will be requested from the client if the window is open
         forkOn.updateSeniorFamilyInfo(true);

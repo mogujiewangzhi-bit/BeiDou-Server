@@ -21,6 +21,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.autoban.AutobanFactory;
@@ -67,7 +69,7 @@ public final class WhisperHandler extends AbstractPacketHandler {
                 handleFind(c.getPlayer(), target, WhisperFlag.LOCATION_FRIEND);
                 break;
             default:
-                log.warn("Unknown request {} triggered by {}", request, c.getPlayer().getName());
+                log.warn(I18nUtil.getLogMessage("Localization.legacy.log.7f0eb9ef5a7bfbfb"), request, c.getPlayer().getName());
                 break;
         }
     }
@@ -95,7 +97,7 @@ public final class WhisperHandler extends AbstractPacketHandler {
 
         if (message.length() > Byte.MAX_VALUE) {
             AutobanFactory.PACKET_EDIT.alert(user, user.getName() + " tried to packet edit with whispers.");
-            log.warn("Chr {} tried to send text with length of {}", user.getName(), message.length());
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.4b26a649cba03770"), user.getName(), message.length());
             user.getClient().disconnect(true, false);
             return;
         }

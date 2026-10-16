@@ -19,6 +19,8 @@
 */
 package org.gms.server;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -250,7 +252,7 @@ public class SkillbookInformationProvider {
                 scriptFileSkillbooks.put(skillbookId, SkillBookEntry.SCRIPT);
             }
         } catch (IOException ioe) {
-            log.error("Failed to read file:{}", file.getFileName(), ioe);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.0ca2a1e0d450d459"), file.getFileName(), ioe);
         }
 
         return scriptFileSkillbooks;

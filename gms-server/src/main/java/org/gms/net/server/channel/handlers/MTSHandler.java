@@ -21,6 +21,8 @@
  */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.inventory.Equip;
@@ -122,7 +124,7 @@ public final class MTSHandler extends AbstractPacketHandler {
                     return;
                 }
                 if (currentListings > 10) {
-                    c.getPlayer().dropMessage(1, "You already have 10 items up for auction!");
+                    c.getPlayer().dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.3658b8ed9b397040"));
                     c.sendPacket(getMTS(1, 0, 0));
                     c.sendPacket(PacketCreator.transferInventory(getTransfer(c.getPlayer().getId())));
                     c.sendPacket(PacketCreator.notYetSoldInv(getNotYetSold(c.getPlayer().getId())));
@@ -359,7 +361,7 @@ public final class MTSHandler extends AbstractPacketHandler {
                         }
                     }
                 } catch (SQLException e) {
-                    log.error("MTS Transfer error", e);
+                    log.error(I18nUtil.getLogMessage("Localization.legacy.log.f4f3b5e24e98de51"), e);
                 }
                 break;
             }
@@ -530,7 +532,7 @@ public final class MTSHandler extends AbstractPacketHandler {
                 break;
             }
             default:
-                log.warn("Unhandled OP (MTS): {}, packet: {}", op, p);
+                log.warn(I18nUtil.getLogMessage("Localization.legacy.log.508364b56b4e2855"), op, p);
                 break;
             }
         } else {

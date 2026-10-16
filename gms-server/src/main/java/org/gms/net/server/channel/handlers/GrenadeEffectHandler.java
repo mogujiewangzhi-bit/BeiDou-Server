@@ -19,6 +19,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.constants.skills.Gunslinger;
@@ -53,7 +55,7 @@ public class GrenadeEffectHandler extends AbstractPacketHandler {
                 }
                 break;
             default:
-                log.warn("The skill id: {} is not coded in {}", skillId, getClass().getSimpleName());
+                log.warn(I18nUtil.getLogMessage("Localization.legacy.log.8b11f9fc8357d66b"), skillId, getClass().getSimpleName());
         }
     }
 

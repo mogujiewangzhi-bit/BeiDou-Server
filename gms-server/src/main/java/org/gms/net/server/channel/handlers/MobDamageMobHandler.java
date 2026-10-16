@@ -21,6 +21,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.autoban.AutobanFactory;
@@ -82,7 +84,7 @@ public final class MobDamageMobHandler extends AbstractPacketHandler {
             }
             if (damageChr == null) {
                 // 2个怪物都没有心灵控制，互殴？
-                log.warn("A mob from controller {} attacked another mob from controller {} without any hypnotized monsters.",
+                log.warn(I18nUtil.getLogMessage("Localization.legacy.log.5dde9bd2f5d34aca"),
                         Optional.ofNullable(attacker.getController()).map(ac -> String.valueOf(ac.getId())).orElse("null"),
                         Optional.ofNullable(damaged.getController()).map(dc -> String.valueOf(dc.getId())).orElse("null"));
                 // 此次攻击无效
@@ -96,7 +98,7 @@ public final class MobDamageMobHandler extends AbstractPacketHandler {
 //                AutobanFactory.DAMAGE_HACK.alert(damageChr, "Possible packet editing hypnotize damage exploit.");   // thanks Rien dev team
                 String attackerName = MonsterInformationProvider.getInstance().getMobNameFromId(attacker.getId());
                 String damagedName = MonsterInformationProvider.getInstance().getMobNameFromId(damaged.getId());
-                log.warn("Chr {} had hypnotized {} to attack {} with damage {} (max: {})", damageChr.getName(),
+                log.warn(I18nUtil.getLogMessage("Localization.legacy.log.2539d766fb2294f4"), damageChr.getName(),
                         attackerName, damagedName, dmg, maxDmg);
                 dmg = maxDmg;
             }

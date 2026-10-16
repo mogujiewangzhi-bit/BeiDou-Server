@@ -33,9 +33,6 @@ public class MonsterDropEntry {
         this.Maximum = Maximum;
     }
 
-    public final short questid;
-    public final int itemId;
-    public final int chance;
-    public final int Minimum;
-    public final int Maximum;
+    public short questid;
+    public int itemId, chance, Minimum, Maximum;
 }

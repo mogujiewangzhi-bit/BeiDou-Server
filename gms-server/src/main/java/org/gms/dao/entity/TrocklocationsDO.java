@@ -28,7 +28,7 @@ public class TrocklocationsDO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id(keyType = KeyType.Auto)
-    private Long trockid;
+    private Integer trockid;
 
     private Integer characterid;
 

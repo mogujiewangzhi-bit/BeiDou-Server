@@ -19,6 +19,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Client;
 import org.gms.constants.game.GameConstants;
 import org.gms.net.AbstractPacketHandler;
@@ -38,7 +40,7 @@ public final class OwlWarpHandler extends AbstractPacketHandler {
         int mapid = p.readInt();
 
         if (ownerid == c.getPlayer().getId()) {
-            c.sendPacket(PacketCreator.serverNotice(1, "You cannot visit your own shop."));
+            c.sendPacket(PacketCreator.serverNotice(1, I18nUtil.getMessage("Localization.legacy.message.98893e626303dfac")));
             return;
         }
 
@@ -73,10 +75,10 @@ public final class OwlWarpHandler extends AbstractPacketHandler {
                             c.sendPacket(PacketCreator.getOwlMessage(18));
                         }
                     } else {
-                        c.sendPacket(PacketCreator.serverNotice(1, "That shop is currently located in another channel. Current location: Channel " + hm.getChannel() + ", '" + hm.getMap().getMapName() + "'."));
+                        c.sendPacket(PacketCreator.serverNotice(1, I18nUtil.getMessage("Localization.legacy.message.df9e2b536eeef036") + hm.getChannel() + ", '" + hm.getMap().getMapName() + "'."));
                     }
                 } else {
-                    c.sendPacket(PacketCreator.serverNotice(1, "That shop is currently located outside of the FM area. Current location: Channel " + hm.getChannel() + ", '" + hm.getMap().getMapName() + "'."));
+                    c.sendPacket(PacketCreator.serverNotice(1, I18nUtil.getMessage("Localization.legacy.message.b6be50ef948a03d4") + hm.getChannel() + ", '" + hm.getMap().getMapName() + "'."));
                 }
             } else {
                 //c.sendPacket(PacketCreator.serverNotice(1, "That merchant has either been closed or is under maintenance."));
@@ -101,10 +103,10 @@ public final class OwlWarpHandler extends AbstractPacketHandler {
                             c.sendPacket(PacketCreator.getOwlMessage(18));
                         }
                     } else {
-                        c.sendPacket(PacketCreator.serverNotice(1, "That merchant is currently located in another channel. Current location: Channel " + hm.getChannel() + ", '" + hm.getMap().getMapName() + "'."));
+                        c.sendPacket(PacketCreator.serverNotice(1, I18nUtil.getMessage("Localization.legacy.message.b60daf2f54a3b908") + hm.getChannel() + ", '" + hm.getMap().getMapName() + "'."));
                     }
                 } else {
-                    c.sendPacket(PacketCreator.serverNotice(1, "That merchant is currently located outside of the FM area. Current location: Channel " + hm.getChannel() + ", '" + hm.getMap().getMapName() + "'."));
+                    c.sendPacket(PacketCreator.serverNotice(1, I18nUtil.getMessage("Localization.legacy.message.95f93ecb1ca88e8a") + hm.getChannel() + ", '" + hm.getMap().getMapName() + "'."));
                 }
             } else {
                 //c.sendPacket(PacketCreator.serverNotice(1, "That merchant has either been closed or is under maintenance."));

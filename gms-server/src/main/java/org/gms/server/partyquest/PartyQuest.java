@@ -22,6 +22,8 @@
 
 package org.gms.server.partyquest;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.net.server.Server;
 import org.gms.net.server.world.Party;
@@ -109,7 +111,7 @@ public class PartyQuest {
         case "LudiPQLast":
             return 800 * level / 5;
         default:
-            log.warn("Unhandled PartyQuest: {}", PQ);
+            log.warn(I18nUtil.getLogMessage("Localization.legacy.log.18b4f1fa43038653"), PQ);
             return 0;
         }
     }

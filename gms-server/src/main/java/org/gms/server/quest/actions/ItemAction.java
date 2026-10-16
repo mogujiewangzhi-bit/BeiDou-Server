@@ -255,7 +255,7 @@ public class ItemAction extends AbstractQuestAction {
     private void announceInventoryLimit(List<Integer> itemids, Character chr) {
         for (Integer id : itemids) {
             if (ItemInformationProvider.getInstance().isPickupRestricted(id) && chr.haveItemWithId(id, true)) {
-                chr.dropMessage(1, "Please check if you already have a similar one-of-a-kind item in your inventory.");
+                chr.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.9f9e1473b23c8807"));
                 return;
             }
         }
@@ -321,7 +321,7 @@ public class ItemAction extends AbstractQuestAction {
                     }
 
                     InventoryManipulator.addById(chr.getClient(), item.getId(), (short) missingQty);
-                    log.debug("Chr {} obtained {}x {} from questId {}", chr, itemid, missingQty, questID);
+                    log.debug(I18nUtil.getLogMessage("Localization.legacy.log.f183bf05ac5c83b2"), chr, itemid, missingQty, questID);
                 }
                 return true;
             }

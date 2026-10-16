@@ -1,5 +1,7 @@
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.FamilyEntitlement;
@@ -39,7 +41,7 @@ public class FamilySummonResponseHandler extends AbstractPacketHandler {
             inviterEntry.refundEntitlement(FamilyEntitlement.SUMMON_FAMILY);
             inviterEntry.gainReputation(FamilyEntitlement.SUMMON_FAMILY.getRepCost(), false); //refund rep cost if declined
             inviter.sendPacket(PacketCreator.getFamilyInfo(inviterEntry));
-            inviter.dropMessage(5, c.getPlayer().getName() + " has denied the summon request.");
+            inviter.dropMessage(5, c.getPlayer().getName() + I18nUtil.getMessage("Localization.legacy.message.81b52d562e955a62"));
         }
     }
 

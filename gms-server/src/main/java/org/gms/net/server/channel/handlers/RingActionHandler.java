@@ -21,6 +21,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.Ring;
@@ -80,66 +82,66 @@ public final class RingActionHandler extends AbstractPacketHandler {
 
         // TODO: get the correct packet bytes for these popups
         if (source.isMarried()) {
-            source.dropMessage(1, "You're already married!");
+            source.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.b9c9c96a82ed1991"));
             source.sendPacket(WeddingPackets.OnMarriageResult((byte) 0));
             return;
         } else if (source.getPartnerId() > 0) {
-            source.dropMessage(1, "You're already engaged!");
+            source.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.4b7167aa3ae528a0"));
             source.sendPacket(WeddingPackets.OnMarriageResult((byte) 0));
             return;
         } else if (source.getMarriageItemId() > 0) {
-            source.dropMessage(1, "You're already engaging someone!");
+            source.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.00079c77484296c0"));
             source.sendPacket(WeddingPackets.OnMarriageResult((byte) 0));
             return;
         } else if (target == null) {
-            source.dropMessage(1, "Unable to find " + name + " on this channel.");
+            source.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.76ff2cf9c68ef97c") + name + I18nUtil.getMessage("Localization.legacy.message.e498e7b54410b462"));
             source.sendPacket(WeddingPackets.OnMarriageResult((byte) 0));
             return;
         } else if (target == source) {
-            source.dropMessage(1, "You can't engage yourself.");
+            source.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.03f1e28fe8699e67"));
             source.sendPacket(WeddingPackets.OnMarriageResult((byte) 0));
             return;
         } else if (target.getLevel() < 50) {
-            source.dropMessage(1, "You can only propose to someone level 50 or higher.");
+            source.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.706a559dd579db49"));
             source.sendPacket(WeddingPackets.OnMarriageResult((byte) 0));
             return;
         } else if (source.getLevel() < 50) {
-            source.dropMessage(1, "You can only propose being level 50 or higher.");
+            source.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.ee0189caf6404e8f"));
             source.sendPacket(WeddingPackets.OnMarriageResult((byte) 0));
             return;
         } else if (!target.getMap().equals(source.getMap())) {
-            source.dropMessage(1, "Make sure your partner is on the same map!");
+            source.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.e83389e51e48805a"));
             source.sendPacket(WeddingPackets.OnMarriageResult((byte) 0));
             return;
         } else if (!source.haveItem(itemid) || itemid < ItemId.ENGAGEMENT_BOX_MIN || itemid > ItemId.ENGAGEMENT_BOX_MAX) {
             source.sendPacket(WeddingPackets.OnMarriageResult((byte) 0));
             return;
         } else if (target.isMarried()) {
-            source.dropMessage(1, "The player is already married!");
+            source.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.f521a6b772239ad4"));
             source.sendPacket(WeddingPackets.OnMarriageResult((byte) 0));
             return;
         } else if (target.getPartnerId() > 0 || target.getMarriageItemId() > 0) {
-            source.dropMessage(1, "The player is already engaged!");
+            source.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.5e9ce50ccb2ddb09"));
             source.sendPacket(WeddingPackets.OnMarriageResult((byte) 0));
             return;
         } else if (target.haveWeddingRing()) {
-            source.dropMessage(1, "The player already holds a marriage ring...");
+            source.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.c28d97eda0627249"));
             source.sendPacket(WeddingPackets.OnMarriageResult((byte) 0));
             return;
         } else if (source.haveWeddingRing()) {
-            source.dropMessage(1, "You can't propose while holding a marriage ring!");
+            source.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.68d99b4165bb7a89"));
             source.sendPacket(WeddingPackets.OnMarriageResult((byte) 0));
             return;
         } else if (target.getGender() == source.getGender()) {
-            source.dropMessage(1, "You may only propose to a " + (source.getGender() == 1 ? "male" : "female") + "!");
+            source.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.2842ab31d3329d20") + (source.getGender() == 1 ? I18nUtil.getMessage("Localization.legacy.message.0d248e82c62c9386") : I18nUtil.getMessage("Localization.legacy.message.9f165139a8c2894a")) + "!");
             source.sendPacket(WeddingPackets.OnMarriageResult((byte) 0));
             return;
         } else if (!InventoryManipulator.checkSpace(c, newBoxId, 1, "")) {
-            source.dropMessage(5, "You don't have a ETC slot available right now!");
+            source.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.ea4f8753c0f7c222"));
             source.sendPacket(WeddingPackets.OnMarriageResult((byte) 0));
             return;
         } else if (!InventoryManipulator.checkSpace(target.getClient(), newBoxId + 1, 1, "")) {
-            source.dropMessage(5, "The girl you proposed doesn't have a ETC slot available right now.");
+            source.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.5e58a6ffaecda353"));
             source.sendPacket(WeddingPackets.OnMarriageResult((byte) 0));
             return;
         }
@@ -185,7 +187,7 @@ public final class RingActionHandler extends AbstractPacketHandler {
 
             eraseEngagementOffline(characterId, con);
         } catch (SQLException ex) {
-            log.error("Error updating offline breakup", ex);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.e945b85610be7800"), ex);
         }
     }
 
@@ -202,7 +204,7 @@ public final class RingActionHandler extends AbstractPacketHandler {
         if (partner == null) {
             eraseEngagementOffline(partnerid);
         } else {
-            partner.dropMessage(5, chr.getName() + " has decided to break up the marriage.");
+            partner.dropMessage(5, chr.getName() + I18nUtil.getMessage("Localization.legacy.message.4ecd865a5ffcf247"));
 
             //partner.sendPacket(Wedding.OnMarriageResult((byte) 0)); ok, how to gracefully unengage someone without the need to cc?
             partner.sendPacket(WeddingPackets.OnNotifyWeddingPartnerTransfer(0, 0));
@@ -213,7 +215,7 @@ public final class RingActionHandler extends AbstractPacketHandler {
             org.gms.server.quest.medal.OutstandingCitizenMedal.refreshEligibility(partner);
         }
 
-        chr.dropMessage(5, "You have successfully break the marriage with " + Character.getNameById(partnerid) + ".");
+        chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.84c2fd5fac1af388") + Character.getNameById(partnerid) + ".");
 
         //chr.sendPacket(Wedding.OnMarriageResult((byte) 0));
         chr.sendPacket(WeddingPackets.OnNotifyWeddingPartnerTransfer(0, 0));
@@ -248,7 +250,7 @@ public final class RingActionHandler extends AbstractPacketHandler {
         if (partner == null) {
             breakEngagementOffline(partnerid);
         } else {
-            partner.dropMessage(5, chr.getName() + " has decided to break up the engagement.");
+            partner.dropMessage(5, chr.getName() + I18nUtil.getMessage("Localization.legacy.message.8c4ac511a26adfd1"));
 
             int partnerMarriageitemid = marriageitemid + ((chr.getGender() == 0) ? 1 : -1);
             if (partner.haveItem(partnerMarriageitemid)) {
@@ -264,7 +266,7 @@ public final class RingActionHandler extends AbstractPacketHandler {
         if (chr.haveItem(marriageitemid)) {
             InventoryManipulator.removeById(chr.getClient(), InventoryType.ETC, marriageitemid, (short) 1, false, false);
         }
-        chr.dropMessage(5, "You have successfully break the engagement with " + Character.getNameById(partnerid) + ".");
+        chr.dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.42ca7876c0eb98de") + Character.getNameById(partnerid) + ".");
 
         //chr.sendPacket(Wedding.OnMarriageResult((byte) 0));
         chr.sendPacket(WeddingPackets.OnNotifyWeddingPartnerTransfer(0, 0));
@@ -375,10 +377,10 @@ public final class RingActionHandler extends AbstractPacketHandler {
                         source.sendPacket(WeddingPackets.OnNotifyWeddingPartnerTransfer(target.getId(), target.getMapId()));
                         target.sendPacket(WeddingPackets.OnNotifyWeddingPartnerTransfer(source.getId(), source.getMapId()));
                     } catch (Exception e) {
-                        log.error("Error with engagement", e);
+                        log.error(I18nUtil.getLogMessage("Localization.legacy.log.d829666774d3f9c6"), e);
                     }
                 } else {
-                    source.dropMessage(1, "She has politely declined your engagement request.");
+                    source.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.e9b2d1cc00800348"));
                     source.sendPacket(WeddingPackets.OnMarriageResult((byte) 0));
 
                     source.setMarriageItemId(-1);
@@ -411,7 +413,7 @@ public final class RingActionHandler extends AbstractPacketHandler {
                 String bride = Character.getNameById(c.getPlayer().getPartnerId());
                 int guest = Character.getIdByName(name);
                 if (groom == null || bride == null || groom.equals("") || bride.equals("") || guest <= 0) {
-                    c.getPlayer().dropMessage(5, "Unable to find " + name + "!");
+                    c.getPlayer().dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.76ff2cf9c68ef97c") + name + "!");
                     return;
                 }
 
@@ -429,14 +431,14 @@ public final class RingActionHandler extends AbstractPacketHandler {
                             if (resStatus > 0) {
                                 long expiration = cserv.getWeddingTicketExpireTime(resStatus + 1);
 
-                                String baseMessage = "You've been invited to %s and %s's Wedding!".formatted(groom, bride);
+                                String baseMessage = I18nUtil.getMessage("Localization.legacy.message.13da1ce49438e584").formatted(groom, bride);
                                 Character guestChr = c.getWorldServer().getPlayerStorage().getCharacterById(guest);
                                 if (guestChr != null && InventoryManipulator.checkSpace(guestChr.getClient(), newItemId, 1, "") && InventoryManipulator.addById(guestChr.getClient(), newItemId, (short) 1, expiration)) {
-                                    guestChr.dropMessage(6, "[Wedding] %s".formatted(baseMessage));
+                                    guestChr.dropMessage(6, I18nUtil.getMessage("Localization.legacy.message.d8dcaff517910c99").formatted(baseMessage));
                                 } else {
-                                    String dueyMessage = baseMessage + " Receive your invitation from Duey!";
+                                    String dueyMessage = baseMessage + I18nUtil.getMessage("Localization.legacy.message.47dd88a029f81f01");
                                     if (guestChr != null && guestChr.isLoggedInWorld()) {
-                                        guestChr.dropMessage(6, "[Wedding] %s".formatted(dueyMessage));
+                                        guestChr.dropMessage(6, I18nUtil.getMessage("Localization.legacy.message.d8dcaff517910c99").formatted(dueyMessage));
                                     } else {
                                         noteService.sendNormal(dueyMessage, groom, name);
                                     }
@@ -447,13 +449,13 @@ public final class RingActionHandler extends AbstractPacketHandler {
                                     DueyProcessor.dueyCreatePackage(weddingTicket, 0, groom, guest);
                                 }
                             } else {
-                                c.getPlayer().dropMessage(5, "Wedding is already under way. You cannot invite any more guests for the event.");
+                                c.getPlayer().dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.5988d79d820dbc93"));
                             }
                         } else {
-                            c.getPlayer().dropMessage(5, "'" + name + "' is already invited for your marriage.");
+                            c.getPlayer().dropMessage(5, "'" + name + I18nUtil.getMessage("Localization.legacy.message.90f2672b1d6f7882"));
                         }
                     } else {
-                        c.getPlayer().dropMessage(5, "Invitation was not sent to '" + name + "'. Either the time for your marriage reservation already came or it was not found.");
+                        c.getPlayer().dropMessage(5, I18nUtil.getMessage("Localization.legacy.message.10ea4ee6a0482aff") + name + I18nUtil.getMessage("Localization.legacy.message.1a41960847a0fecb"));
                     }
 
                 } catch (Exception ex) {
@@ -526,7 +528,7 @@ public final class RingActionHandler extends AbstractPacketHandler {
                 break;
 
             default:
-                log.warn("Unhandled RING_ACTION mode. Packet: {}", p);
+                log.warn(I18nUtil.getLogMessage("Localization.legacy.log.d31ec0df27863892"), p);
                 break;
         }
 

@@ -19,6 +19,8 @@
 */
 package org.gms.net.server.coordinator.matchchecker.listener;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.config.GameConfig;
 import org.gms.constants.game.GameConstants;
@@ -83,30 +85,30 @@ public class MatchCheckerGuildCreation implements MatchCheckerListenerRecipe {
                 matchPlayers.remove(leader);
 
                 if (leader.getGuildId() > 0) {
-                    leader.dropMessage(1, "You cannot create a new Guild while in one.");
+                    leader.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.4aa019f615404828"));
                     broadcastGuildCreationDismiss(matchPlayers);
                     return;
                 }
                 int partyid = leader.getPartyId();
                 if (partyid == -1 || !leader.isPartyLeader()) {
-                    leader.dropMessage(1, "You cannot establish the creation of a new Guild without leading a party.");
+                    leader.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.8156c00b612c075b"));
                     broadcastGuildCreationDismiss(matchPlayers);
                     return;
                 }
                 if (leader.getMapId() != MapId.GUILD_HQ) {
-                    leader.dropMessage(1, "You cannot establish the creation of a new Guild outside of the Guild Headquarters.");
+                    leader.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.9e430fa82764d0f0"));
                     broadcastGuildCreationDismiss(matchPlayers);
                     return;
                 }
                 for (Character chr : matchPlayers) {
                     if (leader.getMap().getCharacterById(chr.getId()) == null) {
-                        leader.dropMessage(1, "You cannot establish the creation of a new Guild if one of the members is not present here.");
+                        leader.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.e8899f81ee8f0200"));
                         broadcastGuildCreationDismiss(matchPlayers);
                         return;
                     }
                 }
                 if (leader.getMeso() < GameConfig.getServerInt("create_guild_cost")) {
-                    leader.dropMessage(1, "You do not have " + GameConstants.numberWithCommas(GameConfig.getServerInt("create_guild_cost")) + " mesos to create a Guild.");
+                    leader.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.f600cf40b2394f6b") + GameConstants.numberWithCommas(GameConfig.getServerInt("create_guild_cost")) + I18nUtil.getMessage("Localization.legacy.message.ed9139bb1a01441b"));
                     broadcastGuildCreationDismiss(matchPlayers);
                     return;
                 }
@@ -124,7 +126,7 @@ public class MatchCheckerGuildCreation implements MatchCheckerListenerRecipe {
                 Server.getInstance().changeRank(gid, leader.getId(), 1);
 
                 leader.sendPacket(GuildPackets.showGuildInfo(leader));
-                leader.dropMessage(1, "You have successfully created a Guild.");
+                leader.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.b827109e8003f43e"));
 
                 for (Character chr : matchPlayers) {
                     boolean cofounder = chr.getPartyId() == partyid;
@@ -140,9 +142,9 @@ public class MatchCheckerGuildCreation implements MatchCheckerListenerRecipe {
                         chr.sendPacket(GuildPackets.showGuildInfo(chr));
 
                         if (cofounder) {
-                            chr.dropMessage(1, "You have successfully cofounded a Guild.");
+                            chr.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.f163ff3bf15e23a9"));
                         } else {
-                            chr.dropMessage(1, "You have successfully joined the new Guild.");
+                            chr.dropMessage(1, I18nUtil.getMessage("Localization.legacy.message.b6583b8275f707c2"));
                         }
                     }
 

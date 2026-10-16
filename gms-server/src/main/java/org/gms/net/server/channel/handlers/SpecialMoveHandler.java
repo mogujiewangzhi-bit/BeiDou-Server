@@ -53,6 +53,10 @@ public final class SpecialMoveHandler extends AbstractPacketHandler {
         p.readInt();
         chr.getAutoBanManager().setTimestamp(4, Server.getInstance().getCurrentTimestamp(), 28);
         int skillid = p.readInt();
+        if (skillid == SuperGM.BLESS && (!chr.isGM() || chr.getSkillLevel(SuperGM.BLESS) != 1)) {
+            c.sendPacket(PacketCreator.enableActions());
+            return;
+        }
         
         /*
         if ((!GameConstants.isPqSkillMap(chr.getMapId()) && GameConstants.isPqSkill(skillid)) || (!chr.isGM() && GameConstants.isGMSkills(skillid)) || (!GameConstants.isInJobTree(skillid, chr.getJob().getId()) && !chr.isGM())) {
@@ -148,7 +152,7 @@ public final class SpecialMoveHandler extends AbstractPacketHandler {
                             chr.cancelMagicDoor();
                             skill.getEffect(skillLevel).applyTo(chr, pos);
                         } else {
-                            chr.message("Please wait 5 seconds before casting Mystic Door again.");
+                            chr.message(I18nUtil.getMessage("Localization.legacy.message.72e6fc5fea149ad9"));
                         }
                     } finally {
                         c.releaseClient();

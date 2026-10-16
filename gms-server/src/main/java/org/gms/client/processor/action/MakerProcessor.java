@@ -19,6 +19,8 @@
 */
 package org.gms.client.processor.action;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.inventory.Equip;
@@ -66,7 +68,7 @@ public class MakerProcessor {
                     int fromLeftover = toCreate;
                     toCreate = ii.getMakerCrystalFromLeftover(toCreate);
                     if (toCreate == -1) {
-                        c.sendPacket(PacketCreator.serverNotice(1, ii.getName(fromLeftover) + " is unavailable for Monster Crystal conversion."));
+                        c.sendPacket(PacketCreator.serverNotice(1, ii.getName(fromLeftover) + I18nUtil.getMessage("Localization.legacy.message.c5d4aae28b971991")));
                         c.sendPacket(PacketCreator.makerEnableActions());
                         return;
                     }
@@ -84,12 +86,12 @@ public class MakerProcessor {
                         if (pair != null) {
                             recipe = MakerItemFactory.generateDisassemblyCrystalEntry(toDisassemble, pair.getLeft(), pair.getRight());
                         } else {
-                            c.sendPacket(PacketCreator.serverNotice(1, ii.getName(toCreate) + " is unavailable for Monster Crystal disassembly."));
+                            c.sendPacket(PacketCreator.serverNotice(1, ii.getName(toCreate) + I18nUtil.getMessage("Localization.legacy.message.cfb3bdc2b235286d")));
                             c.sendPacket(PacketCreator.makerEnableActions());
                             return;
                         }
                     } else {
-                        c.sendPacket(PacketCreator.serverNotice(1, "An unknown error occurred when trying to apply that item for disassembly."));
+                        c.sendPacket(PacketCreator.serverNotice(1, I18nUtil.getMessage("Localization.legacy.message.05234bbf3b749a88")));
                         c.sendPacket(PacketCreator.makerEnableActions());
                         return;
                     }
@@ -137,7 +139,7 @@ public class MakerProcessor {
 
                         if (!reagentids.isEmpty()) {
                             if (!removeOddMakerReagents(toCreate, reagentids)) {
-                                c.sendPacket(PacketCreator.serverNotice(1, "You can only use WATK and MATK Strengthening Gems on weapon items."));
+                                c.sendPacket(PacketCreator.serverNotice(1, I18nUtil.getMessage("Localization.legacy.message.97b38380c5f19ce0")));
                                 c.sendPacket(PacketCreator.makerEnableActions());
                                 return;
                             }
@@ -151,33 +153,33 @@ public class MakerProcessor {
 
                 switch (createStatus) {
                     case -1:// non-available for Maker itemid has been tried to forge
-                        log.warn("Chr {} tried to craft itemid {} using the Maker skill.", c.getPlayer().getName(), toCreate);
-                        c.sendPacket(PacketCreator.serverNotice(1, "The requested item could not be crafted on this operation."));
+                        log.warn(I18nUtil.getLogMessage("Localization.legacy.log.678cde69df0655d5"), c.getPlayer().getName(), toCreate);
+                        c.sendPacket(PacketCreator.serverNotice(1, I18nUtil.getMessage("Localization.legacy.message.35c146a0e54c71c8")));
                         c.sendPacket(PacketCreator.makerEnableActions());
                         break;
 
                     case 1: // no items
-                        c.sendPacket(PacketCreator.serverNotice(1, "You don't have all required items in your inventory to make " + ii.getName(toCreate) + "."));
+                        c.sendPacket(PacketCreator.serverNotice(1, I18nUtil.getMessage("Localization.legacy.message.cc12584ac42faa40") + ii.getName(toCreate) + "."));
                         c.sendPacket(PacketCreator.makerEnableActions());
                         break;
 
                     case 2: // no meso
-                        c.sendPacket(PacketCreator.serverNotice(1, "You don't have enough mesos (" + GameConstants.numberWithCommas(recipe.getCost()) + ") to complete this operation."));
+                        c.sendPacket(PacketCreator.serverNotice(1, I18nUtil.getMessage("Localization.legacy.message.9d1b4bbd68ae023c") + GameConstants.numberWithCommas(recipe.getCost()) + I18nUtil.getMessage("Localization.legacy.message.b9d26206a9c210ad")));
                         c.sendPacket(PacketCreator.makerEnableActions());
                         break;
 
                     case 3: // no req level
-                        c.sendPacket(PacketCreator.serverNotice(1, "You don't have enough level to complete this operation."));
+                        c.sendPacket(PacketCreator.serverNotice(1, I18nUtil.getMessage("Localization.legacy.message.279bf0d6a9987b18")));
                         c.sendPacket(PacketCreator.makerEnableActions());
                         break;
 
                     case 4: // no req skill level
-                        c.sendPacket(PacketCreator.serverNotice(1, "You don't have enough Maker level to complete this operation."));
+                        c.sendPacket(PacketCreator.serverNotice(1, I18nUtil.getMessage("Localization.legacy.message.46ff66691d754b71")));
                         c.sendPacket(PacketCreator.makerEnableActions());
                         break;
 
                     case 5: // inventory full
-                        c.sendPacket(PacketCreator.serverNotice(1, "Your inventory is full."));
+                        c.sendPacket(PacketCreator.serverNotice(1, I18nUtil.getMessage("Localization.legacy.message.7d6760c24583b8e1")));
                         c.sendPacket(PacketCreator.makerEnableActions());
                         break;
 

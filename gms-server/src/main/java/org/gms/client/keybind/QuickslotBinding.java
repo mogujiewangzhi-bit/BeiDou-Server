@@ -1,5 +1,7 @@
 package org.gms.client.keybind;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.net.packet.OutPacket;
 
 import java.util.Arrays;
@@ -17,7 +19,7 @@ public class QuickslotBinding {
     // aKeys' length has to be 8.
     public QuickslotBinding(byte[] aKeys) {
         if (aKeys.length != QUICKSLOT_SIZE) {
-            throw new IllegalArgumentException(String.format("aKeys' size should be %d", QUICKSLOT_SIZE));
+            throw new IllegalArgumentException(String.format(I18nUtil.getExceptionMessage("Localization.legacy.exception.aeb4408d7ce1d092"), QUICKSLOT_SIZE));
         }
 
         this.m_aQuickslotKeyMapped = aKeys.clone();

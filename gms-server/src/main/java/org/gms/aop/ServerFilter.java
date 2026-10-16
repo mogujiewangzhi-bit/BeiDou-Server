@@ -1,5 +1,7 @@
 package org.gms.aop;
 
+import org.gms.util.I18nUtil;
+
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpFilter;
 import jakarta.servlet.http.HttpServletRequest;
@@ -50,15 +52,15 @@ public class ServerFilter extends HttpFilter {
             // 封禁ip禁止请求
             if (accountService.isBanned(remoteAddr)) {
                 request.getInputStream().close();
-                throw new BizException("Banned ip is requesting, forwardedIp: " + forwardedIp + ",realIp: " + realIp + ", remoteAddr: " + remoteAddr);
+                throw new BizException(I18nUtil.getExceptionMessage("Localization.legacy.exception.84556a7fe3356a88") + forwardedIp + I18nUtil.getExceptionMessage("Localization.legacy.exception.1ba79a88b2a11ee4") + realIp + I18nUtil.getExceptionMessage("Localization.legacy.exception.5028ff656025c001") + remoteAddr);
             }
 
             // 限流
             if (!RateLimitUtil.getInstance().check(remoteAddr)) {
-                throw new BizException("IP " + remoteAddr + " has reached rate limit.");
+                throw new BizException("IP " + remoteAddr + I18nUtil.getExceptionMessage("Localization.legacy.exception.b40b6c88cbc79d5d"));
             }
         } catch (Exception e) {
-            log.error("Filter error", e);
+            log.error(I18nUtil.getLogMessage("Localization.legacy.log.25cb5166cb47d4a3"), e);
             // 释放流，否则可能内存泄漏
             request.getInputStream().close();
             response.getOutputStream().close();

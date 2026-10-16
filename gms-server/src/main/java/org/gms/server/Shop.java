@@ -21,6 +21,8 @@
 */
 package org.gms.server;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Character;
 import org.gms.client.Client;
 import org.gms.client.inventory.Inventory;
@@ -89,7 +91,7 @@ public class Shop {
         ShopItem item = findBySlot(slot);
         if (item != null) {
             if (item.getItemId() != itemId) {
-                log.warn("Wrong slot number in shop {}", id);
+                log.warn(I18nUtil.getLogMessage("Localization.legacy.log.e8c890ddebfe6508"), id);
                 return;
             }
         } else {

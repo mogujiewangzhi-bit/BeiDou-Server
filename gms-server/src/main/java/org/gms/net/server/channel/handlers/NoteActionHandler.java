@@ -21,6 +21,8 @@
 */
 package org.gms.net.server.channel.handlers;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.client.Client;
 import org.gms.dao.entity.NotesDO;
 import org.gms.net.AbstractPacketHandler;
@@ -54,7 +56,7 @@ public final class NoteActionHandler extends AbstractPacketHandler {
                 noteService.sendWithFame(message, c.getPlayer().getName(), charname);
                 c.getPlayer().getCashShop().decreaseNotes();
             } catch (Exception e) {
-                log.error("Failed to send note", e);
+                log.error(I18nUtil.getLogMessage("Localization.legacy.log.fc4598f1baa18ad0"), e);
             }
         } else if (action == 1) { // Discard notes in game
             int num = p.readByte();
@@ -67,7 +69,7 @@ public final class NoteActionHandler extends AbstractPacketHandler {
 
                 Optional<NotesDO> discardedNote = noteService.delete(id);
                 if (discardedNote.isEmpty()) {
-                    log.warn("Note with id {} not able to be discarded. Already discarded?", id);
+                    log.warn(I18nUtil.getLogMessage("Localization.legacy.log.bae3e3eed0fea240"), id);
                     continue;
                 }
 

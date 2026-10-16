@@ -1,5 +1,7 @@
 package org.gms.net.encryption.protocol;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.net.encryption.ClientCyphers;
 
 import java.util.HashMap;
@@ -17,7 +19,7 @@ public class ProtocolFactory {
         PacketProtocol protocol = PROTOCOLS.get(version);
 
         if (protocol == null) {
-            throw new UnsupportedOperationException("PacketProtocol is a unsupported version: " + version);
+            throw new UnsupportedOperationException(I18nUtil.getExceptionMessage("Localization.legacy.exception.31a35dbe5574e2c0") + version);
         }
 
         return protocol;

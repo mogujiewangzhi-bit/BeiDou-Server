@@ -1,5 +1,7 @@
 package org.gms.net.packet.logging;
 
+import org.gms.util.I18nUtil;
+
 import org.gms.config.GameConfig;
 import org.gms.constants.net.OpcodeConstants;
 import io.netty.channel.ChannelHandler.Sharable;
@@ -35,7 +37,7 @@ public class InPacketLogger extends ChannelInboundHandlerAdapter implements Pack
             final String opcodeHex = Integer.toHexString(opcode).toUpperCase();
             final String opcodeName = getRecvOpcodeName(opcode);
             final String prefix = opcodeName == null ? "<UnknownPacket> " : "";
-            log.info("{}ClientSend:{} [{}] ({}) <HEX> {} <TEXT> {}", prefix, opcodeName, opcodeHex, packetLength,
+            log.info(I18nUtil.getLogMessage("Localization.legacy.log.4f99f36a94642d31"), prefix, opcodeName, opcodeHex, packetLength,
                     HexTool.toHexString(content), HexTool.toStringFromCharset(content));
         } else {
             log.info("{}...", HexTool.toHexString(new byte[]{content[0], content[1]}));
